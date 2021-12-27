@@ -1,0 +1,112 @@
+{
+  "name": "portable-kanban",
+  "displayName": "portable-kanban",
+  "description": "This is an extension to create a portable kanban.",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.63.1"
+  },
+  "categories": [
+    "Other"
+  ],
+  "repository": {
+    "url": "https://github.com/harehare/portable-kanban.git"
+  },
+  "activationEvents": [
+    "onCustomEditor:portable-kanban.edit",
+    "onCommand:portable-kanban.new"
+  ],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "customEditors": [
+      {
+        "viewType": "portable-kanban.edit",
+        "displayName": "Kanban",
+        "selector": [
+          {
+            "filenamePattern": "*.kanban"
+          }
+        ]
+      }
+    ],
+    "commands": [
+      {
+        "command": "portable-kanban.new",
+        "title": "Portable Kanban: Create new Kanban"
+      }
+    ],
+    "configuration": {
+      "type": "object",
+      "title": "PortableKanban",
+      "properties": {
+        "portable-kanban.theme": {
+          "title": "Portable Kanban Theme",
+          "type": "string",
+          "default": "system",
+          "enum": [
+            "dark",
+            "light",
+            "system"
+          ],
+          "description": "Switch the theme to dark or light"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run package",
+    "compile": "NODE_ENV=production webpack",
+    "watch": "NODE_ENV=develop webpack --watch",
+    "package": "webpack --mode production --devtool hidden-source-map",
+    "lint": "eslint src --ext ts",
+    "test": "jest --silent=false --verbose false"
+  },
+  "devDependencies": {
+    "@babel/preset-env": "^7.16.5",
+    "@babel/preset-typescript": "^7.16.5",
+    "@svgr/webpack": "^6.1.2",
+    "@trivago/prettier-plugin-sort-imports": "^3.1.1",
+    "@types/glob": "^7.2.0",
+    "@types/jest": "^27.0.3",
+    "@types/mocha": "^9.0.0",
+    "@types/node": "17.x",
+    "@types/react": "^17.0.38",
+    "@types/react-beautiful-dnd": "^13.1.2",
+    "@types/react-dom": "^17.0.11",
+    "@types/react-linkify": "^1.0.1",
+    "@types/react-router-dom": "^5.3.2",
+    "@types/styled-components": "^5.1.19",
+    "@types/vscode": "^1.63.1",
+    "@typescript-eslint/eslint-plugin": "^5.8.0",
+    "@typescript-eslint/parser": "^5.8.0",
+    "@vscode/test-electron": "^2.0.0",
+    "css-loader": "^6.5.1",
+    "eslint": "^8.5.0",
+    "eslint-config-prettier": "^8.3.0",
+    "glob": "^7.2.0",
+    "jest": "^27.4.5",
+    "mocha": "^9.1.3",
+    "prettier": "^2.5.1",
+    "style-loader": "^3.3.1",
+    "ts-jest": "^27.1.2",
+    "ts-loader": "^9.2.6",
+    "typescript": "^4.5.4",
+    "webpack": "^5.65.0",
+    "webpack-cli": "^4.9.1",
+    "webpack-node-externals": "^3.0.0"
+  },
+  "dependencies": {
+    "@mojotech/json-type-validation": "^3.1.0",
+    "crypto-js": "^4.1.1",
+    "date-fns": "^2.27.0",
+    "fuse.js": "^6.5.3",
+    "react": "^17.0.2",
+    "react-beautiful-dnd": "^13.1.0",
+    "react-dom": "^17.0.2",
+    "react-icons": "^4.3.1",
+    "react-linkify": "^1.0.0-alpha",
+    "react-router-dom": "^5.3.0",
+    "recoil": "^0.5.2",
+    "styled-components": "^5.3.3"
+  }
+}

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE svg PUBLIC '-//W3C//DTD SVG 1.1//EN' 'http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd'>
+<svg version="1.1" viewBox="0 0 500 500" xml:space="preserve" xmlns="http://www.w3.org/2000/svg">
+	<desc>Created with Fabric.js 4.6.0</desc>
+	<g transform="matrix(1.97 0 0 .87 116.21 107.71)">
+		<path transform="translate(0)" d="m-50-50h100v100h-100z" fill="#fc861d" stroke="#7f1e28"
+			vector-effect="non-scaling-stroke" />
+	</g>
+	<g transform="matrix(1.96 0 0 .86 330.12 107.23)">
+		<path transform="translate(0)" d="m-50-50h100v100h-100z" fill="#eb6f01" stroke="#7f1e28"
+			vector-effect="non-scaling-stroke" />
+	</g>
+	<g transform="matrix(1.96 0 0 .86 115.99 207.6)">
+		<path transform="translate(0)" d="m-50-50h100v100h-100z" fill="#eb6f01" stroke="#7f1e28"
+			vector-effect="non-scaling-stroke" />
+	</g>
+	<g transform="matrix(1.96 0 0 .86 330.12 207.6)">
+		<path transform="translate(0)" d="m-50-50h100v100h-100z" fill="#fc861d" stroke="#7f1e28"
+			vector-effect="non-scaling-stroke" />
+	</g>
+	<g transform="matrix(1.96 0 0 .86 115.99 310.22)">
+		<path transform="translate(0)" d="m-50-50h100v100h-100z" fill="#fc861d" stroke="#7f1e28"
+			vector-effect="non-scaling-stroke" />
+	</g>
+</svg>
