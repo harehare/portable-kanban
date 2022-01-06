@@ -42,8 +42,7 @@ const Overlay = styled.div`
 
 const Container = styled.div`
   position: absolute;
-  width: 50%;
-  max-width: 748px;
+  width: calc(100% - 64px);
   height: calc(100vh - 40px);
   display: flex;
   flex-direction: column;
@@ -153,6 +152,11 @@ const EditCard: React.VFC<Props> = ({ kanban }) => {
             return;
           }
           e.stopPropagation();
+        }}
+        onKeyDown={(e) => {
+          if (e.key === 'Escape') {
+            history.push('/');
+          }
         }}>
         <CloseButton
           onClick={() => {

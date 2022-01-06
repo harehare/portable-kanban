@@ -202,15 +202,18 @@ export const moveCardAcrossList = (
   toCardIndex: number
 ): Kanban => {
   const fromList = kanban.lists.filter((l) => l.id === fromListId)[0];
-  const fromCard = fromList?.cards[fromCardIndex];
+  const fromCard = fromList.cards[fromCardIndex];
   const toList = kanban.lists.filter((l) => l.id === toListId)[0];
 
   if (!fromList || !toList || !fromCard) {
     return kanban;
   }
 
-  const fromCards = fromList?.cards?.filter((_, i) => i !== fromCardIndex);
-  const toCards = insert(toList?.cards, toCardIndex, fromCard);
+  const fromCards = fromList.cards?.filter((_, i) => i !== fromCardIndex);
+  const toCards = insert(toList.cards, toCardIndex, {
+    ...fromCard,
+    listId: toList.id,
+  });
 
   return {
     ...kanban,
