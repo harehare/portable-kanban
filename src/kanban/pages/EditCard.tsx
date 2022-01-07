@@ -22,7 +22,6 @@ import { AddItem } from '../components/shared/AddItem';
 import { Button } from '../components/shared/Button';
 import { DatePicker } from '../components/shared/DatePicker';
 import { Description } from '../components/shared/Description';
-import { Input } from '../components/shared/Form';
 import { ProgressBar } from '../components/shared/ProgressBar';
 import { TextBaseBold } from '../components/shared/Text';
 import { Title } from '../components/shared/Title';
@@ -42,7 +41,8 @@ const Overlay = styled.div`
 
 const Container = styled.div`
   position: absolute;
-  width: calc(100% - 64px);
+  width: calc(100% - 16px);
+  max-width: 748px;
   height: calc(100vh - 40px);
   display: flex;
   flex-direction: column;

@@ -45,7 +45,7 @@ export const Description: React.VFC<Props> = ({
           }}
           placeholder="Enter description"
           style={{
-            width: '100%',
+            width: 'calc(100% - 16px)',
             height: '100%',
             fontFamily: 'var(--font-family)',
             backgroundColor: 'var(--secondary-background-color)',
@@ -63,6 +63,11 @@ export const Description: React.VFC<Props> = ({
           style={{
             fontSize: fontSize === 'medium' ? '1rem' : '1.5rem',
             color: 'var(--text-color)',
+            backgroundColor: 'var(--secondary-background-color)',
+            cursor: 'pointer',
+            minHeight: '24px',
+            width: 'calc(100% - 16px)',
+            borderRadius: 'var(--border-radius)',
           }}
           onClick={(e) => {
             e.stopPropagation();

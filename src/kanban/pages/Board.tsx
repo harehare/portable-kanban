@@ -28,6 +28,8 @@ const Contents = styled.div`
   display: flex;
   background-color: transparent;
   overflow-x: auto;
+  align-items: flex-start;
+  align-content: flex-start;
 `;
 
 interface Props {

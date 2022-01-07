@@ -41,12 +41,12 @@ const Indicator = styled.div<{ checked: boolean }>`
 
   ${Input}:checked + &::after {
     display: block;
-    top: 0.1em;
-    left: 0.35em;
+    top: 0.05em;
+    left: 0.25rem;
     width: 35%;
     height: 50%;
     border: solid var(--form-border-color);
-    border-width: 0 0.15em 0.15em 0;
+    border-width: 0 0.2em 0.2em 0;
     transform: rotate(45deg);
   }
 `;

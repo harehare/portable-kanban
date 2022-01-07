@@ -104,7 +104,7 @@ export const Card: React.VFC<Props> = ({
   }>({ card, isEdit });
   const checkedCount = React.useMemo(
     () => state.card.checkboxes.filter((c) => c.checked).length,
-    [card]
+    [state.card]
   );
 
   React.useEffect(() => {

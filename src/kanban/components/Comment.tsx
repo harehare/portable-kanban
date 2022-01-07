@@ -10,7 +10,9 @@ const Container = styled.div`
   position: relative;
   display: flex;
   align-items: center;
-  margin: 8px;
+  background-color: var(--secondary-background-color);
+  cursor: pointer;
+  margin: 8px 8px 8px 16px;
   :hover {
     background-color: var(--selected-color);
   }

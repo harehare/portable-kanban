@@ -97,6 +97,7 @@ export const Title: React.VFC<Props> = ({
                 : '1.5rem',
             color: 'var(--text-color)',
             width: width === '100%' ? '100%' : `${width}px`,
+            cursor: 'pointer',
           }}
           onClick={(e) => {
             e.stopPropagation();
