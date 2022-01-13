@@ -14,6 +14,7 @@ export const DatePicker: React.VFC<Props> = ({ value, onChange }) => {
   return (
     <Input
       type="datetime-local"
+      style={{ width: 'calc(100% - 16px)', marginLeft: '8px' }}
       value={date}
       onChange={(e) => {
         try {

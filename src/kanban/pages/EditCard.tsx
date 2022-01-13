@@ -1,4 +1,3 @@
-import { createDecipheriv } from 'crypto';
 import * as React from 'react';
 import {
   MdClose,
@@ -35,7 +34,7 @@ const Overlay = styled.div`
   position: absolute;
   display: flex;
   flex-direction: column;
-  background-color: rgba(0, 0, 0, 0.6);
+  background-color: rgba(0, 0, 0, 0.4);
   top: 0;
 `;
 
@@ -85,12 +84,11 @@ const CloseButton = styled.div`
 `;
 
 const BUttons = styled.div`
-  position: absolute;
-  cursor: pointer;
   display: flex;
+  justify-content: flex-end;
+  cursor: pointer;
   gap: 16px;
-  right: 16px;
-  bottom: 16px;
+  margin: 8px;
 `;
 
 interface Props {

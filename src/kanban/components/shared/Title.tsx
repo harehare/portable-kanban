@@ -43,7 +43,7 @@ export const Title: React.VFC<Props> = ({
       onEnter(title === '' ? refDefaultTitle.current : title);
       setEdit(false);
     },
-    [title]
+    [title, isComposing]
   );
   const handleBlur = React.useCallback(() => {
     if (title === '') {

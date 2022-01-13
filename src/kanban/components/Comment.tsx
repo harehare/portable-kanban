@@ -12,10 +12,9 @@ const Container = styled.div`
   align-items: center;
   background-color: var(--secondary-background-color);
   cursor: pointer;
-  margin: 8px 8px 8px 16px;
-  :hover {
-    background-color: var(--selected-color);
-  }
+  border-radius: var(--border-radius);
+  margin-left: 16px;
+  margin-bottom: 16px;
 `;
 
 interface Props {

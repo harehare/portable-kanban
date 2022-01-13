@@ -45,7 +45,7 @@ export const Description: React.VFC<Props> = ({
           }}
           placeholder="Enter description"
           style={{
-            width: 'calc(100% - 16px)',
+            width: 'calc(100% - 24px)',
             height: '100%',
             fontFamily: 'var(--font-family)',
             backgroundColor: 'var(--secondary-background-color)',
@@ -65,8 +65,8 @@ export const Description: React.VFC<Props> = ({
             color: 'var(--text-color)',
             backgroundColor: 'var(--secondary-background-color)',
             cursor: 'pointer',
-            minHeight: '24px',
-            width: 'calc(100% - 16px)',
+            minHeight: '56px',
+            width: 'calc(100% - 24px)',
             borderRadius: 'var(--border-radius)',
           }}
           onClick={(e) => {

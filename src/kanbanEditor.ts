@@ -44,7 +44,6 @@ export class KanbanEditorProvider implements vscode.CustomTextEditorProvider {
     const changeDocumentSubscription = vscode.workspace.onDidChangeTextDocument(
       (e) => {
         if (e.document.uri.toString() === document.uri.toString()) {
-          // TODO:
           // updateWebview();
         }
       }

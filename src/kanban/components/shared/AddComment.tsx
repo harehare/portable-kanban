@@ -14,6 +14,7 @@ const AddItemForm = styled.div`
 const TextArea = styled.textarea`
   font-family: var(--font-family);
   color: var(--secondary-color);
+  border-radius: var(--border-radius);
   outline: none;
   border: none;
   resize: none;

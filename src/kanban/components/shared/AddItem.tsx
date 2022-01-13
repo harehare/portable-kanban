@@ -62,7 +62,7 @@ export const AddItem: React.VFC<Props> = ({
       onEnter(state.name);
       setState({ name: '', isAddItem: false });
     },
-    [state.name]
+    [state.name, isComposing]
   );
 
   return state.isAddItem ? (

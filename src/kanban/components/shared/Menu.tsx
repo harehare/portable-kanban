@@ -20,6 +20,7 @@ const MenuItems = styled.div<{
   top: 24px;
   font-size: 1rem;
   border-radius: 8px;
+  z-index: 100;
   ${({ position }) =>
     position === 'right' &&
     `

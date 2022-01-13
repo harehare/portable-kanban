@@ -104,7 +104,7 @@ export const Card: React.VFC<Props> = ({
   }>({ card, isEdit });
   const checkedCount = React.useMemo(
     () => state.card.checkboxes.filter((c) => c.checked).length,
-    [state.card]
+    [state.card, isComposing]
   );
 
   React.useEffect(() => {
@@ -121,7 +121,7 @@ export const Card: React.VFC<Props> = ({
       }
       setState({ ...state, isEdit: false });
     },
-    [state.card]
+    [state.card, isComposing]
   );
   const inputRef = useAutoFocus();
 
@@ -186,7 +186,11 @@ export const Card: React.VFC<Props> = ({
                   <MdDateRange />
                 </CardInfoIcon>
                 <div style={{ marginBottom: '2px' }}>
-                  <TextXs>{state.card.dueDate.toDateString()}</TextXs>
+                  <TextXs>
+                    {typeof state.card.dueDate === 'string'
+                      ? state.card.dueDate
+                      : state.card.dueDate.toDateString()}
+                  </TextXs>
                 </div>
               </CardInfo>
             )}

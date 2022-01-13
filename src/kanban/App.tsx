@@ -20,11 +20,7 @@ const App: React.VFC = () => {
   const setTitle = actions.useSetTitle();
 
   React.useEffect(() => {
-    history.push('/');
-    vscode.postMessage({
-      type: 'load',
-    });
-    window.addEventListener('message', async (e) => {
+    const onMessage = async (e: MessageEvent<any>) => {
       const message = e.data;
       switch (message.type) {
         case 'update':
@@ -33,7 +29,13 @@ const App: React.VFC = () => {
           setKanban(k);
           return;
       }
+    };
+    window.addEventListener('message', onMessage);
+    history.push('/');
+    vscode.postMessage({
+      type: 'load',
     });
+    return () => window.removeEventListener('message', onMessage);
   }, []);
 
   return (
