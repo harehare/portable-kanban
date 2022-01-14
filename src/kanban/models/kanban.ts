@@ -9,6 +9,8 @@ import {
   constant,
 } from '@mojotech/json-type-validation';
 
+import { uuid } from '../utils';
+
 export type Kanban = {
   lists: List[];
   archive: { lists: Pick<List, 'id' | 'title'>[]; cards: Card[] };
@@ -191,6 +193,20 @@ export const deleteCard = (kanban: Kanban, card: Card): Kanban => {
       ...kanban.archive,
       cards: kanban.archive.cards.filter((c) => c.id !== card.id),
     },
+  };
+};
+
+export const copyCard = (kanban: Kanban, card: Card): Kanban => {
+  return {
+    ...kanban,
+    lists: kanban.lists.map((l) =>
+      l.id === card.listId
+        ? {
+            ...l,
+            cards: [...l.cards, { ...card, id: uuid() }],
+          }
+        : l
+    ),
   };
 };
 

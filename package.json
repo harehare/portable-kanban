@@ -1,6 +1,6 @@
 {
   "name": "portable-kanban",
-  "displayName": "portable-kanban",
+  "displayName": "Portable Kanban",
   "description": "This is an extension to create a portable kanban.",
   "version": "0.0.1",
   "engines": {
@@ -13,8 +13,7 @@
     "url": "https://github.com/harehare/portable-kanban.git"
   },
   "activationEvents": [
-    "onCustomEditor:portable-kanban.edit",
-    "onCommand:portable-kanban.new"
+    "onStartupFinished"
   ],
   "main": "./dist/extension.js",
   "contributes": {

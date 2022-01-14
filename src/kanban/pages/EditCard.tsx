@@ -8,7 +8,7 @@ import {
   MdOutlineDeleteOutline,
   MdRestore,
 } from 'react-icons/md';
-import { MdOutlineArchive } from 'react-icons/md';
+import { MdContentCopy, MdOutlineArchive } from 'react-icons/md';
 import { useParams, useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 
@@ -111,6 +111,7 @@ const EditCard: React.VFC<Props> = ({ kanban }) => {
   const archiveCard = kanbanActions.useArchiveCard();
   const restoreCard = kanbanActions.useRestoreCard();
   const deleteCard = kanbanActions.useDeleteCard();
+  const copyCard = kanbanActions.useCopyCard();
 
   // @ts-expect-error
   const { listId, cardId } = useParams();
@@ -346,6 +347,16 @@ const EditCard: React.VFC<Props> = ({ kanban }) => {
           ))}
         </Line>
         <BUttons>
+          <Button
+            text="Copy"
+            icon={<MdContentCopy />}
+            onClick={() => {
+              if (!kanban || !list || !card) {
+                return;
+              }
+              copyCard(card);
+            }}
+          />
           {!isArchived && (
             <Button
               text="Archive"

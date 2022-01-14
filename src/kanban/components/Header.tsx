@@ -118,7 +118,7 @@ export const Header: React.VFC<Props> = ({ title }) => {
           <TextXs style={{ marginBottom: '4px' }}>{searchLabels.size}</TextXs>
         )}
       </div>
-      <div style={{ padding: '2px' }}>
+      <div style={{ padding: '2px', paddingRight: '16px' }}>
         <Menu
           id={`main-menu`}
           position="left"

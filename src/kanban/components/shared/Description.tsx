@@ -68,6 +68,7 @@ export const Description: React.VFC<Props> = ({
             minHeight: '56px',
             width: 'calc(100% - 24px)',
             borderRadius: 'var(--border-radius)',
+            overflow: 'hidden',
           }}
           onClick={(e) => {
             e.stopPropagation();
@@ -79,6 +80,7 @@ export const Description: React.VFC<Props> = ({
                 style={{
                   margin: '0',
                   fontFamily: 'var(--font-family)',
+                  whiteSpace: 'break-spaces',
                 }}>
                 {description}
               </pre>

@@ -40,6 +40,7 @@ import {
   archiveList,
   restoreList,
   archiveAllCardInList,
+  copyCard,
 } from './models/kanban';
 
 import React = require('react');
@@ -258,6 +259,15 @@ export const kanbanActions = {
     return React.useCallback(
       (card: Card) => {
         setState(deleteCard(kanban, card));
+      },
+      [kanban]
+    );
+  },
+  useCopyCard: () => {
+    const [kanban, setState] = useRecoilState(kanbanState);
+    return React.useCallback(
+      (card: Card) => {
+        setState(copyCard(kanban, card));
       },
       [kanban]
     );
