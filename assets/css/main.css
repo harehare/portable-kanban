@@ -27,3 +27,7 @@ textarea {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+pre {
+  white-space: break-spaces !important;
+}

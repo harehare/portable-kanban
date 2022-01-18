@@ -7,7 +7,6 @@ import { Linkify } from './Linkify';
 const Container = styled.div`
   width: 100%;
   padding: 8px;
-  background-color: transparent;
 `;
 
 const Text = styled.div`
@@ -15,7 +14,6 @@ const Text = styled.div`
   font-size: 1rem;
   line-height: 1.5rem;
   padding: 8px;
-  background-color: transparent;
 `;
 
 interface Props {
@@ -47,6 +45,7 @@ export const Description: React.VFC<Props> = ({
           style={{
             width: 'calc(100% - 24px)',
             height: '100%',
+            minHeight: '128px',
             fontFamily: 'var(--font-family)',
             backgroundColor: 'var(--secondary-background-color)',
             color: 'var(--text-color)',
@@ -78,9 +77,9 @@ export const Description: React.VFC<Props> = ({
             child={
               <pre
                 style={{
-                  margin: '0',
-                  fontFamily: 'var(--font-family)',
                   whiteSpace: 'break-spaces',
+                  margin: '2',
+                  fontFamily: 'var(--font-family)',
                 }}>
                 {description}
               </pre>

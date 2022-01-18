@@ -118,7 +118,7 @@ export const LabelSelect: React.VFC<Props> = ({ list, card }) => {
         />
       ) : (
         <Modal>
-          {kanban.settings.labels.map((l) => (
+          {kanban.settings.labels.map((l: Label) => (
             <Line key={l.id}>
               <LabelItem
                 key={l.id}

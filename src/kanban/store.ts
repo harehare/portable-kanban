@@ -1,3 +1,4 @@
+import * as React from 'react';
 import {
   atom,
   selector,
@@ -41,9 +42,8 @@ import {
   restoreList,
   archiveAllCardInList,
   copyCard,
+  toJson,
 } from './models/kanban';
-
-import React = require('react');
 
 const titleState = atom({
   key: 'titleState',
@@ -84,7 +84,7 @@ const kanbanState = atom<Kanban>({
       onSet((kanban) => {
         vscode.postMessage({
           type: 'edit',
-          kanban: kanban,
+          kanban: toJson(kanban),
         });
       });
     },

@@ -3,7 +3,7 @@ import { MdArchive, MdFilterAlt, MdMenu, MdSearch } from 'react-icons/md';
 import { useHistory, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 
-import LogoImage from '../../assets/icon.svg';
+import LogoImage from '../assets/icon.svg';
 import { actions, selectors } from '../store';
 import { Input } from './shared/Form';
 import { IconButton } from './shared/IconButton';

@@ -75,6 +75,7 @@
     "@types/react-linkify": "^1.0.1",
     "@types/react-router-dom": "^5.3.2",
     "@types/styled-components": "^5.1.19",
+    "@types/uuid": "^8.3.4",
     "@types/vscode": "^1.63.1",
     "@typescript-eslint/eslint-plugin": "^5.8.0",
     "@typescript-eslint/parser": "^5.8.0",
@@ -106,6 +107,7 @@
     "react-linkify": "^1.0.0-alpha",
     "react-router-dom": "^5.3.0",
     "recoil": "^0.5.2",
-    "styled-components": "^5.3.3"
+    "styled-components": "^5.3.3",
+    "uuid": "^8.3.2"
   }
 }
