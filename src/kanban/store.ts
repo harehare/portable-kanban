@@ -84,7 +84,7 @@ const kanbanState = atom<Kanban>({
       onSet((kanban) => {
         vscode.postMessage({
           type: 'edit',
-          kanban: toJson(kanban),
+          kanban: kanban,
         });
       });
     },

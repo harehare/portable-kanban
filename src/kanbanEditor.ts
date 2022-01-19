@@ -1,6 +1,8 @@
 import { v4 as uuidv4 } from 'uuid';
 import * as vscode from 'vscode';
 
+import { Kanban, toJson } from './kanban/models/kanban';
+
 export class KanbanEditorProvider implements vscode.CustomTextEditorProvider {
   public static register(context: vscode.ExtensionContext): vscode.Disposable {
     const provider = new KanbanEditorProvider(context);
@@ -125,12 +127,18 @@ export class KanbanEditorProvider implements vscode.CustomTextEditorProvider {
 			</html>`;
   }
 
-  private updateTextDocument(document: vscode.TextDocument, kanban: string) {
+  private updateTextDocument(document: vscode.TextDocument, kanban: Kanban) {
+    const text = toJson(kanban);
+
+    if (document.getText() === text) {
+      return;
+    }
+
     const edit = new vscode.WorkspaceEdit();
     edit.replace(
       document.uri,
       new vscode.Range(0, 0, document.lineCount, 0),
-      kanban
+      toJson(kanban)
     );
 
     return vscode.workspace.applyEdit(edit);
