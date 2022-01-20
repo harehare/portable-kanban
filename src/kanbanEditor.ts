@@ -8,7 +8,8 @@ export class KanbanEditorProvider implements vscode.CustomTextEditorProvider {
     const provider = new KanbanEditorProvider(context);
     const providerRegistration = vscode.window.registerCustomEditorProvider(
       KanbanEditorProvider.viewType,
-      provider
+      provider,
+      { webviewOptions: { retainContextWhenHidden: true } }
     );
     return providerRegistration;
   }
@@ -26,7 +27,6 @@ export class KanbanEditorProvider implements vscode.CustomTextEditorProvider {
 
     webviewPanel.webview.options = {
       enableScripts: true,
-      enableCommandUris: true,
     };
     webviewPanel.webview.html = this.getHtmlForWebview(webviewPanel.webview);
 
@@ -40,18 +40,6 @@ export class KanbanEditorProvider implements vscode.CustomTextEditorProvider {
         text: document.getText(),
       });
     };
-
-    const changeDocumentSubscription = vscode.workspace.onDidChangeTextDocument(
-      (e) => {
-        if (e.document.uri.toString() === document.uri.toString()) {
-          // updateWebview();
-        }
-      }
-    );
-
-    webviewPanel.onDidDispose(() => {
-      changeDocumentSubscription.dispose();
-    });
 
     webviewPanel.webview.onDidReceiveMessage((e) => {
       switch (e.type) {

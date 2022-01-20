@@ -13,7 +13,8 @@
     "url": "https://github.com/harehare/portable-kanban.git"
   },
   "activationEvents": [
-    "onStartupFinished"
+    "onCustomEditor:portable-kanban.edit",
+    "onCommand:portable-kanban.new"
   ],
   "main": "./dist/extension.js",
   "contributes": {
@@ -97,7 +98,6 @@
   },
   "dependencies": {
     "@mojotech/json-type-validation": "^3.1.0",
-    "crypto-js": "^4.1.1",
     "date-fns": "^2.27.0",
     "fuse.js": "^6.5.3",
     "react": "^17.0.2",
