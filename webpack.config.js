@@ -88,7 +88,7 @@ const kanbanConfig = {
         use: [
           {
             loader: 'ts-loader',
-            options: { configFile: 'tsconfig-web.json' },
+            options: { configFile: 'tsconfig-kanban.json' },
           },
         ],
       },

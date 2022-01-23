@@ -2,7 +2,8 @@
 
 This extension kanban board for Visual Studio Code.
 
-![kanban](./img/kanban.png)
+![kanban](./img/kanban.jpg)
+![Dark-kanban](./img/dark.jpg )
 
 ## Using Kanban
 
@@ -12,3 +13,4 @@ Create new Kanban in the Command Pallet (ctrl+shift+P).
 
 - [ ] Sync with Github Project
 - [ ] Sync with Trello
+- [ ] Add a related card to a card
