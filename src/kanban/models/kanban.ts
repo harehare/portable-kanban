@@ -86,6 +86,10 @@ export const newCard = (id: string, listId: string) => {
 };
 
 export const addList = (kanban: Kanban, list: List): Kanban => {
+  if (!list.title) {
+    return kanban;
+  }
+
   return {
     ...kanban,
     lists: [...kanban.lists, list],
@@ -93,6 +97,10 @@ export const addList = (kanban: Kanban, list: List): Kanban => {
 };
 
 export const updateList = (kanban: Kanban, list: List): Kanban => {
+  if (!list.title) {
+    return kanban;
+  }
+
   return {
     ...kanban,
     lists: kanban.lists.map((l) => (l.id === list.id ? list : l)),
@@ -164,6 +172,10 @@ export const restoreList = (kanban: Kanban, list: List): Kanban => {
 };
 
 export const addCard = (kanban: Kanban, list: List, card: Card): Kanban => {
+  if (!card.title) {
+    return kanban;
+  }
+
   return {
     ...kanban,
     lists: kanban.lists.map((l) =>
@@ -173,6 +185,10 @@ export const addCard = (kanban: Kanban, list: List, card: Card): Kanban => {
 };
 
 export const updateCard = (kanban: Kanban, list: List, card: Card): Kanban => {
+  if (!card.title) {
+    return kanban;
+  }
+
   return {
     ...kanban,
     lists: kanban.lists.map((l) =>
@@ -299,6 +315,10 @@ export const addCheckBox = (
   card: Card,
   checkbox: CheckBox
 ): Kanban => {
+  if (!checkbox.title) {
+    return kanban;
+  }
+
   return {
     ...kanban,
     lists: kanban.lists.map((l) =>
@@ -325,6 +345,10 @@ export const updateCheckBox = (
   card: Card,
   checkbox: CheckBox
 ): Kanban => {
+  if (!checkbox.title) {
+    return kanban;
+  }
+
   return {
     ...kanban,
     lists: kanban.lists.map((l) =>
@@ -381,6 +405,10 @@ export const addLabel = (
   card: Card,
   label: Label
 ): Kanban => {
+  if (label.title) {
+    return kanban;
+  }
+
   return {
     ...kanban,
     lists: kanban.lists.map((l) =>
@@ -407,6 +435,10 @@ export const updateLabel = (
   card: Card,
   label: Label
 ): Kanban => {
+  if (label.title) {
+    return kanban;
+  }
+
   return {
     ...kanban,
     lists: kanban.lists.map((l) =>
@@ -461,6 +493,10 @@ export const addComments = (
   card: Card,
   comment: Comment
 ): Kanban => {
+  if (!comment.comment) {
+    return kanban;
+  }
+
   return {
     ...kanban,
     lists: kanban.lists.map((l) =>
@@ -487,6 +523,10 @@ export const updateComments = (
   card: Card,
   comment: Comment
 ): Kanban => {
+  if (!comment.comment) {
+    return kanban;
+  }
+
   return {
     ...kanban,
     lists: kanban.lists.map((l) =>

@@ -350,6 +350,7 @@ const EditCard: React.VFC<Props> = ({ kanban }) => {
           <Button
             text="Copy"
             icon={<MdContentCopy />}
+            disabled={false}
             onClick={() => {
               if (!kanban || !list || !card) {
                 return;
@@ -361,6 +362,7 @@ const EditCard: React.VFC<Props> = ({ kanban }) => {
             <Button
               text="Archive"
               icon={<MdOutlineArchive />}
+              disabled={false}
               onClick={() => {
                 if (!kanban || !list || !card) {
                   return;
@@ -374,6 +376,7 @@ const EditCard: React.VFC<Props> = ({ kanban }) => {
             <Button
               text="Restore"
               icon={<MdRestore />}
+              disabled={false}
               onClick={() => {
                 if (!kanban || !list || !archivedCard) {
                   return;
@@ -388,6 +391,7 @@ const EditCard: React.VFC<Props> = ({ kanban }) => {
               text="Delete"
               icon={<MdOutlineDeleteOutline />}
               type="danger"
+              disabled={false}
               onClick={() => {
                 if (!kanban || !list || !archivedCard) {
                   return;

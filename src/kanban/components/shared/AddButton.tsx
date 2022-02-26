@@ -27,6 +27,7 @@ interface Props {
   text: string;
   type: 'primary' | 'secondary' | 'danger';
   canClose: boolean;
+  disabled: boolean;
   onAddClick: () => void;
   onCancel?: () => void;
 }
@@ -35,12 +36,18 @@ export const AddButton: React.VFC<Props> = ({
   text,
   type,
   canClose,
+  disabled = false,
   onAddClick,
   onCancel,
 }) => {
   return (
     <Buttons>
-      <Button text={text} type={type} onClick={onAddClick} />
+      <Button
+        text={text}
+        type={type}
+        onClick={onAddClick}
+        disabled={disabled}
+      />
       {canClose ? (
         <Icon
           onClick={(e) => {

@@ -56,6 +56,7 @@ interface Props {
   text: string;
   icon?: React.ReactElement;
   type?: 'primary' | 'secondary' | 'danger';
+  disabled: boolean;
   onClick: () => void;
 }
 
@@ -63,11 +64,13 @@ export const Button: React.VFC<Props> = ({
   text,
   icon = null,
   type = 'secondary',
+  disabled = false,
   onClick,
 }) => {
   return (
     <ButtonBase
       background={type}
+      disabled={disabled}
       onClick={(e) => {
         e.stopPropagation();
         onClick();

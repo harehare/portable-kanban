@@ -42,7 +42,6 @@ import {
   restoreList,
   archiveAllCardInList,
   copyCard,
-  toJson,
 } from './models/kanban';
 
 const titleState = atom({

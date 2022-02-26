@@ -62,6 +62,7 @@ export const AddComment: React.VFC<Props> = ({
         text={addText}
         type={type}
         canClose={false}
+        disabled={false}
         onAddClick={() => {
           onEnter(text);
           setText('');

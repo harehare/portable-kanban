@@ -109,6 +109,7 @@ export const LabelEdit: React.VFC<Props> = ({ label, onEdit, onDelete }) => {
           <Button
             text={label ? 'Edit' : 'Create'}
             type="primary"
+            disabled={false}
             onClick={() => {
               onEdit(
                 label
@@ -125,6 +126,7 @@ export const LabelEdit: React.VFC<Props> = ({ label, onEdit, onDelete }) => {
             <Button
               type="danger"
               text="Delete"
+              disabled={false}
               onClick={() => {
                 if (!onDelete) {
                   return;

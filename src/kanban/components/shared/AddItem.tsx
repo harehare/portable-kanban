@@ -91,6 +91,7 @@ export const AddItem: React.VFC<Props> = ({
         text={addText}
         type={type}
         canClose={true}
+        disabled={false}
         onAddClick={() => {
           onEnter(state.name);
           setState({ name: '', isAddItem: false });

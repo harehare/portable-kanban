@@ -116,6 +116,10 @@ export const Card: React.VFC<Props> = ({
         return;
       }
 
+      if (!state.card.title) {
+        return;
+      }
+
       if (onEnter) {
         onEnter(state.card);
       }
