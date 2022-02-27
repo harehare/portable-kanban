@@ -214,7 +214,10 @@ export const List: React.VFC<Props> = ({ kanban, list }) => {
                 <AddButton
                   text="Add a card"
                   type="primary"
-                  disabled={!addCard?.title}
+                  disabled={
+                    addCard?.title === undefined ||
+                    addCard?.title?.replace('\n', '') === ''
+                  }
                   canClose={true}
                   onAddClick={() => {
                     setAddCard(undefined);

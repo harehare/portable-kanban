@@ -405,7 +405,7 @@ export const addLabel = (
   card: Card,
   label: Label
 ): Kanban => {
-  if (label.title) {
+  if (!label.title) {
     return kanban;
   }
 
@@ -435,7 +435,7 @@ export const updateLabel = (
   card: Card,
   label: Label
 ): Kanban => {
-  if (label.title) {
+  if (!label.title) {
     return kanban;
   }
 
