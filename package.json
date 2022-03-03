@@ -2,13 +2,13 @@
   "name": "portable-kanban",
   "displayName": "Portable Kanban",
   "description": "This is an extension to create a portable kanban.",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "author": "harehare",
   "publisher": "harehare",
   "icon": "assets/icon.png",
   "private": true,
   "engines": {
-    "vscode": "^1.63.1"
+    "vscode": "^1.64.0"
   },
   "categories": [
     "Other"

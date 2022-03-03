@@ -26,6 +26,7 @@ const ArchiveMenu = styled.div`
   width: var(--list-width);
   height: calc(100vh - var(--header-height));
   padding: 16px;
+  overflow-y: scroll;
 `;
 
 const ArchiveCard = styled.div``;
