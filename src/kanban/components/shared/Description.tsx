@@ -34,6 +34,10 @@ export const Description: React.VFC<Props> = ({
     setEdit(false);
   }, [description]);
 
+  React.useEffect(() => {
+    setDescription(defaultDescription);
+  }, [defaultDescription]);
+
   return (
     <Container>
       {isEdit ? (
@@ -45,13 +49,12 @@ export const Description: React.VFC<Props> = ({
           style={{
             width: 'calc(100% - 24px)',
             height: '100%',
-            minHeight: '128px',
+            minHeight: '72px',
             fontFamily: 'var(--font-family)',
             backgroundColor: 'var(--secondary-background-color)',
             color: 'var(--text-color)',
             fontSize: fontSize === 'medium' ? '1rem' : '1.5rem',
             lineHeight: '1.5rem',
-            padding: '8px',
           }}
           value={description}
           autoFocus={true}
@@ -64,7 +67,7 @@ export const Description: React.VFC<Props> = ({
             color: 'var(--text-color)',
             backgroundColor: 'var(--secondary-background-color)',
             cursor: 'pointer',
-            minHeight: '56px',
+            minHeight: '72px',
             width: 'calc(100% - 24px)',
             borderRadius: 'var(--border-radius)',
             overflow: 'hidden',
@@ -78,7 +81,7 @@ export const Description: React.VFC<Props> = ({
               <pre
                 style={{
                   whiteSpace: 'break-spaces',
-                  margin: '2',
+                  margin: '0',
                   fontFamily: 'var(--font-family)',
                 }}>
                 {description}

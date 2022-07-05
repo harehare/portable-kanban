@@ -48,7 +48,13 @@ export const LabelList: React.VFC<Props> = ({ list, card }) => {
   return (
     <Labels>
       {card.labels.map((l) => (
-        <LabelItem key={l.id} style={{ backgroundColor: l.color }}>
+        <LabelItem
+          key={l.id}
+          style={{ backgroundColor: l.color, cursor: 'pointer' }}
+          onClick={(e) => {
+            e.stopPropagation();
+            setShowModal(true);
+          }}>
           {l.title}
         </LabelItem>
       ))}

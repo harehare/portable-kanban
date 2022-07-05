@@ -53,6 +53,10 @@ export const Title: React.VFC<Props> = ({
     setEdit(false);
   }, [title]);
 
+  React.useEffect(() => {
+    setTitle(defaultTitle);
+  }, [defaultTitle]);
+
   return (
     <>
       {isEdit ? (

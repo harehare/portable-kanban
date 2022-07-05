@@ -75,7 +75,12 @@ export const LabelEdit: React.VFC<Props> = ({ label, onEdit, onDelete }) => {
           <TextSm>Label name</TextSm>
         </Title>
         <Input
-          style={{ width: 'calc(100% - 24px)', boxShadow: 'var(--shadow-sm)' }}
+          style={{
+            marginLeft: '-3px',
+            width: 'calc(100% - 24px)',
+            boxShadow: 'var(--shadow-sm)',
+            borderBottom: '1px solid var(--form-border-color)',
+          }}
           value={labelText}
           onChange={(e) => {
             setLabelText(e.target.value);

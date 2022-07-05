@@ -9,7 +9,10 @@ interface Props {
 }
 
 export const DatePicker: React.VFC<Props> = ({ value, onChange }) => {
-  const date = value ? format(value, "yyyy-MM-dd'T'hh:mm") : undefined;
+  const date = React.useMemo(
+    () => (value ? format(value, "yyyy-MM-dd'T'hh:mm") : undefined),
+    [value]
+  );
 
   return (
     <Input

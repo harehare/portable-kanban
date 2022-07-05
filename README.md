@@ -9,8 +9,8 @@ This extension kanban board for Visual Studio Code.
 
 Create new Kanban in the Command Pallet (ctrl+shift+P).
 
-## TODO
+## TODO :construction:
 
-- [ ] Sync with Github Project
-- [ ] Sync with Trello
-- [ ] Add a related card to a card
+- Sync with Github Project
+- Sync with Trello
+- Add a related card to a card

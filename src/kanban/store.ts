@@ -42,6 +42,7 @@ import {
   restoreList,
   archiveAllCardInList,
   copyCard,
+  moveCheckBox,
 } from './models/kanban';
 
 const titleState = atom({
@@ -352,6 +353,28 @@ export const kanbanActions = {
     return React.useCallback(
       (list: List, card: Card, id: string) => {
         setState(deleteCheckBox(kanban, list, card, id));
+      },
+      [kanban]
+    );
+  },
+  useMoveCheckBox: () => {
+    const [kanban, setState] = useRecoilState(kanbanState);
+    return React.useCallback(
+      (
+        listId: string,
+        cardId: string,
+        fromCheckBoxIndex: number,
+        toCheckBoxIndex: number
+      ) => {
+        setState(
+          moveCheckBox(
+            kanban,
+            listId,
+            cardId,
+            fromCheckBoxIndex,
+            toCheckBoxIndex
+          )
+        );
       },
       [kanban]
     );

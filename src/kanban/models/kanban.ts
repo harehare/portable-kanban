@@ -399,6 +399,44 @@ export const deleteCheckBox = (
   };
 };
 
+export const moveCheckBox = (
+  kanban: Kanban,
+  listId: string,
+  cardId: string,
+  fromCheckboxIndex: number,
+  toCheckboxIndex: number
+): Kanban => {
+  const list = kanban.lists.filter((l) => l.id === listId)[0];
+  const card = list.cards.filter((c) => c.id === cardId)[0];
+  const checkbox = card.checkboxes[fromCheckboxIndex];
+  const movedCheckBox = card.checkboxes.filter(
+    (_, i) => i !== fromCheckboxIndex
+  );
+
+  return {
+    ...kanban,
+    lists: kanban.lists.map((l) =>
+      l.id === list.id
+        ? {
+            ...list,
+            cards: l.cards.map((c) =>
+              card.id === c.id
+                ? {
+                    ...card,
+                    checkboxes: insert(
+                      movedCheckBox,
+                      toCheckboxIndex,
+                      checkbox
+                    ),
+                  }
+                : c
+            ),
+          }
+        : l
+    ),
+  };
+};
+
 export const addLabel = (
   kanban: Kanban,
   list: List,

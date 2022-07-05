@@ -1,5 +1,12 @@
 import * as React from 'react';
 import {
+  DragDropContext,
+  Draggable,
+  Droppable,
+  DropResult,
+} from 'react-beautiful-dnd';
+import { HotKeys } from 'react-hotkeys';
+import {
   MdClose,
   MdComment,
   MdSubtitles,
@@ -9,7 +16,7 @@ import {
   MdRestore,
 } from 'react-icons/md';
 import { MdContentCopy, MdOutlineArchive } from 'react-icons/md';
-import { useParams, useHistory } from 'react-router-dom';
+import { useParams, useHistory, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 
 import { vscode } from '../../vscode';
@@ -95,6 +102,12 @@ interface Props {
   kanban?: KanbanModel;
 }
 
+const keyMap = {
+  CLOSE: 'escape',
+  MOVE_PREV: 'up',
+  MOVE_NEXT: 'down',
+};
+
 const EditCard: React.VFC<Props> = ({ kanban }) => {
   const showModal = selectors.useShowModal();
   const setShowModal = actions.useSetShowModal();
@@ -105,6 +118,7 @@ const EditCard: React.VFC<Props> = ({ kanban }) => {
   const addCheckBox = kanbanActions.useAddCheckBox();
   const updateCheckBox = kanbanActions.useUpdateCheckBox();
   const deleteCheckBox = kanbanActions.useDeleteCheckBox();
+  const moveCheckBox = kanbanActions.useMoveCheckBox();
   const addComments = kanbanActions.useAddComments();
   const updateComments = kanbanActions.useUpdateComments();
   const deleteComments = kanbanActions.useDeleteComments();
@@ -123,6 +137,40 @@ const EditCard: React.VFC<Props> = ({ kanban }) => {
     () => list?.cards.filter((c) => c.id === cardId)[0],
     [cardId, list?.cards]
   );
+
+  const handlers = {
+    CLOSE: () => history.push('/'),
+    MOVE_PREV: () => {
+      if (!list) {
+        return;
+      }
+
+      const index = list.cards.findIndex((c) => c.id === cardId);
+      const prev =
+        list.cards[index - 1 <= 0 ? list.cards.length - 1 : index - 1];
+      if (!prev) {
+        return;
+      }
+
+      history.push(`/list/${list.id}/card/${prev.id}`);
+    },
+    MOVE_NEXT: () => {
+      console.log(list);
+      if (!list) {
+        return;
+      }
+
+      const index = list.cards.findIndex((c) => c.id === cardId);
+      const next =
+        list.cards[index + 1 >= list.cards.length - 1 ? 0 : index + 1];
+      if (!next) {
+        return;
+      }
+
+      history.push(`/list/${list.id}/card/${next.id}`);
+    },
+  };
+
   const comments = React.useMemo(
     () => [...(card?.comments ?? [])].reverse(),
     [card]
@@ -133,281 +181,324 @@ const EditCard: React.VFC<Props> = ({ kanban }) => {
     [cardId, list?.cards]
   );
   const [isArchived, setArchived] = React.useState(!!archivedCard);
+  const taskList = React.useMemo(
+    () =>
+      card?.checkboxes.map((c, index) => (
+        <Draggable key={c.id} draggableId={c.id} index={index}>
+          {(provided) => (
+            <div
+              ref={provided.innerRef}
+              {...provided.draggableProps}
+              {...provided.dragHandleProps}>
+              <Task
+                key={c.id}
+                checkbox={c}
+                onEnter={(title) => {
+                  if (!kanban || !list || !card) {
+                    return;
+                  }
+                  updateCheckBox(list, card, {
+                    ...c,
+                    title,
+                  });
+                }}
+                onChecked={(checked) => {
+                  if (!kanban || !list || !card) {
+                    return;
+                  }
+                  updateCheckBox(list, card, {
+                    ...c,
+                    checked,
+                  });
+                }}
+                onDelete={(checkbox) => {
+                  if (!kanban || !list || !card) {
+                    return;
+                  }
+                  deleteCheckBox(list, card, checkbox.id);
+                }}
+              />
+            </div>
+          )}
+        </Draggable>
+      )),
+    [card?.checkboxes]
+  );
+
+  const onDragEnd = React.useCallback(
+    (result: DropResult) => {
+      if (!result.destination || !kanban || !list || !card) {
+        return;
+      }
+
+      switch (result.type) {
+        case 'tasks':
+          moveCheckBox(
+            list.id,
+            card.id,
+            result.source.index,
+            result.destination.index
+          );
+          break;
+      }
+    },
+    [kanban]
+  );
 
   return (
-    <Overlay
-      onClick={() => {
-        if (showModal) {
-          setShowModal(false);
-          return;
-        }
-
-        history.push('/');
-      }}>
-      <Container
-        onClick={(e) => {
-          if (showModal) {
-            setShowModal(false);
-            return;
-          }
-          e.stopPropagation();
-        }}
-        onKeyDown={(e) => {
-          if (e.key === 'Escape') {
-            history.push('/');
-          }
-        }}>
-        <CloseButton
+    <HotKeys keyMap={keyMap} handlers={handlers}>
+      <DragDropContext onDragEnd={onDragEnd}>
+        <Overlay
           onClick={() => {
+            if (showModal) {
+              setShowModal(false);
+              return;
+            }
+
             history.push('/');
           }}>
-          <MdClose />
-        </CloseButton>
-        {isArchived && (
-          <Line>
-            <Head>
-              <Icon>
-                <MdOutlineArchive />
-              </Icon>
-              This card has been archived.
-            </Head>
-          </Line>
-        )}
-        <Line>
-          <Head>
-            <Icon>
-              <MdSubtitles />
-            </Icon>
-            <Title
-              title={card?.title ?? ''}
-              fontSize={'large'}
-              width={'100%'}
-              onEnter={(title) => {
-                if (!kanban || !list || !card) {
-                  return;
-                }
-                updateCard(list, {
-                  ...card,
-                  title,
-                });
-              }}
-            />
-          </Head>
-        </Line>
-        <Line>
-          <Head>
-            <Icon>
-              <MdOutlineDescription />
-            </Icon>
-            <TextBaseBold>Description</TextBaseBold>
-          </Head>
-          <Description
-            description={card?.description ?? ''}
-            fontSize="medium"
-            onEnter={(description) => {
-              if (!kanban || !list || !card) {
+          <Container
+            onClick={(e) => {
+              if (showModal) {
+                setShowModal(false);
                 return;
               }
-              updateCard(list, {
-                ...card,
-                description,
-              });
-            }}
-          />
-        </Line>
-        {kanban && list && card ? (
-          <Line>
-            <LabelList list={list} card={card} />
-          </Line>
-        ) : (
-          <></>
-        )}
-        <Line>
-          <Head>
-            <Icon>
-              <MdOutlineDescription />
-            </Icon>
-            <TextBaseBold>Due Date</TextBaseBold>
-          </Head>
-          <DatePicker
-            value={card?.dueDate ? card.dueDate : undefined}
-            onChange={(date) => {
-              if (!kanban || !list || !card) {
-                return;
-              }
-              updateCardDueDate(list, card, date);
-            }}
-          />
-        </Line>
-        <Line>
-          <Head>
-            <Icon>
-              <MdCheck />
-            </Icon>
-            <TextBaseBold>Task List</TextBaseBold>
-          </Head>
-          <div style={{ margin: '8px -16px 8px -16px' }}>
-            <ProgressBar
-              progress={
-                ((card?.checkboxes.filter((c) => c.checked).length ?? 0.0) /
-                  (card?.checkboxes.length ?? 1.0)) *
-                100
-              }
-            />
-          </div>
-          {card?.checkboxes.map((c) => (
-            <Task
-              key={c.id}
-              checkbox={c}
-              onEnter={(title) => {
-                if (!kanban || !list || !card) {
-                  return;
-                }
-                updateCheckBox(list, card, {
-                  ...c,
-                  title,
-                });
-              }}
-              onChecked={(checked) => {
-                if (!kanban || !list || !card) {
-                  return;
-                }
-                updateCheckBox(list, card, {
-                  ...c,
-                  checked,
-                });
-              }}
-              onDelete={(checkbox) => {
-                if (!kanban || !list || !card) {
-                  return;
-                }
-                deleteCheckBox(list, card, checkbox.id);
-              }}
-            />
-          ))}
-          <div style={{ margin: '0 12px' }}>
-            <AddItem
-              addText="Add item"
-              placeholder="Add item"
-              type="primary"
-              onEnter={(text) => {
-                if (!kanban || !list || !card) {
-                  return;
-                }
-                addCheckBox(list, card, {
-                  id: uuid(),
-                  title: text,
-                  checked: false,
-                });
-              }}
-            />
-          </div>
-        </Line>
-        <Line>
-          <Head>
-            <Icon>
-              <MdComment />
-            </Icon>
-            <TextBaseBold>Comments</TextBaseBold>
-          </Head>
-          <AddComment
-            addText="Save"
-            placeholder="Enter a comment"
-            type="primary"
-            onEnter={(comment) => {
-              if (!kanban || !list || !card) {
-                return;
-              }
-              addComments(list, card, {
-                id: uuid(),
-                comment,
-              });
-            }}
-          />
-          {comments.map((c) => (
-            <Comment
-              key={c.id}
-              comment={c}
-              onEnter={(text) => {
-                if (!kanban || !list || !card) {
-                  return;
-                }
-                updateComments(list, card, {
-                  ...c,
-                  comment: text,
-                });
-              }}
-              onDelete={(comment) => {
-                if (!kanban || !list || !card) {
-                  return;
-                }
-                deleteComments(list, card, comment.id);
-              }}
-            />
-          ))}
-        </Line>
-        <BUttons>
-          <Button
-            text="Copy"
-            icon={<MdContentCopy />}
-            disabled={false}
-            onClick={() => {
-              if (!kanban || !list || !card) {
-                return;
-              }
-              copyCard(card);
-            }}
-          />
-          {!isArchived && (
-            <Button
-              text="Archive"
-              icon={<MdOutlineArchive />}
-              disabled={false}
+              e.stopPropagation();
+            }}>
+            <CloseButton
               onClick={() => {
-                if (!kanban || !list || !card) {
-                  return;
-                }
-                archiveCard(list, card);
-                setArchived(true);
-              }}
-            />
-          )}
-          {isArchived && (
-            <Button
-              text="Restore"
-              icon={<MdRestore />}
-              disabled={false}
-              onClick={() => {
-                if (!kanban || !list || !archivedCard) {
-                  return;
-                }
-                restoreCard(archivedCard);
-                setArchived(false);
-              }}
-            />
-          )}
-          {isArchived && (
-            <Button
-              text="Delete"
-              icon={<MdOutlineDeleteOutline />}
-              type="danger"
-              disabled={false}
-              onClick={() => {
-                if (!kanban || !list || !archivedCard) {
-                  return;
-                }
-                deleteCard(archivedCard);
-                vscode.postMessage({
-                  type: 'info-message',
-                  message: `Delete ${archivedCard.title}`,
-                });
                 history.push('/');
-              }}
-            />
-          )}
-        </BUttons>
-      </Container>
-    </Overlay>
+              }}>
+              <MdClose />
+            </CloseButton>
+            {isArchived && (
+              <Line>
+                <Head>
+                  <Icon>
+                    <MdOutlineArchive />
+                  </Icon>
+                  This card has been archived.
+                </Head>
+              </Line>
+            )}
+            <Line>
+              <Head>
+                <Icon>
+                  <MdSubtitles />
+                </Icon>
+                <Title
+                  title={card?.title ?? ''}
+                  fontSize={'large'}
+                  width={'100%'}
+                  onEnter={(title) => {
+                    if (!kanban || !list || !card) {
+                      return;
+                    }
+                    updateCard(list, {
+                      ...card,
+                      title,
+                    });
+                  }}
+                />
+              </Head>
+            </Line>
+            <Line>
+              <Head>
+                <Icon>
+                  <MdOutlineDescription />
+                </Icon>
+                <TextBaseBold>Description</TextBaseBold>
+              </Head>
+              <Description
+                description={card?.description ?? ''}
+                fontSize="medium"
+                onEnter={(description) => {
+                  if (!kanban || !list || !card) {
+                    return;
+                  }
+                  updateCard(list, {
+                    ...card,
+                    description,
+                  });
+                }}
+              />
+            </Line>
+            {kanban && list && card ? (
+              <Line>
+                <LabelList list={list} card={card} />
+              </Line>
+            ) : (
+              <></>
+            )}
+            <Line>
+              <Head>
+                <Icon>
+                  <MdOutlineDescription />
+                </Icon>
+                <TextBaseBold>Due Date</TextBaseBold>
+              </Head>
+              <DatePicker
+                value={card?.dueDate ? card.dueDate : undefined}
+                onChange={(date) => {
+                  if (!kanban || !list || !card) {
+                    return;
+                  }
+                  updateCardDueDate(list, card, date);
+                }}
+              />
+            </Line>
+            <Line>
+              <Head>
+                <Icon>
+                  <MdCheck />
+                </Icon>
+                <TextBaseBold>Task List</TextBaseBold>
+              </Head>
+              <div style={{ margin: '8px -16px 8px -16px' }}>
+                <ProgressBar
+                  progress={
+                    ((card?.checkboxes.filter((c) => c.checked).length ?? 0.0) /
+                      (card?.checkboxes.length ?? 1.0)) *
+                    100
+                  }
+                />
+              </div>
+              <Droppable droppableId={card?.id || ''} type="tasks">
+                {(provided) => (
+                  <div
+                    ref={provided.innerRef}
+                    style={{ width: 'calc(100% - 16px)' }}>
+                    <div>
+                      {taskList} {provided.placeholder}
+                    </div>
+                  </div>
+                )}
+              </Droppable>
+              <div style={{ margin: '0 12px' }}>
+                <AddItem
+                  addText="Add item"
+                  placeholder="Add item"
+                  type="primary"
+                  onEnter={(text) => {
+                    if (!kanban || !list || !card) {
+                      return;
+                    }
+                    addCheckBox(list, card, {
+                      id: uuid(),
+                      title: text,
+                      checked: false,
+                    });
+                  }}
+                />
+              </div>
+            </Line>
+            <Line>
+              <Head>
+                <Icon>
+                  <MdComment />
+                </Icon>
+                <TextBaseBold>Comments</TextBaseBold>
+              </Head>
+              <AddComment
+                addText="Save"
+                placeholder="Enter a comment"
+                type="primary"
+                onEnter={(comment) => {
+                  if (!kanban || !list || !card) {
+                    return;
+                  }
+                  addComments(list, card, {
+                    id: uuid(),
+                    comment,
+                  });
+                }}
+              />
+              {comments.map((c) => (
+                <Comment
+                  key={c.id}
+                  comment={c}
+                  onEnter={(text) => {
+                    if (!kanban || !list || !card) {
+                      return;
+                    }
+                    updateComments(list, card, {
+                      ...c,
+                      comment: text,
+                    });
+                  }}
+                  onDelete={(comment) => {
+                    if (!kanban || !list || !card) {
+                      return;
+                    }
+                    deleteComments(list, card, comment.id);
+                  }}
+                />
+              ))}
+            </Line>
+            <BUttons>
+              <Button
+                text="Copy"
+                icon={<MdContentCopy />}
+                disabled={false}
+                onClick={() => {
+                  if (!kanban || !list || !card) {
+                    return;
+                  }
+                  copyCard(card);
+                }}
+              />
+              {!isArchived && (
+                <Button
+                  text="Archive"
+                  icon={<MdOutlineArchive />}
+                  disabled={false}
+                  onClick={() => {
+                    if (!kanban || !list || !card) {
+                      return;
+                    }
+                    archiveCard(list, card);
+                    setArchived(true);
+                  }}
+                />
+              )}
+              {isArchived && (
+                <Button
+                  text="Restore"
+                  icon={<MdRestore />}
+                  disabled={false}
+                  onClick={() => {
+                    if (!kanban || !list || !archivedCard) {
+                      return;
+                    }
+                    restoreCard(archivedCard);
+                    setArchived(false);
+                  }}
+                />
+              )}
+              {isArchived && (
+                <Button
+                  text="Delete"
+                  icon={<MdOutlineDeleteOutline />}
+                  type="danger"
+                  disabled={false}
+                  onClick={() => {
+                    if (!kanban || !list || !archivedCard) {
+                      return;
+                    }
+                    deleteCard(archivedCard);
+                    vscode.postMessage({
+                      type: 'info-message',
+                      message: `Delete ${archivedCard.title}`,
+                    });
+                    history.push('/');
+                  }}
+                />
+              )}
+            </BUttons>
+          </Container>
+        </Overlay>
+      </DragDropContext>
+    </HotKeys>
   );
 };
 

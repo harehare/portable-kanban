@@ -152,6 +152,7 @@ export const LabelSelect: React.VFC<Props> = ({ list, card }) => {
             </Line>
           ))}
           <AddLabel
+            style={{ width: '131px' }}
             onClick={(e) => {
               e.stopPropagation();
               setShowEditLabel({ show: true, label: undefined });

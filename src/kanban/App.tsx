@@ -43,7 +43,7 @@ const App: React.VFC = () => {
       <Route path="/">
         <Board kanban={kanban} />
       </Route>
-      {background && (
+      {(background || history.location.pathname.startsWith('/list')) && (
         <Switch>
           <Route path="/archive/cards">
             <ArchiveCards cards={kanban.archive.cards} />
