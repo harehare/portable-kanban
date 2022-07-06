@@ -5,7 +5,6 @@ import {
   Droppable,
   DropResult,
 } from 'react-beautiful-dnd';
-import { HotKeys } from 'react-hotkeys';
 import {
   MdClose,
   MdComment,
@@ -101,12 +100,6 @@ const BUttons = styled.div`
 interface Props {
   kanban?: KanbanModel;
 }
-
-const keyMap = {
-  CLOSE: 'escape',
-  MOVE_PREV: 'up',
-  MOVE_NEXT: 'down',
-};
 
 const EditCard: React.VFC<Props> = ({ kanban }) => {
   const showModal = selectors.useShowModal();
@@ -246,7 +239,6 @@ const EditCard: React.VFC<Props> = ({ kanban }) => {
   );
 
   return (
-    <HotKeys keyMap={keyMap} handlers={handlers}>
       <DragDropContext onDragEnd={onDragEnd}>
         <Overlay
           onClick={() => {
@@ -498,7 +490,6 @@ const EditCard: React.VFC<Props> = ({ kanban }) => {
           </Container>
         </Overlay>
       </DragDropContext>
-    </HotKeys>
   );
 };
 
