@@ -621,7 +621,7 @@ export const updateSettings = (kanban: Kanban, settings: Settings): Kanban => {
 };
 
 export const toJson = (kanban: Kanban) => {
-  return JSON.stringify(kanban);
+  return JSON.stringify(kanban, null, 2);
 };
 
 export const fromJson = async (json: string): Promise<Kanban> => {
