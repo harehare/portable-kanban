@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Switch, Route, useLocation, useHistory } from 'react-router-dom';
+import { Route, useLocation, Routes, useNavigate } from 'react-router-dom';
 
 import { vscode } from '../vscode';
 import { fromJson } from './models/kanban';
@@ -10,11 +10,10 @@ import { EditCard } from './pages/EditCard';
 import { Filter } from './pages/Filter';
 import { selectors, actions } from './store';
 
-const App: React.VFC = () => {
+const App = () => {
   const location = useLocation();
-  // @ts-expect-error
-  const background = location?.state?.background;
-  const history = useHistory();
+  const state = location.state as { backgroundLocation?: Location };
+  const navigate = useNavigate();
   const kanban = selectors.useKanban();
   const setKanban = actions.useSetKanban();
   const setTitle = actions.useSetTitle();
@@ -31,7 +30,7 @@ const App: React.VFC = () => {
       }
     };
     window.addEventListener('message', onMessage);
-    history.push('/');
+    navigate('/');
     vscode.postMessage({
       type: 'load',
     });
@@ -40,24 +39,28 @@ const App: React.VFC = () => {
 
   return (
     <>
-      <Route path="/">
-        <Board kanban={kanban} />
-      </Route>
-      {(background || history.location.pathname.startsWith('/list')) && (
-        <Switch>
-          <Route path="/archive/cards">
-            <ArchiveCards cards={kanban.archive.cards} />
-          </Route>
-          <Route path="/archive/lists">
-            <ArchiveLists lists={kanban.archive.lists} />
-          </Route>
-          <Route path="/filters">
-            <Filter settings={kanban.settings} />
-          </Route>
-          <Route path="/list/:listId/card/:cardId">
-            <EditCard kanban={kanban} />
-          </Route>
-        </Switch>
+      <Routes location={state?.backgroundLocation || location}>
+        <Route path="/" element={<Board kanban={kanban} />} />
+      </Routes>
+      {(state?.backgroundLocation || location.pathname.startsWith('/list')) && (
+        <Routes>
+          <Route
+            path="/archive/cards"
+            element={<ArchiveCards cards={kanban.archive.cards} />}
+          />
+          <Route
+            path="/archive/lists"
+            element={<ArchiveLists lists={kanban.archive.lists} />}
+          />
+          <Route
+            path="/filters"
+            element={<Filter settings={kanban.settings} />}
+          />
+          <Route
+            path="/list/:listId/card/:cardId"
+            element={<EditCard kanban={kanban} />}
+          />
+        </Routes>
       )}
     </>
   );

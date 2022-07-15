@@ -168,8 +168,8 @@ export const Card: React.VFC<Props> = ({
           key={card.id}
           to={{
             pathname: `/list/${state.card.listId}/card/${state.card.id}`,
-            state: { background: location },
-          }}>
+          }}
+          state={{ backgroundLocation: location }}>
           <Labels>
             {state.card.labels.map((l) => (
               <Label key={l.id} style={{ backgroundColor: l.color }}>

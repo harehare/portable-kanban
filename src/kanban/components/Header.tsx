@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { MdArchive, MdFilterAlt, MdMenu, MdSearch } from 'react-icons/md';
-import { useHistory, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 
 import LogoImage from '../assets/icon.svg';
@@ -62,7 +62,7 @@ const Logo = styled.div`
 export const Header: React.VFC<Props> = ({ title }) => {
   const setFilter = actions.useSetFilter();
   const searchLabels = selectors.useFilterLabels();
-  const history = useHistory();
+  const navigate = useNavigate();
   const location = useLocation();
   const [searchInput, setSearchInput] = React.useState('');
 
@@ -111,7 +111,7 @@ export const Header: React.VFC<Props> = ({ title }) => {
         <IconButton
           icon={<MdFilterAlt />}
           onClick={() => {
-            history.push('/filters', { background: location });
+            navigate('/filters', { state: { backgroundLocation: location } });
           }}
         />
         {(searchLabels.size ?? 0) > 0 && (
@@ -132,14 +132,18 @@ export const Header: React.VFC<Props> = ({ title }) => {
               icon: <MdArchive />,
               text: 'Archived List',
               onClick: () => {
-                history.push('/archive/lists', { background: location });
+                navigate('/archive/lists', {
+                  state: { backgroundLocation: location },
+                });
               },
             },
             {
               icon: <MdArchive />,
               text: 'Archived cards',
               onClick: () => {
-                history.push('/archive/cards', { background: location });
+                navigate('/archive/cards', {
+                  state: { backgroundLocation: location },
+                });
               },
             },
           ]}

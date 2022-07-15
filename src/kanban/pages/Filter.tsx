@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useHistory } from 'react-router';
+import { useNavigate } from 'react-router';
 import styled from 'styled-components';
 
 import { CheckBox } from '../components/shared/CheckBox';
@@ -54,12 +54,12 @@ export const Filter: React.VFC<Props> = ({ settings }) => {
   const filteredText = selectors.useFilterText();
   const filteredLabels = selectors.useFilterLabels();
   const setFilter = actions.useSetFilter();
-  const history = useHistory();
+  const navigate = useNavigate();
 
   return (
     <Overlay
       onClick={() => {
-        history.push('/');
+        navigate('/');
       }}>
       <Container
         onClick={(e) => {

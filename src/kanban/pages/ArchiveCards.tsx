@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useHistory } from 'react-router';
+import { useNavigate } from 'react-router';
 import styled from 'styled-components';
 
 import { Card } from '../components/Card';
@@ -47,12 +47,12 @@ interface Props {
 export const ArchiveCards: React.VFC<Props> = ({ cards }) => {
   const restoreCard = kanbanActions.useRestoreCard();
   const deleteCard = kanbanActions.useDeleteCard();
-  const history = useHistory();
+  const navigate = useNavigate();
 
   return (
     <Overlay
       onClick={() => {
-        history.push('/');
+        navigate('/');
       }}>
       <ArchiveMenu>
         <div style={{ width: '100%', padding: '8px', textAlign: 'center' }}>
