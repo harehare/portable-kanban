@@ -204,7 +204,15 @@ export const List: React.VFC<Props> = ({ kanban, list }) => {
                   isEdit={true}
                   onEnter={(c) => {
                     setAddCard(undefined);
-                    setKanban(addCardToKanban(kanban, list, c));
+                    setKanban(
+                      c.title.split('\n').reduce((arr, v) => {
+                        const newList = arr.lists.find((l) => l.id === list.id);
+                        return addCardToKanban(arr, newList ?? list, {
+                          ...newCard(uuid(), list.id),
+                          title: v,
+                        });
+                      }, kanban)
+                    );
                   }}
                 />
               ) : (
@@ -222,7 +230,13 @@ export const List: React.VFC<Props> = ({ kanban, list }) => {
                   onAddClick={() => {
                     setAddCard(undefined);
                     setKanban(
-                      addCard ? addCardToKanban(kanban, list, addCard) : kanban
+                      addCard?.title.split('\n').reduce((arr, v) => {
+                        const newList = arr.lists.find((l) => l.id === list.id);
+                        return addCardToKanban(arr, newList ?? list, {
+                          ...newCard(uuid(), list.id),
+                          title: v,
+                        });
+                      }, kanban)
                     );
                   }}
                   onCancel={() => {

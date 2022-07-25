@@ -112,7 +112,7 @@ export const Card: React.VFC<Props> = ({
   }, [card, isEdit]);
   const handleKeyDown = React.useCallback(
     (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-      if (e.key !== 'Enter' || isComposing) {
+      if (e.key !== 'Enter' || isComposing || e.shiftKey) {
         return;
       }
 
