@@ -47,6 +47,7 @@ const Overlay = styled.div`
 const Container = styled.div`
   position: absolute;
   width: calc(100% - 16px);
+  max-height: calc(100vh - 32px);
   max-width: 748px;
   display: flex;
   flex-direction: column;
@@ -188,6 +189,12 @@ const EditCard: React.VFC<Props> = ({ kanban }) => {
                   if (!kanban || !list || !card) {
                     return;
                   }
+
+                  if (title.trim() === '') {
+                    deleteCheckBox(list, card, c.id);
+                    return;
+                  }
+
                   updateCheckBox(list, card, {
                     ...c,
                     title,
