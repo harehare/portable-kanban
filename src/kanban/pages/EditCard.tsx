@@ -299,27 +299,32 @@ const EditCard: React.VFC<Props> = ({ kanban }) => {
               />
             </Head>
           </Line>
-          <Line>
-            <Head>
-              <Icon>
-                <MdOutlineDescription />
-              </Icon>
-              <TextBaseBold>Description</TextBaseBold>
-            </Head>
-            <Description
-              description={card?.description ?? ''}
-              fontSize="medium"
-              onEnter={(description) => {
-                if (!kanban || !list || !card) {
-                  return;
-                }
-                updateCard(list, {
-                  ...card,
-                  description,
-                });
-              }}
-            />
-          </Line>
+          {
+            // @ts-ignore
+            window.settings.showDescription && (
+              <Line>
+                <Head>
+                  <Icon>
+                    <MdOutlineDescription />
+                  </Icon>
+                  <TextBaseBold>Description</TextBaseBold>
+                </Head>
+                <Description
+                  description={card?.description ?? ''}
+                  fontSize="medium"
+                  onEnter={(description) => {
+                    if (!kanban || !list || !card) {
+                      return;
+                    }
+                    updateCard(list, {
+                      ...card,
+                      description,
+                    });
+                  }}
+                />
+              </Line>
+            )
+          }
           {kanban && list && card ? (
             <Line>
               <LabelList list={list} card={card} />
@@ -344,51 +349,57 @@ const EditCard: React.VFC<Props> = ({ kanban }) => {
               }}
             />
           </Line>
-          <Line>
-            <Head>
-              <Icon>
-                <MdCheck />
-              </Icon>
-              <TextBaseBold>Task List</TextBaseBold>
-            </Head>
-            <div style={{ margin: '8px -16px 8px -16px' }}>
-              <ProgressBar
-                progress={
-                  ((card?.checkboxes.filter((c) => c.checked).length ?? 0.0) /
-                    (card?.checkboxes.length ?? 1.0)) *
-                  100
-                }
-              />
-            </div>
-            <Droppable droppableId={card?.id || ''} type="tasks">
-              {(provided) => (
-                <div
-                  ref={provided.innerRef}
-                  style={{ width: 'calc(100% - 16px)' }}>
-                  <div>
-                    {taskList} {provided.placeholder}
-                  </div>
+          {
+            // @ts-ignore
+            window.settings.showTaskList && (
+              <Line>
+                <Head>
+                  <Icon>
+                    <MdCheck />
+                  </Icon>
+                  <TextBaseBold>Task List</TextBaseBold>
+                </Head>
+                <div style={{ margin: '8px -16px 8px -16px' }}>
+                  <ProgressBar
+                    progress={
+                      ((card?.checkboxes.filter((c) => c.checked).length ??
+                        0.0) /
+                        (card?.checkboxes.length ?? 1.0)) *
+                      100
+                    }
+                  />
                 </div>
-              )}
-            </Droppable>
-            <div style={{ margin: '0 12px' }}>
-              <AddItem
-                addText="Add item"
-                placeholder="Add item"
-                type="primary"
-                onEnter={(text) => {
-                  if (!kanban || !list || !card) {
-                    return;
-                  }
-                  addCheckBox(list, card, {
-                    id: uuid(),
-                    title: text,
-                    checked: false,
-                  });
-                }}
-              />
-            </div>
-          </Line>
+                <Droppable droppableId={card?.id || ''} type="tasks">
+                  {(provided) => (
+                    <div
+                      ref={provided.innerRef}
+                      style={{ width: 'calc(100% - 16px)' }}>
+                      <div>
+                        {taskList} {provided.placeholder}
+                      </div>
+                    </div>
+                  )}
+                </Droppable>
+                <div style={{ margin: '0 12px' }}>
+                  <AddItem
+                    addText="Add item"
+                    placeholder="Add item"
+                    type="primary"
+                    onEnter={(text) => {
+                      if (!kanban || !list || !card) {
+                        return;
+                      }
+                      addCheckBox(list, card, {
+                        id: uuid(),
+                        title: text,
+                        checked: false,
+                      });
+                    }}
+                  />
+                </div>
+              </Line>
+            )
+          }
           <Line>
             <Head>
               <Icon>

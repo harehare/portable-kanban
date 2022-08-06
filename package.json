@@ -2,7 +2,7 @@
   "name": "portable-kanban",
   "displayName": "Portable Kanban",
   "description": "This is an extension to create a portable kanban.",
-  "version": "0.1.24",
+  "version": "0.1.25",
   "author": "harehare",
   "publisher": "harehare",
   "icon": "assets/icon.png",
@@ -56,7 +56,19 @@
             "light",
             "system"
           ],
-          "description": "Switch the theme to dark or light"
+          "description": "Switch the theme to dark or light."
+        },
+        "portable-kanban.show-description": {
+          "title": "Portable Kanban Show Description",
+          "type": "boolean",
+          "default": "true",
+          "description": "Card description is shown."
+        },
+        "portable-kanban.show-task-list": {
+          "title": "Portable Kanban Show Task List",
+          "type": "boolean",
+          "default": "true",
+          "description": "Card task list is shown."
         }
       }
     }
@@ -85,7 +97,7 @@
     "@types/react-router-dom": "^5.3.3",
     "@types/styled-components": "^5.1.25",
     "@types/uuid": "^8.3.4",
-    "@types/vscode": "^1.69.0",
+    "@types/vscode": "^1.69.1",
     "@typescript-eslint/eslint-plugin": "^5.32.0",
     "@typescript-eslint/parser": "^5.32.0",
     "@vscode/test-electron": "^2.1.5",

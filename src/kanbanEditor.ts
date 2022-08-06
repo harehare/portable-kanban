@@ -72,6 +72,14 @@ export class KanbanEditorProvider implements vscode.CustomTextEditorProvider {
     const theme = vscode.workspace
       .getConfiguration()
       .get('portable-kanban.theme') as 'dark' | 'light' | 'system';
+    const showDescription =
+      vscode.workspace
+        .getConfiguration()
+        .get('portable-kanban.show-description') ?? true;
+    const showTaskList =
+      vscode.workspace
+        .getConfiguration()
+        .get('portable-kanban.show-task-list') ?? true;
     const cssUri = webview.asWebviewUri(
       vscode.Uri.joinPath(
         this.context.extensionUri,
@@ -108,6 +116,12 @@ export class KanbanEditorProvider implements vscode.CustomTextEditorProvider {
         <link rel="stylesheet" nonce="${nonce}" href="${themeUri}">
 			</head>
 			<body>
+        <script nonce="${nonce}">
+          window.settings = {
+            showDescription: ${showDescription},
+            showTaskList: ${showTaskList},
+          };
+        </script>
 				<div id="root">
 				</div>
 				<script nonce="${nonce}" src="${scriptUri}"></script>

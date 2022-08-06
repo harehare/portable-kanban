@@ -133,13 +133,15 @@ export const Card: React.VFC<Props> = ({
     <Container>
       {!editable ? (
         <>
-          <Labels>
-            {state.card.labels.map((l) => (
-              <Label key={l.id} style={{ backgroundColor: l.color }}>
-                {l.title}
-              </Label>
-            ))}
-          </Labels>
+          {state.card.labels.length > 0 && (
+            <Labels>
+              {state.card.labels.map((l) => (
+                <Label key={l.id} style={{ backgroundColor: l.color }}>
+                  {l.title}
+                </Label>
+              ))}
+            </Labels>
+          )}
           <Title>{state.card.title}</Title>
         </>
       ) : state.isEdit ? (
@@ -170,13 +172,15 @@ export const Card: React.VFC<Props> = ({
             pathname: `/list/${state.card.listId}/card/${state.card.id}`,
           }}
           state={{ backgroundLocation: location }}>
-          <Labels>
-            {state.card.labels.map((l) => (
-              <Label key={l.id} style={{ backgroundColor: l.color }}>
-                {l.title}
-              </Label>
-            ))}
-          </Labels>
+          {state.card.labels.length > 0 && (
+            <Labels>
+              {state.card.labels.map((l) => (
+                <Label key={l.id} style={{ backgroundColor: l.color }}>
+                  {l.title}
+                </Label>
+              ))}
+            </Labels>
+          )}
           <Title>{state.card.title}</Title>
           <div
             style={{

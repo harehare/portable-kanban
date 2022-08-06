@@ -5,7 +5,7 @@
     "lib": ["ES2020", "dom"],
     "rootDir": "src",
     "strict": true,
-    "jsx": "react-jsx"
+    "jsx": "react-jsxdev"
   },
   "include": ["./src/**/*.ts", "./src/**/*.tsx"],
   "exclude": ["node_modules", "**/*.test.ts"]
