@@ -19,7 +19,7 @@ interface Props {
   progress: number;
 }
 
-export const ProgressBar: React.VFC<Props> = ({ progress }) => {
+export const ProgressBar = ({ progress }: Props) => {
   return (
     <Container>
       <Progress progress={progress} />

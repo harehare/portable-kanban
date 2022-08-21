@@ -89,12 +89,12 @@ interface Props {
   onEnter?: (card: CardModel) => void;
 }
 
-export const Card: React.VFC<Props> = ({
+export const Card = ({
   card,
   onEnter,
   editable = true,
   isEdit = false,
-}) => {
+}: Props) => {
   const location = useLocation();
   const setAddCard = actions.useSetAddingCard();
   const [isComposing, setIsComposing] = React.useState(false);

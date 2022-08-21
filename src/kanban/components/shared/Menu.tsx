@@ -63,7 +63,7 @@ interface Props {
   items: (MenuItem | 'separator')[];
 }
 
-export const Menu: React.VFC<Props> = ({ id, icon, position, items }) => {
+export const Menu = ({ id, icon, position, items }: Props) => {
   const menuId = selectors.useMenu();
   const setMenu = actions.useSetMenu();
   const closeMenu = actions.useMenuClose();

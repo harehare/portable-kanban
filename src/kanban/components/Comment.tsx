@@ -23,7 +23,7 @@ interface Props {
   onDelete: (comment: CommentModel) => void;
 }
 
-export const Comment: React.VFC<Props> = ({ comment, onEnter, onDelete }) => {
+export const Comment = ({ comment, onEnter, onDelete }: Props) => {
   const [showDeleteButton, setShowDeleteButton] = React.useState(false);
 
   return (

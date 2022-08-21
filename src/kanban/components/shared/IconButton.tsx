@@ -11,7 +11,7 @@ interface Props {
   onClick: () => void;
 }
 
-export const IconButton: React.VFC<Props> = ({ icon, onClick }) => {
+export const IconButton = ({ icon, onClick }: Props) => {
   return (
     <Button
       onClick={(e) => {

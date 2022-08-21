@@ -5,8 +5,8 @@
 const path = require('path');
 
 const extensionConfig = {
+  mode: process.env.NODE_ENV,
   target: 'node',
-  mode: 'development',
   entry: {
     extension: './src/extension.ts',
   },
@@ -52,8 +52,8 @@ const extensionConfig = {
 };
 
 const kanbanConfig = {
+  mode: process.env.NODE_ENV,
   target: 'web',
-  mode: 'development',
   entry: {
     kanban: './src/kanban/index.tsx',
   },

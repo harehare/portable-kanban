@@ -44,7 +44,7 @@ interface Props {
   cards: CardModel[];
 }
 
-export const ArchiveCards: React.VFC<Props> = ({ cards }) => {
+export const ArchiveCards = ({ cards }: Props) => {
   const restoreCard = kanbanActions.useRestoreCard();
   const deleteCard = kanbanActions.useDeleteCard();
   const navigate = useNavigate();

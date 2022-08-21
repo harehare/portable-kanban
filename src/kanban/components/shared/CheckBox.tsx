@@ -56,7 +56,7 @@ interface Props {
   onChange: (checked: boolean) => void;
 }
 
-export const CheckBox: React.VFC<Props> = ({ checked, onChange }) => {
+export const CheckBox = ({ checked, onChange }: Props) => {
   return (
     <Label>
       <Input

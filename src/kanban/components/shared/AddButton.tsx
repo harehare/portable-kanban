@@ -32,14 +32,14 @@ interface Props {
   onCancel?: () => void;
 }
 
-export const AddButton: React.VFC<Props> = ({
+export const AddButton = ({
   text,
   type,
   canClose,
   disabled = false,
   onAddClick,
   onCancel,
-}) => {
+}: Props) => {
   return (
     <Buttons>
       <Button

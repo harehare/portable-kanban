@@ -59,7 +59,7 @@ interface Props {
   onDelete?: (label: Label) => void;
 }
 
-export const LabelEdit: React.VFC<Props> = ({ label, onEdit, onDelete }) => {
+export const LabelEdit = ({ label, onEdit, onDelete }: Props) => {
   const [selectedColor, setSelectedColor] = React.useState(
     label ? label.color : ('#ff9f1a' as Color)
   );

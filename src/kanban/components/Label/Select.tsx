@@ -61,7 +61,7 @@ interface Props {
   card: Card;
 }
 
-export const LabelSelect: React.VFC<Props> = ({ list, card }) => {
+export const LabelSelect = ({ list, card }: Props) => {
   const kanban = selectors.useKanban();
   const addLabel = kanbanActions.useAddLabel();
   const updateLabel = kanbanActions.useUpdateLabel();

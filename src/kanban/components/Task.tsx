@@ -24,12 +24,7 @@ interface Props {
   onDelete: (checkbox: CheckBoxModel) => void;
 }
 
-export const Task: React.VFC<Props> = ({
-  checkbox,
-  onChecked,
-  onEnter,
-  onDelete,
-}) => {
+export const Task = ({ checkbox, onChecked, onEnter, onDelete }: Props) => {
   const [showDeleteButton, setShowDeleteButton] = React.useState(false);
 
   return (

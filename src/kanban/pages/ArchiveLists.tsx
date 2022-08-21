@@ -44,7 +44,7 @@ interface Props {
   lists: Pick<List, 'title' | 'id'>[];
 }
 
-export const ArchiveLists: React.VFC<Props> = ({ lists }) => {
+export const ArchiveLists = ({ lists }: Props) => {
   const restoreList = kanbanActions.useRestoreList();
   const removeList = kanbanActions.useRemoveList();
   const navigate = useNavigate();

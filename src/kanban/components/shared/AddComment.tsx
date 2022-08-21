@@ -34,12 +34,7 @@ interface Props {
   onEnter: (text: string) => void;
 }
 
-export const AddComment: React.VFC<Props> = ({
-  addText,
-  placeholder,
-  type,
-  onEnter,
-}) => {
+export const AddComment = ({ addText, placeholder, type, onEnter }: Props) => {
   const [text, setText] = React.useState('');
   return (
     <AddItemForm>

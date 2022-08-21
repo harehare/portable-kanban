@@ -59,7 +59,7 @@ const Logo = styled.div`
   padding-top: 8px;
 `;
 
-export const Header: React.VFC<Props> = ({ title }) => {
+export const Header = ({ title }: Props) => {
   const setFilter = actions.useSetFilter();
   const searchLabels = selectors.useFilterLabels();
   const navigate = useNavigate();

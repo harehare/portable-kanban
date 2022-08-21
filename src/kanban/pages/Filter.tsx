@@ -50,7 +50,7 @@ interface Props {
   settings: Settings;
 }
 
-export const Filter: React.VFC<Props> = ({ settings }) => {
+export const Filter = ({ settings }: Props) => {
   const filteredText = selectors.useFilterText();
   const filteredLabels = selectors.useFilterLabels();
   const setFilter = actions.useSetFilter();

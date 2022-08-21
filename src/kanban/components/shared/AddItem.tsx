@@ -43,12 +43,7 @@ interface Props {
   onEnter: (text: string) => void;
 }
 
-export const AddItem: React.VFC<Props> = ({
-  addText,
-  placeholder,
-  type,
-  onEnter,
-}) => {
+export const AddItem = ({ addText, placeholder, type, onEnter }: Props) => {
   const [state, setState] = React.useState<{
     name: string;
     isAddItem: boolean;

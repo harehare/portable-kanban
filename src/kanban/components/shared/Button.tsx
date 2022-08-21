@@ -60,13 +60,13 @@ interface Props {
   onClick: () => void;
 }
 
-export const Button: React.VFC<Props> = ({
+export const Button = ({
   text,
-  icon = null,
+  icon = undefined,
   type = 'secondary',
   disabled = false,
   onClick,
-}) => {
+}: Props) => {
   return (
     <ButtonBase
       background={type}

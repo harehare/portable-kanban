@@ -36,7 +36,7 @@ interface Props {
   kanban: KanbanModel;
 }
 
-const Board: React.VFC<Props> = ({ kanban }) => {
+const Board = ({ kanban }: Props) => {
   const title = selectors.useTitle();
   const setAddCard = actions.useSetAddingCard();
   const moveList = kanbanActions.useMoveList();

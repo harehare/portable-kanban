@@ -7,7 +7,7 @@ interface Props {
   child: React.ReactElement;
 }
 
-export const Linkify: React.VFC<Props> = ({ child }) => {
+export const Linkify = ({ child }: Props) => {
   return (
     <ReactLinkify
       componentDecorator={(decoratedHref, decoratedText, key) => (

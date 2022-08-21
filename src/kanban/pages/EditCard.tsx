@@ -30,9 +30,21 @@ import { Description } from '../components/shared/Description';
 import { ProgressBar } from '../components/shared/ProgressBar';
 import { TextBaseBold } from '../components/shared/Text';
 import { Title } from '../components/shared/Title';
-import { Kanban as KanbanModel } from '../models/kanban';
+import {
+  Kanban as KanbanModel,
+  Comment as CommentModel,
+} from '../models/kanban';
 import { selectors, actions, kanbanActions } from '../store';
 import { uuid } from '../utils';
+
+declare global {
+  interface Window {
+    settings: {
+      showDescription: boolean;
+      showTaskList: boolean;
+    };
+  }
+}
 
 const Overlay = styled.div`
   width: 100%;
@@ -101,7 +113,7 @@ interface Props {
   kanban?: KanbanModel;
 }
 
-const EditCard: React.VFC<Props> = ({ kanban }) => {
+const EditCard = ({ kanban }: Props) => {
   const showModal = selectors.useShowModal();
   const setShowModal = actions.useSetShowModal();
   const navigate = useNavigate();
@@ -129,39 +141,6 @@ const EditCard: React.VFC<Props> = ({ kanban }) => {
     () => list?.cards.filter((c) => c.id === cardId)[0],
     [cardId, list?.cards]
   );
-
-  const handlers = {
-    CLOSE: () => navigate('/'),
-    MOVE_PREV: () => {
-      if (!list) {
-        return;
-      }
-
-      const index = list.cards.findIndex((c) => c.id === cardId);
-      const prev =
-        list.cards[index - 1 <= 0 ? list.cards.length - 1 : index - 1];
-      if (!prev) {
-        return;
-      }
-
-      navigate(`/list/${list.id}/card/${prev.id}`);
-    },
-    MOVE_NEXT: () => {
-      console.log(list);
-      if (!list) {
-        return;
-      }
-
-      const index = list.cards.findIndex((c) => c.id === cardId);
-      const next =
-        list.cards[index + 1 >= list.cards.length - 1 ? 0 : index + 1];
-      if (!next) {
-        return;
-      }
-
-      navigate(`/list/${list.id}/card/${next.id}`);
-    },
-  };
 
   const comments = React.useMemo(
     () => [...(card?.comments ?? [])].reverse(),
@@ -243,6 +222,114 @@ const EditCard: React.VFC<Props> = ({ kanban }) => {
     [kanban]
   );
 
+  const handleEditDescription = React.useCallback(
+    (description: string) => {
+      if (!kanban || !list || !card) {
+        return;
+      }
+      updateCard(list, {
+        ...card,
+        description,
+      });
+    },
+    [kanban, list, card]
+  );
+
+  const handleEditDate = React.useCallback(
+    (date: Date) => {
+      if (!kanban || !list || !card) {
+        return;
+      }
+      updateCardDueDate(list, card, date);
+    },
+    [kanban, list, card]
+  );
+
+  const handleAddTask = React.useCallback(
+    (text: string) => {
+      if (!kanban || !list || !card) {
+        return;
+      }
+      addCheckBox(list, card, {
+        id: uuid(),
+        title: text,
+        checked: false,
+      });
+    },
+    [kanban, list, card]
+  );
+
+  const handleAddComment = React.useCallback(
+    (comment: string) => {
+      if (!kanban || !list || !card) {
+        return;
+      }
+      addComments(list, card, {
+        id: uuid(),
+        comment,
+      });
+    },
+    [kanban, list, card]
+  );
+
+  const handleEditComment = React.useCallback(
+    (c: CommentModel) => (text: string) => {
+      if (!kanban || !list || !card) {
+        return;
+      }
+      updateComments(list, card, {
+        ...c,
+        comment: text,
+      });
+    },
+    [kanban, list, card]
+  );
+
+  const handleDeleteComment = React.useCallback(
+    (comment: CommentModel) => {
+      if (!kanban || !list || !card) {
+        return;
+      }
+      deleteComments(list, card, comment.id);
+    },
+    [kanban, list, card]
+  );
+
+  const handleCopyCard = React.useCallback(() => {
+    if (!kanban || !list || !card) {
+      return;
+    }
+    copyCard(card);
+  }, [kanban, list, card]);
+
+  const handleArchiveCard = React.useCallback(() => {
+    if (!kanban || !list || !card) {
+      return;
+    }
+    archiveCard(list, card);
+    setArchived(true);
+  }, [kanban, list, card]);
+
+  const handleRestoreCard = React.useCallback(() => {
+    if (!kanban || !list || !archivedCard) {
+      return;
+    }
+    restoreCard(archivedCard);
+    setArchived(false);
+  }, [kanban, list, card]);
+
+  const handleDeleteCard = React.useCallback(() => {
+    if (!kanban || !list || !archivedCard) {
+      return;
+    }
+    deleteCard(archivedCard);
+    vscode.postMessage({
+      type: 'info-message',
+      message: `Delete ${archivedCard.title}`,
+    });
+    navigate('/');
+  }, [kanban, list, card]);
+
   return (
     <DragDropContext onDragEnd={onDragEnd}>
       <Overlay
@@ -252,6 +339,7 @@ const EditCard: React.VFC<Props> = ({ kanban }) => {
             return;
           }
 
+          // TODO: save card
           navigate('/');
         }}>
         <Container
@@ -299,32 +387,21 @@ const EditCard: React.VFC<Props> = ({ kanban }) => {
               />
             </Head>
           </Line>
-          {
-            // @ts-ignore
-            window.settings.showDescription && (
-              <Line>
-                <Head>
-                  <Icon>
-                    <MdOutlineDescription />
-                  </Icon>
-                  <TextBaseBold>Description</TextBaseBold>
-                </Head>
-                <Description
-                  description={card?.description ?? ''}
-                  fontSize="medium"
-                  onEnter={(description) => {
-                    if (!kanban || !list || !card) {
-                      return;
-                    }
-                    updateCard(list, {
-                      ...card,
-                      description,
-                    });
-                  }}
-                />
-              </Line>
-            )
-          }
+          {window.settings.showDescription && (
+            <Line>
+              <Head>
+                <Icon>
+                  <MdOutlineDescription />
+                </Icon>
+                <TextBaseBold>Description</TextBaseBold>
+              </Head>
+              <Description
+                description={card?.description ?? ''}
+                fontSize="medium"
+                onEnter={handleEditDescription}
+              />
+            </Line>
+          )}
           {kanban && list && card ? (
             <Line>
               <LabelList list={list} card={card} />
@@ -341,65 +418,47 @@ const EditCard: React.VFC<Props> = ({ kanban }) => {
             </Head>
             <DatePicker
               value={card?.dueDate ? card.dueDate : undefined}
-              onChange={(date) => {
-                if (!kanban || !list || !card) {
-                  return;
-                }
-                updateCardDueDate(list, card, date);
-              }}
+              onChange={handleEditDate}
             />
           </Line>
-          {
-            // @ts-ignore
-            window.settings.showTaskList && (
-              <Line>
-                <Head>
-                  <Icon>
-                    <MdCheck />
-                  </Icon>
-                  <TextBaseBold>Task List</TextBaseBold>
-                </Head>
-                <div style={{ margin: '8px -16px 8px -16px' }}>
-                  <ProgressBar
-                    progress={
-                      ((card?.checkboxes.filter((c) => c.checked).length ??
-                        0.0) /
-                        (card?.checkboxes.length ?? 1.0)) *
-                      100
-                    }
-                  />
-                </div>
-                <Droppable droppableId={card?.id || ''} type="tasks">
-                  {(provided) => (
-                    <div
-                      ref={provided.innerRef}
-                      style={{ width: 'calc(100% - 16px)' }}>
-                      <div>
-                        {taskList} {provided.placeholder}
-                      </div>
+          {window.settings.showTaskList && (
+            <Line>
+              <Head>
+                <Icon>
+                  <MdCheck />
+                </Icon>
+                <TextBaseBold>Task List</TextBaseBold>
+              </Head>
+              <div style={{ margin: '8px -16px 8px -16px' }}>
+                <ProgressBar
+                  progress={
+                    ((card?.checkboxes.filter((c) => c.checked).length ?? 0.0) /
+                      (card?.checkboxes.length ?? 1.0)) *
+                    100
+                  }
+                />
+              </div>
+              <Droppable droppableId={card?.id || ''} type="tasks">
+                {(provided) => (
+                  <div
+                    ref={provided.innerRef}
+                    style={{ width: 'calc(100% - 16px)' }}>
+                    <div>
+                      {taskList} {provided.placeholder}
                     </div>
-                  )}
-                </Droppable>
-                <div style={{ margin: '0 12px' }}>
-                  <AddItem
-                    addText="Add item"
-                    placeholder="Add item"
-                    type="primary"
-                    onEnter={(text) => {
-                      if (!kanban || !list || !card) {
-                        return;
-                      }
-                      addCheckBox(list, card, {
-                        id: uuid(),
-                        title: text,
-                        checked: false,
-                      });
-                    }}
-                  />
-                </div>
-              </Line>
-            )
-          }
+                  </div>
+                )}
+              </Droppable>
+              <div style={{ margin: '0 12px' }}>
+                <AddItem
+                  addText="Add item"
+                  placeholder="Add item"
+                  type="primary"
+                  onEnter={handleAddTask}
+                />
+              </div>
+            </Line>
+          )}
           <Line>
             <Head>
               <Icon>
@@ -411,35 +470,14 @@ const EditCard: React.VFC<Props> = ({ kanban }) => {
               addText="Save"
               placeholder="Enter a comment"
               type="primary"
-              onEnter={(comment) => {
-                if (!kanban || !list || !card) {
-                  return;
-                }
-                addComments(list, card, {
-                  id: uuid(),
-                  comment,
-                });
-              }}
+              onEnter={handleAddComment}
             />
             {comments.map((c) => (
               <Comment
                 key={c.id}
                 comment={c}
-                onEnter={(text) => {
-                  if (!kanban || !list || !card) {
-                    return;
-                  }
-                  updateComments(list, card, {
-                    ...c,
-                    comment: text,
-                  });
-                }}
-                onDelete={(comment) => {
-                  if (!kanban || !list || !card) {
-                    return;
-                  }
-                  deleteComments(list, card, comment.id);
-                }}
+                onEnter={handleEditComment(c)}
+                onDelete={handleDeleteComment}
               />
             ))}
           </Line>
@@ -448,25 +486,14 @@ const EditCard: React.VFC<Props> = ({ kanban }) => {
               text="Copy"
               icon={<MdContentCopy />}
               disabled={false}
-              onClick={() => {
-                if (!kanban || !list || !card) {
-                  return;
-                }
-                copyCard(card);
-              }}
+              onClick={handleCopyCard}
             />
             {!isArchived && (
               <Button
                 text="Archive"
                 icon={<MdOutlineArchive />}
                 disabled={false}
-                onClick={() => {
-                  if (!kanban || !list || !card) {
-                    return;
-                  }
-                  archiveCard(list, card);
-                  setArchived(true);
-                }}
+                onClick={handleArchiveCard}
               />
             )}
             {isArchived && (
@@ -474,13 +501,7 @@ const EditCard: React.VFC<Props> = ({ kanban }) => {
                 text="Restore"
                 icon={<MdRestore />}
                 disabled={false}
-                onClick={() => {
-                  if (!kanban || !list || !archivedCard) {
-                    return;
-                  }
-                  restoreCard(archivedCard);
-                  setArchived(false);
-                }}
+                onClick={handleRestoreCard}
               />
             )}
             {isArchived && (
@@ -489,17 +510,7 @@ const EditCard: React.VFC<Props> = ({ kanban }) => {
                 icon={<MdOutlineDeleteOutline />}
                 type="danger"
                 disabled={false}
-                onClick={() => {
-                  if (!kanban || !list || !archivedCard) {
-                    return;
-                  }
-                  deleteCard(archivedCard);
-                  vscode.postMessage({
-                    type: 'info-message',
-                    message: `Delete ${archivedCard.title}`,
-                  });
-                  navigate('/');
-                }}
+                onClick={handleDeleteCard}
               />
             )}
           </BUttons>

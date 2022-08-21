@@ -80,7 +80,7 @@ const searchOptions = {
   keys: ['title', 'description', 'comments.comment'],
 };
 
-export const List: React.VFC<Props> = ({ kanban, list }) => {
+export const List = ({ kanban, list }: Props) => {
   const setKanban = actions.useSetKanban();
   const setAddCard = actions.useSetAddingCard();
   const archiveList = kanbanActions.useArchiveList();

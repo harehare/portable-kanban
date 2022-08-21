@@ -41,7 +41,7 @@ interface Props {
   card: Card;
 }
 
-export const LabelList: React.VFC<Props> = ({ list, card }) => {
+export const LabelList = ({ list, card }: Props) => {
   const showModal = selectors.useShowModal();
   const setShowModal = actions.useSetShowModal();
 

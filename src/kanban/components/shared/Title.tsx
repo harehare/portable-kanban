@@ -20,12 +20,12 @@ interface Props {
   onEnter: (text: string) => void;
 }
 
-export const Title: React.VFC<Props> = ({
+export const Title = ({
   title: defaultTitle,
   fontSize,
   width,
   onEnter,
-}) => {
+}: Props) => {
   const [isEdit, setEdit] = React.useState(false);
   const [title, setTitle] = React.useState(defaultTitle);
   const refDefaultTitle = React.useRef(defaultTitle);

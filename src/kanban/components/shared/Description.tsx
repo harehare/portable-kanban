@@ -22,11 +22,11 @@ interface Props {
   onEnter: (text: string) => void;
 }
 
-export const Description: React.VFC<Props> = ({
+export const Description = ({
   description: defaultDescription,
   fontSize,
   onEnter,
-}) => {
+}: Props) => {
   const [isEdit, setEdit] = React.useState(false);
   const [description, setDescription] = React.useState(defaultDescription);
   const handleBlur = React.useCallback(() => {
