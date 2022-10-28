@@ -9,10 +9,13 @@ interface Props {
 }
 
 export const DatePicker = ({ value, onChange }: Props) => {
-  const date = React.useMemo(
-    () => (value ? format(value, "yyyy-MM-dd'T'hh:mm") : undefined),
-    [value]
-  );
+  const date = React.useMemo(() => {
+    try {
+      return value ? format(value, "yyyy-MM-dd'T'HH:mm") : undefined;
+    } catch {
+      return format(new Date(), "yyyy-MM-dd'T'HH:mm");
+    }
+  }, [value]);
 
   return (
     <Input
@@ -22,7 +25,9 @@ export const DatePicker = ({ value, onChange }: Props) => {
       onChange={(e) => {
         try {
           onChange(new Date(Date.parse(e.target.value)));
-        } catch {}
+        } catch {
+          onChange(new Date());
+        }
       }}
     />
   );
