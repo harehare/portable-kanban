@@ -37,34 +37,46 @@ const Icon = styled.div`
 `;
 
 interface Props {
+  enableContinuousInput?: boolean;
   addText: string;
   placeholder: string;
   type: 'primary' | 'secondary' | 'danger';
   onEnter: (text: string) => void;
 }
 
-export const AddItem = ({ addText, placeholder, type, onEnter }: Props) => {
-  const [state, setState] = React.useState<{
-    name: string;
-    isAddItem: boolean;
-  }>({ name: '', isAddItem: false });
+export const AddItem = ({
+  enableContinuousInput = false,
+  addText,
+  placeholder,
+  type,
+  onEnter,
+}: Props) => {
+  const [isAddItem, setIsAddItem] = React.useState(false);
+  const [name, setName] = React.useState('');
   const [isComposing, setIsComposing] = React.useState(false);
   const handleKeyDown = React.useCallback(
     (e: React.KeyboardEvent<HTMLInputElement>) => {
+      if (e.key === 'Escape') {
+        setIsAddItem(false);
+        return;
+      }
+
       if (e.key !== 'Enter' || isComposing) {
         return;
       }
-      onEnter(state.name);
-      setState({ name: '', isAddItem: false });
+
+      onEnter(name);
+      setName('');
+      setIsAddItem(enableContinuousInput);
     },
-    [state.name, isComposing]
+    [name, isComposing]
   );
 
-  return state.isAddItem ? (
+  return isAddItem ? (
     <AddItemForm>
       <Input
         onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-          setState({ ...state, name: e.target.value });
+          setName(e.target.value);
         }}
         placeholder={placeholder}
         style={{
@@ -78,7 +90,7 @@ export const AddItem = ({ addText, placeholder, type, onEnter }: Props) => {
         onCompositionEnd={() => {
           setIsComposing(false);
         }}
-        value={state.name}
+        value={name}
         autoFocus={true}
         onKeyDown={handleKeyDown}
       />
@@ -88,18 +100,20 @@ export const AddItem = ({ addText, placeholder, type, onEnter }: Props) => {
         canClose={true}
         disabled={false}
         onAddClick={() => {
-          onEnter(state.name);
-          setState({ name: '', isAddItem: false });
+          onEnter(name);
+          setIsAddItem(false);
+          setName('');
         }}
         onCancel={() => {
-          setState({ name: '', isAddItem: false });
+          setIsAddItem(false);
+          setName('');
         }}
       />
     </AddItemForm>
   ) : (
     <AddItemLabel
       onClick={() => {
-        setState({ ...state, isAddItem: true });
+        setIsAddItem(true);
       }}>
       <Icon>
         <MdAdd />

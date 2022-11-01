@@ -171,6 +171,23 @@ export const restoreList = (kanban: Kanban, list: List): Kanban => {
   };
 };
 
+export const moveAllCardsToList = (
+  kanban: Kanban,
+  fromList: List,
+  toList: List
+): Kanban => {
+  return {
+    ...kanban,
+    lists: kanban.lists.map((l) =>
+      l.id === toList.id
+        ? { ...l, cards: [...l.cards, ...fromList.cards] }
+        : l.id === fromList.id
+        ? { ...fromList, cards: [] }
+        : l
+    ),
+  };
+};
+
 export const addCard = (kanban: Kanban, list: List, card: Card): Kanban => {
   if (!card.title) {
     return kanban;

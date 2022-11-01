@@ -160,6 +160,15 @@ export const List = ({ kanban, list }: Props) => {
                       },
                       'separator',
                       {
+                        icon: <></>,
+                        text: 'Move all cards in this list',
+                        onClick: () => {
+                          // TODO: show list
+                          // TODO: 特定のリストのカードをすべてリストに移動する処理を追加する
+                        },
+                      },
+                      'separator',
+                      {
                         icon: <MdArchive />,
                         text: 'Archive this list',
                         onClick: () => {

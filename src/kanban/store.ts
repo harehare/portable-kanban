@@ -43,6 +43,7 @@ import {
   archiveAllCardInList,
   copyCard,
   moveCheckBox,
+  moveAllCardsToList,
 } from './models/kanban';
 
 const titleState = atom({
@@ -232,6 +233,15 @@ export const kanbanActions = {
     return React.useCallback(
       (list: List) => {
         setState(restoreList(kanban, list));
+      },
+      [kanban]
+    );
+  },
+  useMoveAllCardsToList: () => {
+    const [kanban, setState] = useRecoilState(kanbanState);
+    return React.useCallback(
+      (fromList: List, toList: List) => {
+        setState(moveAllCardsToList(kanban, fromList, toList));
       },
       [kanban]
     );

@@ -152,6 +152,7 @@ const EditCard = ({ kanban }: Props) => {
     [cardId, list?.cards]
   );
   const [isArchived, setArchived] = React.useState(!!archivedCard);
+  const [isAddTask, setIsAddTask] = React.useState(false);
   const taskList = React.useMemo(
     () =>
       card?.checkboxes.map((c, index) => (
@@ -178,6 +179,7 @@ const EditCard = ({ kanban }: Props) => {
                     ...c,
                     title,
                   });
+                  setIsAddTask(true);
                 }}
                 onChecked={(checked) => {
                   if (!kanban || !list || !card) {
@@ -451,6 +453,7 @@ const EditCard = ({ kanban }: Props) => {
               </Droppable>
               <div style={{ margin: '0 12px' }}>
                 <AddItem
+                  enableContinuousInput
                   addText="Add item"
                   placeholder="Add item"
                   type="primary"
