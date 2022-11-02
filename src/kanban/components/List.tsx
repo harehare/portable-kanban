@@ -118,6 +118,28 @@ export const List = ({ kanban, list }: Props) => {
       )),
     [filteredCards]
   );
+  const handleAddCard = React.useCallback(
+    (card: CardModel) => {
+      setKanban(
+        card.title.split('\n').reduce((arr, v) => {
+          const newList = arr.lists.find((l) => l.id === list.id);
+          const tokens = v.split(':').filter((x) => !!x);
+          const title = tokens.length > 1 ? tokens[1] : v;
+          const labelName = tokens.length > 1 ? tokens[0] : undefined;
+          const labels = labelName
+            ? kanban.settings.labels.filter((l) => l.title === labelName)
+            : [];
+
+          return addCardToKanban(arr, newList ?? list, {
+            ...newCard(uuid(), list.id),
+            title,
+            labels,
+          });
+        }, kanban)
+      );
+    },
+    [kanban, setKanban]
+  );
 
   return (
     <Container>
@@ -213,15 +235,7 @@ export const List = ({ kanban, list }: Props) => {
                   isEdit={true}
                   onEnter={(c) => {
                     setAddCard(undefined);
-                    setKanban(
-                      c.title.split('\n').reduce((arr, v) => {
-                        const newList = arr.lists.find((l) => l.id === list.id);
-                        return addCardToKanban(arr, newList ?? list, {
-                          ...newCard(uuid(), list.id),
-                          title: v,
-                        });
-                      }, kanban)
-                    );
+                    handleAddCard(c);
                   }}
                 />
               ) : (
@@ -238,15 +252,7 @@ export const List = ({ kanban, list }: Props) => {
                   canClose={true}
                   onAddClick={() => {
                     setAddCard(undefined);
-                    setKanban(
-                      addCard?.title.split('\n').reduce((arr, v) => {
-                        const newList = arr.lists.find((l) => l.id === list.id);
-                        return addCardToKanban(arr, newList ?? list, {
-                          ...newCard(uuid(), list.id),
-                          title: v,
-                        });
-                      }, kanban)
-                    );
+                    handleAddCard(addCard);
                   }}
                   onCancel={() => {
                     setAddCard(undefined);
