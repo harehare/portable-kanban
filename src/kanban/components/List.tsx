@@ -2,7 +2,13 @@ import Fuse from 'fuse.js';
 import * as React from 'react';
 import { Droppable, Draggable } from 'react-beautiful-dnd';
 import { FiPlus } from 'react-icons/fi';
-import { MdAdd, MdArchive, MdMenu, MdOutlineArchive } from 'react-icons/md';
+import {
+  MdAdd,
+  MdArchive,
+  MdDriveFileMoveOutline,
+  MdMenu,
+  MdOutlineArchive,
+} from 'react-icons/md';
 import styled from 'styled-components';
 
 import {
@@ -16,6 +22,7 @@ import {
 import { selectors, actions, kanbanActions } from '../store';
 import { uuid } from '../utils';
 import { Card } from './Card';
+import { SelectList } from './SelectList';
 import { AddButton } from './shared/AddButton';
 import { Menu } from './shared/Menu';
 import { TextSm, TextXs } from './shared/Text';
@@ -70,10 +77,10 @@ const isLabelMatch = (card: CardModel, labels: Set<string>): boolean =>
   labels.size === 0 ||
   [...card.labels.map((l) => l.title)].filter((x) => labels.has(x)).length > 0;
 
-interface Props {
+type Props = {
   kanban: KanbanModel;
   list: ListModel;
-}
+};
 
 const searchOptions = {
   includeScore: true,
@@ -84,10 +91,12 @@ export const List = ({ kanban, list }: Props) => {
   const setKanban = actions.useSetKanban();
   const setAddCard = actions.useSetAddingCard();
   const archiveList = kanbanActions.useArchiveList();
+  const moveAllCardsToList = kanbanActions.useMoveAllCardsToList();
   const archiveAllCardInList = kanbanActions.useArchiveAllCardInList();
   const addCard = selectors.useAddCard();
   const filteredText = selectors.useFilterText();
   const filteredLabels = selectors.useFilterLabels();
+  const setMenu = actions.useSetMenu();
   const searcher = React.useMemo(
     () => new Fuse(list.cards, searchOptions),
     [list.cards]
@@ -154,6 +163,7 @@ export const List = ({ kanban, list }: Props) => {
                     alignItems: 'center',
                     justifyContent: 'space-between',
                     marginBottom: '8px',
+                    position: 'relative',
                   }}>
                   <Title
                     title={list.title}
@@ -182,11 +192,10 @@ export const List = ({ kanban, list }: Props) => {
                       },
                       'separator',
                       {
-                        icon: <></>,
+                        icon: <MdDriveFileMoveOutline />,
                         text: 'Move all cards in this list',
                         onClick: () => {
-                          // TODO: show list
-                          // TODO: 特定のリストのカードをすべてリストに移動する処理を追加する
+                          setMenu(`select-list-${list.id}`);
                         },
                       },
                       'separator',
@@ -205,6 +214,14 @@ export const List = ({ kanban, list }: Props) => {
                         },
                       },
                     ]}
+                  />
+                  <SelectList
+                    menuId={`select-list-${list.id}`}
+                    listId={list.id}
+                    lists={kanban.lists}
+                    onClick={(toList) => {
+                      moveAllCardsToList(list, toList);
+                    }}
                   />
                 </div>
               </Header>

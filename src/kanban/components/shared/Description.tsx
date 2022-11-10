@@ -16,11 +16,11 @@ const Text = styled.div`
   padding: 8px;
 `;
 
-interface Props {
+type Props = {
   description: string;
   fontSize: 'medium' | 'large';
   onEnter: (text: string) => void;
-}
+};
 
 export const Description = ({
   description: defaultDescription,

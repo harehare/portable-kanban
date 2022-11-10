@@ -53,11 +53,11 @@ const LabelItem = styled.div`
   height: 16px;
 `;
 
-interface Props {
+type Props = {
   label?: Label;
   onEdit: (label: Label) => void;
   onDelete?: (label: Label) => void;
-}
+};
 
 export const LabelEdit = ({ label, onEdit, onDelete }: Props) => {
   const [selectedColor, setSelectedColor] = React.useState(

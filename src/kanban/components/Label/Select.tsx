@@ -56,10 +56,10 @@ const AddLabel = styled.div`
   max-width: 140px;
 `;
 
-interface Props {
+type Props = {
   list: List;
   card: Card;
-}
+};
 
 export const LabelSelect = ({ list, card }: Props) => {
   const kanban = selectors.useKanban();

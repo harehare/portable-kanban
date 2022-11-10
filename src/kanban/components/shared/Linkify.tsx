@@ -3,9 +3,9 @@ import ReactLinkify from 'react-linkify';
 
 import { vscode } from '../../../vscode';
 
-interface Props {
+type Props = {
   child: React.ReactElement;
-}
+};
 
 export const Linkify = ({ child }: Props) => {
   return (

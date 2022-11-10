@@ -17,12 +17,12 @@ const Container = styled.div`
   }
 `;
 
-interface Props {
+type Props = {
   checkbox: CheckBoxModel;
   onChecked: (checked: boolean) => void;
   onEnter: (title: string) => void;
   onDelete: (checkbox: CheckBoxModel) => void;
-}
+};
 
 export const Task = ({ checkbox, onChecked, onEnter, onDelete }: Props) => {
   const [showDeleteButton, setShowDeleteButton] = React.useState(false);

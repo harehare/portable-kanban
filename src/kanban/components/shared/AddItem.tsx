@@ -36,13 +36,13 @@ const Icon = styled.div`
   margin: 4px 4px 0 0;
 `;
 
-interface Props {
+type Props = {
   enableContinuousInput?: boolean;
   addText: string;
   placeholder: string;
   type: 'primary' | 'secondary' | 'danger';
   onEnter: (text: string) => void;
-}
+};
 
 export const AddItem = ({
   enableContinuousInput = false,

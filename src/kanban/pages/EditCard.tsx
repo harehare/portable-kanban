@@ -109,9 +109,9 @@ const BUttons = styled.div`
   margin: 16px;
 `;
 
-interface Props {
+type Props = {
   kanban?: KanbanModel;
-}
+};
 
 const EditCard = ({ kanban }: Props) => {
   const showModal = selectors.useShowModal();

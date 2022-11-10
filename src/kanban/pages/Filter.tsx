@@ -46,9 +46,9 @@ const LabelItem = styled.div`
   justify-content: space-between;
 `;
 
-interface Props {
+type Props = {
   settings: Settings;
-}
+};
 
 export const Filter = ({ settings }: Props) => {
   const filteredText = selectors.useFilterText();

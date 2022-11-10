@@ -17,11 +17,11 @@ const Container = styled.div`
   margin-bottom: 16px;
 `;
 
-interface Props {
+type Props = {
   comment: CommentModel;
   onEnter: (title: string) => void;
   onDelete: (comment: CommentModel) => void;
-}
+};
 
 export const Comment = ({ comment, onEnter, onDelete }: Props) => {
   const [showDeleteButton, setShowDeleteButton] = React.useState(false);

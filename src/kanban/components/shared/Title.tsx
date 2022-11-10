@@ -12,13 +12,13 @@ const Container = styled.div`
   background-color: transparent;
 `;
 
-interface Props {
+type Props = {
   title: string;
   fontSize: 'small' | 'medium' | 'large';
   width: number | '100%';
   editable?: boolean;
   onEnter: (text: string) => void;
-}
+};
 
 export const Title = ({
   title: defaultTitle,

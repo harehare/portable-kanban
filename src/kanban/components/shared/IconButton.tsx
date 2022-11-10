@@ -6,10 +6,10 @@ const Button = styled.div`
   font-size: 1.1rem;
 `;
 
-interface Props {
+type Props = {
   icon: React.ReactNode;
   onClick: () => void;
-}
+};
 
 export const IconButton = ({ icon, onClick }: Props) => {
   return (

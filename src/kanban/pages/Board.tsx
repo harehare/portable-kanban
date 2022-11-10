@@ -32,9 +32,9 @@ const Contents = styled.div`
   align-content: flex-start;
 `;
 
-interface Props {
+type Props = {
   kanban: KanbanModel;
-}
+};
 
 const Board = ({ kanban }: Props) => {
   const title = selectors.useTitle();

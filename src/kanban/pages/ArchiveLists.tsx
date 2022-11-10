@@ -40,9 +40,9 @@ const MenuItem = styled.div`
   cursor: pointer;
 `;
 
-interface Props {
+type Props = {
   lists: Pick<List, 'title' | 'id'>[];
-}
+};
 
 export const ArchiveLists = ({ lists }: Props) => {
   const restoreList = kanbanActions.useRestoreList();

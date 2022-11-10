@@ -23,14 +23,14 @@ const Buttons = styled.div`
   justify-content: flex-start;
 `;
 
-interface Props {
+type Props = {
   text: string;
   type: 'primary' | 'secondary' | 'danger';
   canClose: boolean;
   disabled: boolean;
   onAddClick: () => void;
   onCancel?: () => void;
-}
+};
 
 export const AddButton = ({
   text,

@@ -51,10 +51,10 @@ const Indicator = styled.div<{ checked: boolean }>`
   }
 `;
 
-interface Props {
+type Props = {
   checked: boolean;
   onChange: (checked: boolean) => void;
-}
+};
 
 export const CheckBox = ({ checked, onChange }: Props) => {
   return (

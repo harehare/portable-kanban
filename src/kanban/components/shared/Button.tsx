@@ -52,13 +52,13 @@ const Label = styled.div`
   background-color: transparent;
 `;
 
-interface Props {
+type Props = {
   text: string;
   icon?: React.ReactElement;
   type?: 'primary' | 'secondary' | 'danger';
   disabled: boolean;
   onClick: () => void;
-}
+};
 
 export const Button = ({
   text,

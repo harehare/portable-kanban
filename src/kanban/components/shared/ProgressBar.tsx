@@ -15,9 +15,9 @@ const Progress = styled.div<{
   height: 8px;
 `;
 
-interface Props {
+type Props = {
   progress: number;
-}
+};
 
 export const ProgressBar = ({ progress }: Props) => {
   return (

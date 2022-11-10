@@ -82,12 +82,12 @@ const Label = styled.div`
   padding: 0 8px;
 `;
 
-interface Props {
+type Props = {
   card: CardModel;
   isEdit?: boolean;
   editable?: boolean;
   onEnter?: (card: CardModel) => void;
-}
+};
 
 export const Card = ({
   card,

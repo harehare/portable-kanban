@@ -3,10 +3,10 @@ import * as React from 'react';
 
 import { Input } from './Form';
 
-interface Props {
+type Props = {
   value?: Date;
   onChange: (date: Date) => void;
-}
+};
 
 export const DatePicker = ({ value, onChange }: Props) => {
   const date = React.useMemo(() => {

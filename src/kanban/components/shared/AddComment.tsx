@@ -27,12 +27,12 @@ const TextArea = styled.textarea`
   }
 `;
 
-interface Props {
+type Props = {
   addText: string;
   placeholder: string;
   type: 'primary' | 'secondary' | 'danger';
   onEnter: (text: string) => void;
-}
+};
 
 export const AddComment = ({ addText, placeholder, type, onEnter }: Props) => {
   const [text, setText] = React.useState('');

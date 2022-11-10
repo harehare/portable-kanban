@@ -10,9 +10,9 @@ import { IconButton } from './shared/IconButton';
 import { Menu } from './shared/Menu';
 import { TextXs } from './shared/Text';
 
-interface Props {
+type Props = {
   title: string;
-}
+};
 
 const Container = styled.div`
   width: 100vw;

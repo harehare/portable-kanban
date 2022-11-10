@@ -40,9 +40,9 @@ const MenuItem = styled.div`
   cursor: pointer;
 `;
 
-interface Props {
+type Props = {
   cards: CardModel[];
-}
+};
 
 export const ArchiveCards = ({ cards }: Props) => {
   const restoreCard = kanbanActions.useRestoreCard();

@@ -36,10 +36,10 @@ const AddButton = styled.div`
   height: 24px;
 `;
 
-interface Props {
+type Props = {
   list: List;
   card: Card;
-}
+};
 
 export const LabelList = ({ list, card }: Props) => {
   const showModal = selectors.useShowModal();
