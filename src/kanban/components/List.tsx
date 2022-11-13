@@ -162,7 +162,8 @@ export const List = ({ kanban, list }: Props) => {
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'space-between',
-                    marginBottom: '8px',
+                    paddingLeft: '8px',
+                    paddingBottom: '8px',
                     position: 'relative',
                   }}>
                   <Title

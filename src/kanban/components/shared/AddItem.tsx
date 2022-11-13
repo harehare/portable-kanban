@@ -65,6 +65,12 @@ export const AddItem = ({
         return;
       }
 
+      if (name === '') {
+        setName('');
+        setIsAddItem(false);
+        return;
+      }
+
       onEnter(name);
       setName('');
       setIsAddItem(enableContinuousInput);

@@ -180,7 +180,13 @@ export const moveAllCardsToList = (
     ...kanban,
     lists: kanban.lists.map((l) =>
       l.id === toList.id
-        ? { ...l, cards: [...l.cards, ...fromList.cards] }
+        ? {
+            ...l,
+            cards: [
+              ...l.cards,
+              ...fromList.cards.map((c) => ({ ...c, listId: toList.id })),
+            ],
+          }
         : l.id === fromList.id
         ? { ...fromList, cards: [] }
         : l

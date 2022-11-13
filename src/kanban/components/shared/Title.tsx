@@ -6,7 +6,7 @@ import { Linkify } from './Linkify';
 
 const Container = styled.div`
   font-size: 1rem;
-  line-height: 1.5rem;
+  line-height: 1.3rem;
   font-weight: 800;
   padding: 2px 0;
   background-color: transparent;
@@ -38,6 +38,8 @@ export const Title = ({
 
       if (title === '') {
         setTitle(refDefaultTitle.current);
+        setEdit(false);
+        return;
       }
 
       onEnter(title === '' ? refDefaultTitle.current : title);
@@ -77,7 +79,7 @@ export const Title = ({
                 : fontSize === 'small'
                 ? '0.875rem'
                 : '1.5rem',
-            lineHeight: '1.5rem',
+            lineHeight: '1.3rem',
           }}
           onCompositionStart={() => {
             setIsComposing(true);
@@ -101,6 +103,7 @@ export const Title = ({
                 : '1.5rem',
             color: 'var(--text-color)',
             width: width === '100%' ? '100%' : `${width}px`,
+            padding: '4px',
             cursor: 'pointer',
           }}
           onClick={(e) => {
