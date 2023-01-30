@@ -124,7 +124,7 @@
     "react-dom": "^18.2.0",
     "react-icons": "^4.7.1",
     "react-linkify": "^1.0.0-alpha",
-    "react-router-dom": "^6.7.0",
+    "react-router-dom": "^6.8.0",
     "recoil": "^0.7.6",
     "styled-components": "^5.3.6",
     "uuid": "^9.0.0"
