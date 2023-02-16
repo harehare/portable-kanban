@@ -1,8 +1,7 @@
+import CodeEditor from '@uiw/react-textarea-code-editor';
 import * as React from 'react';
+import ReactMarkdown from 'react-markdown';
 import styled from 'styled-components';
-
-import { TextArea } from './Form';
-import { Linkify } from './Linkify';
 
 const Container = styled.div`
   width: 100%;
@@ -41,8 +40,8 @@ export const Description = ({
   return (
     <Container>
       {isEdit ? (
-        <TextArea
-          onChange={(e) => {
+        <CodeEditor
+          onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
             setDescription(e.target.value);
           }}
           placeholder="Enter description"
@@ -56,12 +55,13 @@ export const Description = ({
             fontSize: fontSize === 'medium' ? '1rem' : '1.5rem',
             lineHeight: '1.5rem',
           }}
+          language="markdown"
           value={description}
           autoFocus={true}
           onBlur={handleBlur}
         />
       ) : (
-        <Text
+        <div
           style={{
             fontSize: fontSize === 'medium' ? '1rem' : '1.5rem',
             color: 'var(--text-color)',
@@ -71,24 +71,14 @@ export const Description = ({
             width: 'calc(100% - 24px)',
             borderRadius: 'var(--border-radius)',
             overflow: 'hidden',
+            padding: '8px',
           }}
           onClick={(e) => {
             e.stopPropagation();
             setEdit(true);
           }}>
-          <Linkify
-            child={
-              <pre
-                style={{
-                  whiteSpace: 'break-spaces',
-                  margin: '0',
-                  fontFamily: 'var(--font-family)',
-                }}>
-                {description}
-              </pre>
-            }
-          />
-        </Text>
+          <ReactMarkdown>{description}</ReactMarkdown>
+        </div>
       )}
     </Container>
   );

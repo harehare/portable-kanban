@@ -57,7 +57,7 @@ export type Comment = {
   comment: string;
 };
 
-export const colors = [
+export const colors: ReadonlyArray<`#${string}`> = [
   '#61bd4f',
   '#f2d600',
   '#ff9f1a',

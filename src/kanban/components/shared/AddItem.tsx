@@ -3,7 +3,7 @@ import { MdAdd } from 'react-icons/md';
 import styled from 'styled-components';
 
 import { AddButton } from './AddButton';
-import { Input } from './Form';
+import { Input } from './Input';
 
 const AddItemLabel = styled.div`
   display: flex;

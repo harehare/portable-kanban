@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import { Color, colors, Label } from '../../models/kanban';
 import { uuid } from '../../utils';
 import { Button } from '../shared/Button';
-import { Input } from '../shared/Form';
+import { Input } from '../shared/Input';
 import { TextSm } from '../shared/Text';
 
 const Modal = styled.div`

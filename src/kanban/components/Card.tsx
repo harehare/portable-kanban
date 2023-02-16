@@ -1,3 +1,5 @@
+import format from 'date-fns/format';
+import sub from 'date-fns/sub';
 import * as React from 'react';
 import { FaRegComment } from 'react-icons/fa';
 import { MdDateRange } from 'react-icons/md';
@@ -66,6 +68,7 @@ const CardInfo = styled.div`
   justify-content: center;
   margin-top: 8px;
   margin-left: 8px;
+  color: var(--primary-color);
 `;
 
 const CardInfoIcon = styled.div`
@@ -129,6 +132,44 @@ export const Card = ({
   );
   const inputRef = useAutoFocus();
 
+  const isOneDayLeft = React.useMemo(
+    () =>
+      state.card.dueDate
+        ? format(Date.now(), 'yyyy-MM-dd') ===
+          format(
+            sub(state.card.dueDate, {
+              days: 1,
+            }),
+            'yyyy-MM-dd'
+          )
+        : false,
+    [state.card.dueDate]
+  );
+
+  console.log(
+    format(
+      sub(state.card.dueDate ?? Date.now(), {
+        days: 1,
+      }),
+      'yyyy-MM-dd'
+    )
+  );
+
+  const isDueDate = React.useMemo(
+    () =>
+      state.card.dueDate
+        ? format(state.card.dueDate, 'yyyy-MM-dd') ===
+          format(Date.now(), 'yyyy-MM-dd')
+        : false,
+    [state.card.dueDate]
+  );
+
+  const dueDateColor = React.useMemo(
+    () =>
+      isDueDate ? '#FF4500' : isOneDayLeft ? '#FF7F50' : 'var(--primary-color)',
+    [isDueDate, isOneDayLeft]
+  );
+
   return (
     <Container>
       {!editable ? (
@@ -190,10 +231,14 @@ export const Card = ({
             }}>
             {state.card.dueDate && (
               <CardInfo>
-                <CardInfoIcon>
+                <CardInfoIcon style={{ color: dueDateColor }}>
                   <MdDateRange />
                 </CardInfoIcon>
-                <div style={{ marginBottom: '2px' }}>
+                <div
+                  style={{
+                    marginBottom: '2px',
+                    color: dueDateColor,
+                  }}>
                   <TextXs>
                     {typeof state.card.dueDate === 'string'
                       ? state.card.dueDate

@@ -339,7 +339,9 @@ const EditCard = ({ kanban }: Props) => {
             return;
           }
 
-          // TODO: save card
+          if (kanban && list && card) {
+            updateCard(list, card);
+          }
           navigate('/');
         }}>
         <Container

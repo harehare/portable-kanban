@@ -1,7 +1,7 @@
-import { format } from 'date-fns';
+import format from 'date-fns/format';
 import * as React from 'react';
 
-import { Input } from './Form';
+import { Input } from './Input';
 
 type Props = {
   value?: Date;

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import styled from 'styled-components';
 
-import { Input } from './Form';
+import { Input } from './Input';
 import { Linkify } from './Linkify';
 
 const Container = styled.div`

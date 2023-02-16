@@ -5,8 +5,8 @@ import styled from 'styled-components';
 
 import LogoImage from '../assets/icon.svg';
 import { actions, selectors } from '../store';
-import { Input } from './shared/Form';
 import { IconButton } from './shared/IconButton';
+import { Input } from './shared/Input';
 import { Menu } from './shared/Menu';
 import { TextXs } from './shared/Text';
 
