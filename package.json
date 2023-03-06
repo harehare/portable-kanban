@@ -96,7 +96,7 @@
     "@types/react-router-dom": "^5.3.3",
     "@types/styled-components": "^5.1.26",
     "@types/uuid": "^9.0.1",
-    "@types/vscode": "^1.75.1",
+    "@types/vscode": "^1.76.0",
     "@typescript-eslint/eslint-plugin": "^5.52.0",
     "@typescript-eslint/parser": "^5.54.0",
     "@vscode/test-electron": "^2.2.3",
