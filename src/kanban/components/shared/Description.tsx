@@ -1,4 +1,3 @@
-import CodeEditor from '@uiw/react-textarea-code-editor';
 import * as React from 'react';
 import ReactMarkdown from 'react-markdown';
 import styled from 'styled-components';
@@ -40,7 +39,7 @@ export const Description = ({
   return (
     <Container>
       {isEdit ? (
-        <CodeEditor
+        <textarea
           onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
             setDescription(e.target.value);
           }}
@@ -48,14 +47,17 @@ export const Description = ({
           style={{
             width: 'calc(100% - 24px)',
             height: '100%',
-            minHeight: '72px',
+            minHeight: '96px',
             fontFamily: 'var(--font-family)',
             backgroundColor: 'var(--secondary-background-color)',
             color: 'var(--text-color)',
             fontSize: fontSize === 'medium' ? '1rem' : '1.5rem',
             lineHeight: '1.5rem',
+            padding: '8px',
+            resize: 'none',
+            borderColor: 'var(--form-border-color)',
+            outline: 'none',
           }}
-          language="markdown"
           value={description}
           autoFocus={true}
           onBlur={handleBlur}
@@ -67,7 +69,7 @@ export const Description = ({
             color: 'var(--text-color)',
             backgroundColor: 'var(--secondary-background-color)',
             cursor: 'pointer',
-            minHeight: '72px',
+            minHeight: '96px',
             width: 'calc(100% - 24px)',
             borderRadius: 'var(--border-radius)',
             overflow: 'hidden',

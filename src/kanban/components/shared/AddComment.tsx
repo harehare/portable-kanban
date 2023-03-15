@@ -1,4 +1,3 @@
-import CodeEditor from '@uiw/react-textarea-code-editor';
 import * as React from 'react';
 import styled from 'styled-components';
 
@@ -39,7 +38,7 @@ export const AddComment = ({ addText, placeholder, type, onEnter }: Props) => {
   const [text, setText] = React.useState('');
   return (
     <AddItemForm>
-      <CodeEditor
+      <textarea
         onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
           setText(e.target.value);
         }}
@@ -47,8 +46,12 @@ export const AddComment = ({ addText, placeholder, type, onEnter }: Props) => {
           color: 'var(--text-color)',
           backgroundColor: 'var(--secondary-background-color)',
           width: '100%',
+          fontSize: '1rem',
           minHeight: '72px',
           marginBottom: '8px',
+          padding: '8px',
+          borderColor: 'var(--form-border-color)',
+          outline: 'none',
         }}
         placeholder={placeholder}
         value={text}
