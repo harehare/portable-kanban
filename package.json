@@ -86,7 +86,7 @@
     "@svgr/webpack": "^8.0.1",
     "@trivago/prettier-plugin-sort-imports": "^4.1.1",
     "@types/glob": "^8.1.0",
-    "@types/jest": "^29.5.1",
+    "@types/jest": "^29.5.2",
     "@types/mocha": "^10.0.1",
     "@types/node": "20.x",
     "@types/react": "^18.2.7",
