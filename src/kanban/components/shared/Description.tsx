@@ -1,5 +1,6 @@
 import * as React from 'react';
 import ReactMarkdown from 'react-markdown';
+import TextareaAutosize from 'react-textarea-autosize';
 import styled from 'styled-components';
 
 const Container = styled.div`
@@ -39,23 +40,24 @@ export const Description = ({
   return (
     <Container>
       {isEdit ? (
-        <textarea
+        <TextareaAutosize
           onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
             setDescription(e.target.value);
           }}
           placeholder="Enter description"
+          minRows={3}
+          maxRows={20}
           style={{
             width: 'calc(100% - 24px)',
-            height: '100%',
-            minHeight: '96px',
             fontFamily: 'var(--font-family)',
             backgroundColor: 'var(--secondary-background-color)',
             color: 'var(--text-color)',
             fontSize: fontSize === 'medium' ? '1rem' : '1.5rem',
             lineHeight: '1.5rem',
-            padding: '8px',
+            padding: '24px 8px 16px 8px',
             resize: 'none',
             borderColor: 'var(--form-border-color)',
+            borderRadius: 'var(--border-radius)',
             outline: 'none',
           }}
           value={description}
