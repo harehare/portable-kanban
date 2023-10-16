@@ -97,7 +97,7 @@
     "@types/styled-components": "^5.1.26",
     "@types/uuid": "^9.0.3",
     "@types/vscode": "^1.81.0",
-    "@typescript-eslint/eslint-plugin": "^6.5.0",
+    "@typescript-eslint/eslint-plugin": "^6.8.0",
     "@typescript-eslint/parser": "^6.6.0",
     "@vscode/test-electron": "^2.3.4",
     "css-loader": "^6.8.1",
