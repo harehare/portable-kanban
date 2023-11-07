@@ -5,6 +5,7 @@ import {
   Draggable,
   DropResult,
 } from 'react-beautiful-dnd';
+import { ScrollContainer } from 'react-indiana-drag-scroll';
 import styled from 'styled-components';
 
 import { Header } from '../components/Header';
@@ -50,6 +51,7 @@ const Board = ({ kanban }: Props) => {
         <Draggable key={l.id} draggableId={l.id} index={index}>
           {(provided) => (
             <div
+              className="list"
               ref={provided.innerRef}
               {...provided.draggableProps}
               {...provided.dragHandleProps}>
@@ -104,22 +106,34 @@ const Board = ({ kanban }: Props) => {
         <Droppable droppableId="list" direction="horizontal" type="lists">
           {(provided) => (
             <Contents {...provided.droppableProps} ref={provided.innerRef}>
-              {list}
-              {provided.placeholder}
-              <div style={{ margin: '8px' }}>
-                <AddItem
-                  addText="Add List"
-                  placeholder="Enter list title"
-                  type="primary"
-                  onEnter={(title) => {
-                    addList({
-                      id: uuid(),
-                      title,
-                      cards: [],
-                    });
-                  }}
-                />
-              </div>
+              <ScrollContainer
+                mouseScroll={{ ignoreElements: '.list' }}
+                style={{
+                  width: '100%',
+                  height: 'calc(100vh - var(--header-height))',
+                  display: 'flex',
+                  backgroundColor: 'transparent',
+                  overflowX: 'auto',
+                  alignItems: 'flex-start',
+                  alignContent: 'flex-start',
+                }}>
+                {list}
+                {provided.placeholder}
+                <div style={{ margin: '8px' }}>
+                  <AddItem
+                    addText="Add List"
+                    placeholder="Enter list title"
+                    type="primary"
+                    onEnter={(title) => {
+                      addList({
+                        id: uuid(),
+                        title,
+                        cards: [],
+                      });
+                    }}
+                  />
+                </div>
+              </ScrollContainer>
             </Contents>
           )}
         </Droppable>
