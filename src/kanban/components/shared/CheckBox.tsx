@@ -62,7 +62,7 @@ export const CheckBox = ({ checked, onChange }: Props) => {
       <Input
         type="checkbox"
         checked={checked}
-        onChange={(e) => {
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
           onChange(e.target.checked);
         }}
       />

@@ -96,7 +96,7 @@ export const Header = ({ title }: Props) => {
           value={searchInput}
           autoComplete="off"
           placeholder="Filter cards"
-          onChange={(e) => {
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
             setSearchInput(e.target.value);
           }}
         />

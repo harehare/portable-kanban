@@ -51,7 +51,7 @@ export const LabelList = ({ list, card }: Props) => {
         <LabelItem
           key={l.id}
           style={{ backgroundColor: l.color, cursor: 'pointer' }}
-          onClick={(e) => {
+          onClick={(e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
             e.stopPropagation();
             setShowModal(true);
           }}>
@@ -59,7 +59,7 @@ export const LabelList = ({ list, card }: Props) => {
         </LabelItem>
       ))}
       <AddButton
-        onClick={(e) => {
+        onClick={(e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
           e.stopPropagation();
           setShowModal(true);
         }}>

@@ -135,21 +135,21 @@ const EditCard = ({ kanban }: Props) => {
   const { listId, cardId } = useParams();
   const list = React.useMemo(
     () => kanban?.lists.filter((l) => l.id === listId)[0],
-    [listId, kanban?.lists]
+    [listId, kanban?.lists],
   );
   const card = React.useMemo(
     () => list?.cards.filter((c) => c.id === cardId)[0],
-    [cardId, list?.cards]
+    [cardId, list?.cards],
   );
 
   const comments = React.useMemo(
     () => [...(card?.comments ?? [])].reverse(),
-    [card]
+    [card],
   );
   const archivedCard = React.useMemo(
     () =>
       card ? null : kanban?.archive.cards.filter((c) => c.id === cardId)[0],
-    [cardId, list?.cards]
+    [cardId, list?.cards],
   );
   const [isArchived, setArchived] = React.useState(!!archivedCard);
   const taskList = React.useMemo(
@@ -199,7 +199,7 @@ const EditCard = ({ kanban }: Props) => {
           )}
         </Draggable>
       )),
-    [card?.checkboxes]
+    [card?.checkboxes],
   );
 
   const onDragEnd = React.useCallback(
@@ -214,12 +214,12 @@ const EditCard = ({ kanban }: Props) => {
             list.id,
             card.id,
             result.source.index,
-            result.destination.index
+            result.destination.index,
           );
           break;
       }
     },
-    [kanban]
+    [kanban],
   );
 
   const handleEditDescription = React.useCallback(
@@ -232,7 +232,7 @@ const EditCard = ({ kanban }: Props) => {
         description,
       });
     },
-    [kanban, list, card]
+    [kanban, list, card],
   );
 
   const handleEditDate = React.useCallback(
@@ -242,7 +242,7 @@ const EditCard = ({ kanban }: Props) => {
       }
       updateCardDueDate(list, card, date);
     },
-    [kanban, list, card]
+    [kanban, list, card],
   );
 
   const handleAddTask = React.useCallback(
@@ -256,7 +256,7 @@ const EditCard = ({ kanban }: Props) => {
         checked: false,
       });
     },
-    [kanban, list, card]
+    [kanban, list, card],
   );
 
   const handleAddComment = React.useCallback(
@@ -269,7 +269,7 @@ const EditCard = ({ kanban }: Props) => {
         comment,
       });
     },
-    [kanban, list, card]
+    [kanban, list, card],
   );
 
   const handleEditComment = React.useCallback(
@@ -282,7 +282,7 @@ const EditCard = ({ kanban }: Props) => {
         comment: text,
       });
     },
-    [kanban, list, card]
+    [kanban, list, card],
   );
 
   const handleDeleteComment = React.useCallback(
@@ -292,7 +292,7 @@ const EditCard = ({ kanban }: Props) => {
       }
       deleteComments(list, card, comment.id);
     },
-    [kanban, list, card]
+    [kanban, list, card],
   );
 
   const handleCopyCard = React.useCallback(() => {
@@ -345,7 +345,7 @@ const EditCard = ({ kanban }: Props) => {
           navigate('/');
         }}>
         <Container
-          onClick={(e) => {
+          onClick={(e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
             if (showModal) {
               setShowModal(false);
               return;

@@ -45,7 +45,7 @@ export const Title = ({
       onEnter(title === '' ? refDefaultTitle.current : title);
       setEdit(false);
     },
-    [title, isComposing]
+    [title, isComposing],
   );
   const handleBlur = React.useCallback(() => {
     if (title === '') {
@@ -63,7 +63,7 @@ export const Title = ({
     <>
       {isEdit ? (
         <Input
-          onChange={(e) => {
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
             setTitle(e.target.value);
           }}
           placeholder="Enter list title"
@@ -106,7 +106,7 @@ export const Title = ({
             padding: '4px',
             cursor: 'pointer',
           }}
-          onClick={(e) => {
+          onClick={(e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
             e.stopPropagation();
             setEdit(true);
           }}>

@@ -75,14 +75,14 @@ export const ArchiveLists = ({ lists }: Props) => {
             />
             <Menus>
               <MenuItem
-                onClick={(e) => {
+                onClick={(e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
                   e.stopPropagation();
                   restoreList({ ...l, cards: [] });
                 }}>
                 Restore
               </MenuItem>
               <MenuItem
-                onClick={(e) => {
+                onClick={(e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
                   e.stopPropagation();
                   removeList(l.id);
                 }}>

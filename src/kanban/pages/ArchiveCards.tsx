@@ -63,14 +63,14 @@ export const ArchiveCards = ({ cards }: Props) => {
             <Card card={c} isEdit={false} editable={false} />
             <Menus>
               <MenuItem
-                onClick={(e) => {
+                onClick={(e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
                   e.stopPropagation();
                   restoreCard(c);
                 }}>
                 Restore
               </MenuItem>
               <MenuItem
-                onClick={(e) => {
+                onClick={(e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
                   e.stopPropagation();
                   deleteCard(c);
                 }}>

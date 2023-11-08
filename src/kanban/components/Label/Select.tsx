@@ -76,7 +76,7 @@ export const LabelSelect = ({ list, card }: Props) => {
   });
   const selectedLabelNames = React.useMemo(
     () => card.labels.map((l) => l.title),
-    [card.labels]
+    [card.labels],
   );
   const handleCreate = React.useCallback((label: Label) => {
     if (kanban.settings.labels.map((l) => l.title).includes(label.title)) {
@@ -94,7 +94,7 @@ export const LabelSelect = ({ list, card }: Props) => {
     updateLabel(list, card, label);
     updateSettings({
       labels: kanban.settings.labels.map((l) =>
-        l.id === label.id ? label : l
+        l.id === label.id ? label : l,
       ),
     });
     setShowEditLabel({ show: false });
@@ -123,7 +123,7 @@ export const LabelSelect = ({ list, card }: Props) => {
               <LabelItem
                 key={l.id}
                 style={{ backgroundColor: l.color }}
-                onClick={(e) => {
+                onClick={(e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
                   e.stopPropagation();
                   const isSelected = selectedLabelNames.includes(l.title);
                   if (isSelected) {
@@ -153,7 +153,7 @@ export const LabelSelect = ({ list, card }: Props) => {
           ))}
           <AddLabel
             style={{ width: '131px' }}
-            onClick={(e) => {
+            onClick={(e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
               e.stopPropagation();
               setShowEditLabel({ show: true, label: undefined });
             }}>

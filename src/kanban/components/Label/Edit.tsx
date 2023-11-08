@@ -61,13 +61,13 @@ type Props = {
 
 export const LabelEdit = ({ label, onEdit, onDelete }: Props) => {
   const [selectedColor, setSelectedColor] = React.useState(
-    label ? label.color : ('#ff9f1a' as Color)
+    label ? label.color : ('#ff9f1a' as Color),
   );
   const [labelText, setLabelText] = React.useState(label ? label.title : '');
 
   return (
     <Modal
-      onClick={(e) => {
+      onClick={(e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
         e.stopPropagation();
       }}>
       <Line>
@@ -82,7 +82,7 @@ export const LabelEdit = ({ label, onEdit, onDelete }: Props) => {
             borderBottom: '1px solid var(--form-border-color)',
           }}
           value={labelText}
-          onChange={(e) => {
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
             setLabelText(e.target.value);
           }}
         />
@@ -96,7 +96,7 @@ export const LabelEdit = ({ label, onEdit, onDelete }: Props) => {
             <LabelItem
               key={c}
               style={{ backgroundColor: c }}
-              onClick={(e) => {
+              onClick={(e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
                 e.stopPropagation();
                 setSelectedColor(c);
               }}>
@@ -123,7 +123,7 @@ export const LabelEdit = ({ label, onEdit, onDelete }: Props) => {
                       id: uuid(),
                       title: labelText,
                       color: selectedColor,
-                    }
+                    },
               );
             }}
           />

@@ -99,7 +99,7 @@ export const List = ({ kanban, list }: Props) => {
   const setMenu = actions.useSetMenu();
   const searcher = React.useMemo(
     () => new Fuse(list.cards, searchOptions),
-    [list.cards]
+    [list.cards],
   );
   const filteredCards = React.useMemo(() => {
     if (!filteredText) {
@@ -125,7 +125,7 @@ export const List = ({ kanban, list }: Props) => {
           )}
         </Draggable>
       )),
-    [filteredCards]
+    [filteredCards],
   );
   const handleAddCard = React.useCallback(
     (card: CardModel) => {
@@ -144,10 +144,10 @@ export const List = ({ kanban, list }: Props) => {
             title,
             labels,
           });
-        }, kanban)
+        }, kanban),
       );
     },
-    [kanban, setKanban]
+    [kanban, setKanban],
   );
 
   return (
@@ -175,7 +175,7 @@ export const List = ({ kanban, list }: Props) => {
                         updateList(kanban, {
                           ...list,
                           title: text,
-                        })
+                        }),
                       );
                     }}
                   />
@@ -279,7 +279,9 @@ export const List = ({ kanban, list }: Props) => {
                 />
               ) : (
                 <AddLabel
-                  onClick={(e) => {
+                  onClick={(
+                    e: React.MouseEvent<HTMLDivElement, MouseEvent>,
+                  ) => {
                     e.stopPropagation();
                     setAddCard(newCard(uuid(), list.id));
                   }}>

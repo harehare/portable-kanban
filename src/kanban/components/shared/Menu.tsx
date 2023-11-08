@@ -55,7 +55,7 @@ export const Menu = ({ id, icon, position, items }: Props) => {
   return (
     <>
       <MenuIcon
-        onClick={(e) => {
+        onClick={(e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
           e.stopPropagation();
           setMenu(id);
         }}>
@@ -78,7 +78,7 @@ export const Menu = ({ id, icon, position, items }: Props) => {
                   }}>
                   <MenuItem text={i.text} icon={i.icon} onClick={i.onClick} />
                 </div>
-              )
+              ),
             )}
           </MenuItems>
         )}

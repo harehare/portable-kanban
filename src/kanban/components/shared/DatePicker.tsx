@@ -22,7 +22,7 @@ export const DatePicker = ({ value, onChange }: Props) => {
       type="datetime-local"
       style={{ width: 'calc(100% - 16px)', marginLeft: '8px' }}
       value={date}
-      onChange={(e) => {
+      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
         try {
           onChange(new Date(Date.parse(e.target.value)));
         } catch {

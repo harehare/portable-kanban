@@ -62,7 +62,7 @@ export const Filter = ({ settings }: Props) => {
         navigate('/');
       }}>
       <Container
-        onClick={(e) => {
+        onClick={(e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
           e.stopPropagation();
         }}>
         <div style={{ width: '100%', padding: '8px', textAlign: 'center' }}>
@@ -84,19 +84,19 @@ export const Filter = ({ settings }: Props) => {
             </div>
             <LabelItem
               style={{ backgroundColor: label.color }}
-              onClick={(e) => {
+              onClick={(e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
                 e.stopPropagation();
                 if (filteredLabels.has(label.title)) {
                   setFilter(
                     filteredText,
                     new Set(
-                      [...filteredLabels].filter((l) => l !== label.title)
-                    )
+                      [...filteredLabels].filter((l) => l !== label.title),
+                    ),
                   );
                 } else {
                   setFilter(
                     filteredText,
-                    new Set([...filteredLabels, label.title])
+                    new Set([...filteredLabels, label.title]),
                   );
                 }
               }}>

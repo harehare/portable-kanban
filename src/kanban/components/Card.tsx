@@ -107,7 +107,7 @@ export const Card = ({
   }>({ card, isEdit });
   const checkedCount = React.useMemo(
     () => state.card.checkboxes.filter((c) => c.checked).length,
-    [state.card, isComposing]
+    [state.card, isComposing],
   );
 
   React.useEffect(() => {
@@ -128,7 +128,7 @@ export const Card = ({
       }
       setState({ ...state, isEdit: false });
     },
-    [state.card, isComposing]
+    [state.card, isComposing],
   );
   const inputRef = useAutoFocus();
 
@@ -140,10 +140,10 @@ export const Card = ({
             sub(state.card.dueDate, {
               days: 1,
             }),
-            'yyyy-MM-dd'
+            'yyyy-MM-dd',
           )
         : false,
-    [state.card.dueDate]
+    [state.card.dueDate],
   );
 
   console.log(
@@ -151,8 +151,8 @@ export const Card = ({
       sub(state.card.dueDate ?? Date.now(), {
         days: 1,
       }),
-      'yyyy-MM-dd'
-    )
+      'yyyy-MM-dd',
+    ),
   );
 
   const isDueDate = React.useMemo(
@@ -161,13 +161,13 @@ export const Card = ({
         ? format(state.card.dueDate, 'yyyy-MM-dd') ===
           format(Date.now(), 'yyyy-MM-dd')
         : false,
-    [state.card.dueDate]
+    [state.card.dueDate],
   );
 
   const dueDateColor = React.useMemo(
     () =>
       isDueDate ? '#FF4500' : isOneDayLeft ? '#FF7F50' : 'var(--primary-color)',
-    [isDueDate, isOneDayLeft]
+    [isDueDate, isOneDayLeft],
   );
 
   return (
@@ -187,7 +187,7 @@ export const Card = ({
         </>
       ) : state.isEdit ? (
         <Input
-          onChange={(e) => {
+          onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
             const card = { ...state.card, title: e.target.value };
             setState({
               ...state,

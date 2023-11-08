@@ -14,7 +14,7 @@ type Props = {
 export const IconButton = ({ icon, onClick }: Props) => {
   return (
     <Button
-      onClick={(e) => {
+      onClick={(e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
         e.stopPropagation();
         onClick();
       }}>

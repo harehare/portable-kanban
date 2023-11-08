@@ -71,7 +71,7 @@ export const Button = ({
     <ButtonBase
       background={type}
       disabled={disabled}
-      onClick={(e) => {
+      onClick={(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         e.stopPropagation();
         onClick();
       }}>

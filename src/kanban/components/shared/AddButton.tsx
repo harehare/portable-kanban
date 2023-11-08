@@ -50,7 +50,7 @@ export const AddButton = ({
       />
       {canClose ? (
         <Icon
-          onClick={(e) => {
+          onClick={(e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
             e.stopPropagation();
             if (onCancel) {
               onCancel();
