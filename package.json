@@ -125,7 +125,7 @@
     "react-icons": "^4.11.0",
     "react-indiana-drag-scroll": "^3.0.3-alpha",
     "react-linkify": "^1.0.0-alpha",
-    "react-markdown": "^9.0.0",
+    "react-markdown": "^9.0.1",
     "react-router-dom": "^6.18.0",
     "react-textarea-autosize": "^8.5.3",
     "recoil": "^0.7.7",
