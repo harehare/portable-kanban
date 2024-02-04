@@ -95,7 +95,7 @@
     "@types/react-linkify": "^1.0.4",
     "@types/react-router-dom": "^5.3.3",
     "@types/styled-components": "^5.1.30",
-    "@types/uuid": "^9.0.7",
+    "@types/uuid": "^9.0.8",
     "@types/vscode": "^1.85.0",
     "@typescript-eslint/eslint-plugin": "^6.20.0",
     "@typescript-eslint/parser": "^6.17.0",
