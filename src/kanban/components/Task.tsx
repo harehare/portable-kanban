@@ -12,7 +12,7 @@ const Container = styled.div`
   align-items: center;
   width: 100%;
   padding: 8px;
-  :hover {
+  &:hover {
     background-color: var(--selected-color);
   }
 `;

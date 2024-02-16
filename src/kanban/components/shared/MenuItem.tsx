@@ -9,7 +9,7 @@ const Item = styled.div`
   color: var(--text-color);
   background-color: var(--primary-background-color);
   padding: 8px;
-  :hover {
+  &:hover {
     background-color: rgba(0, 0, 0, 0.1);
   }
 `;

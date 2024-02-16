@@ -20,27 +20,27 @@ const ButtonBase = styled.button<{
           background-color: var(--primary-color);
         `
       : background === 'danger'
-      ? css`
-          color: var(--light-text-color);
-          background-color: var(--danger-color);
-        `
-      : css`
-          color: var(--text-color);
-          background-color: var(--button-color);
-        `}
-  :hover {
+        ? css`
+            color: var(--light-text-color);
+            background-color: var(--danger-color);
+          `
+        : css`
+            color: var(--text-color);
+            background-color: var(--button-color);
+          `}
+  &:hover {
     ${({ background }) =>
       background === 'primary'
         ? css`
             background-color: #285f8f !important;
           `
         : background === 'danger'
-        ? css`
-            background-color: #c02a33 !important;
-          `
-        : css`
-            background-color: var(--selected-color) !important;
-          `}
+          ? css`
+              background-color: #c02a33 !important;
+            `
+          : css`
+              background-color: var(--selected-color) !important;
+            `}
   }
 `;
 

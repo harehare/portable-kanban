@@ -1,5 +1,5 @@
-import format from 'date-fns/format';
-import sub from 'date-fns/sub';
+import { format } from 'date-fns/format';
+import { sub } from 'date-fns/sub';
 import * as React from 'react';
 import { FaRegComment } from 'react-icons/fa';
 import { MdDateRange } from 'react-icons/md';
@@ -19,9 +19,9 @@ const Container = styled.div`
   border-radius: var(--border-radius);
   background-color: var(--secondary-background-color);
   cursor: pointer;
-  box-sizing: border-box;
+  box-sizing: content-box;
   box-shadow: var(--shadow-sm);
-  :hover {
+  &:hover {
     background-color: var(--hover-color);
   }
 `;
