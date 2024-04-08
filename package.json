@@ -100,7 +100,7 @@
     "@typescript-eslint/eslint-plugin": "^7.6.0",
     "@typescript-eslint/parser": "^7.6.0",
     "@vscode/test-electron": "^2.3.9",
-    "css-loader": "^6.10.0",
+    "css-loader": "^7.1.0",
     "eslint": "^8.57.0",
     "eslint-config-prettier": "^9.1.0",
     "glob": "^10.3.12",
