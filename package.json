@@ -129,7 +129,7 @@
     "react-router-dom": "^6.23.0",
     "react-textarea-autosize": "^8.5.3",
     "recoil": "^0.7.7",
-    "styled-components": "^6.1.8",
+    "styled-components": "^6.1.9",
     "uuid": "^9.0.1"
   }
 }
