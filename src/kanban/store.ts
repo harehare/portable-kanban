@@ -152,7 +152,7 @@ export const actions = {
     const setState = useSetRecoilState(filterState);
     return React.useCallback(
       (text: string, labels: Set<string>) => setState({ text, labels }),
-      []
+      [],
     );
   },
   useSetShowModal: () => {
@@ -180,7 +180,7 @@ export const kanbanActions = {
       (list: List) => {
         setState(addList(kanban, list));
       },
-      [kanban]
+      [kanban],
     );
   },
   useUpdateList: () => {
@@ -189,7 +189,7 @@ export const kanbanActions = {
       (list: List) => {
         setState(updateList(kanban, list));
       },
-      [kanban]
+      [kanban],
     );
   },
   useMoveList: () => {
@@ -198,7 +198,7 @@ export const kanbanActions = {
       (fromListId: number, toListId: number) => {
         setState(moveList(kanban, fromListId, toListId));
       },
-      [kanban]
+      [kanban],
     );
   },
   useRemoveList: () => {
@@ -207,7 +207,7 @@ export const kanbanActions = {
       (listId: string) => {
         setState(removeList(kanban, listId));
       },
-      [kanban]
+      [kanban],
     );
   },
   useArchiveList: () => {
@@ -216,7 +216,7 @@ export const kanbanActions = {
       (list: List) => {
         setState(archiveList(kanban, list));
       },
-      [kanban]
+      [kanban],
     );
   },
   useArchiveAllCardInList: () => {
@@ -225,7 +225,7 @@ export const kanbanActions = {
       (list: List) => {
         setState(archiveAllCardInList(kanban, list));
       },
-      [kanban]
+      [kanban],
     );
   },
   useRestoreList: () => {
@@ -234,7 +234,7 @@ export const kanbanActions = {
       (list: List) => {
         setState(restoreList(kanban, list));
       },
-      [kanban]
+      [kanban],
     );
   },
   useMoveAllCardsToList: () => {
@@ -243,7 +243,7 @@ export const kanbanActions = {
       (fromList: List, toList: List) => {
         setState(moveAllCardsToList(kanban, fromList, toList));
       },
-      [kanban]
+      [kanban],
     );
   },
   useAddCard: () => {
@@ -252,7 +252,7 @@ export const kanbanActions = {
       (list: List, card: Card) => {
         setState(addCard(kanban, list, card));
       },
-      [kanban]
+      [kanban],
     );
   },
   useUpdateCard: () => {
@@ -261,7 +261,7 @@ export const kanbanActions = {
       (list: List, card: Card) => {
         setState(updateCard(kanban, list, card));
       },
-      [kanban]
+      [kanban],
     );
   },
   useDeleteCard: () => {
@@ -270,7 +270,7 @@ export const kanbanActions = {
       (card: Card) => {
         setState(deleteCard(kanban, card));
       },
-      [kanban]
+      [kanban],
     );
   },
   useCopyCard: () => {
@@ -279,7 +279,7 @@ export const kanbanActions = {
       (card: Card) => {
         setState(copyCard(kanban, card));
       },
-      [kanban]
+      [kanban],
     );
   },
   useMoveCard: () => {
@@ -288,7 +288,7 @@ export const kanbanActions = {
       (listId: string, fromCardIndex: number, toCardIndex: number) => {
         setState(moveCard(kanban, listId, fromCardIndex, toCardIndex));
       },
-      [kanban]
+      [kanban],
     );
   },
   useMoveCardAcrossList: () => {
@@ -298,7 +298,7 @@ export const kanbanActions = {
         fromListId: string,
         fromCardIndex: number,
         toListId: string,
-        toCardIndex: number
+        toCardIndex: number,
       ) => {
         setState(
           moveCardAcrossList(
@@ -306,11 +306,11 @@ export const kanbanActions = {
             fromListId,
             fromCardIndex,
             toListId,
-            toCardIndex
-          )
+            toCardIndex,
+          ),
         );
       },
-      [kanban]
+      [kanban],
     );
   },
   useArchiveCard: () => {
@@ -319,7 +319,7 @@ export const kanbanActions = {
       (list: List, card: Card) => {
         setState(archiveCard(kanban, list, card));
       },
-      [kanban]
+      [kanban],
     );
   },
   useRestoreCard: () => {
@@ -328,16 +328,16 @@ export const kanbanActions = {
       (card: Card) => {
         setState(restoreCard(kanban, card));
       },
-      [kanban]
+      [kanban],
     );
   },
   useUpdateCardDueDate: () => {
     const [kanban, setState] = useRecoilState(kanbanState);
     return React.useCallback(
-      (list: List, card: Card, dueDate: Date) => {
+      (list: List, card: Card, dueDate?: Date) => {
         setState(updateCard(kanban, list, { ...card, dueDate }));
       },
-      [kanban]
+      [kanban],
     );
   },
   useAddCheckBox: () => {
@@ -346,7 +346,7 @@ export const kanbanActions = {
       (list: List, card: Card, checkbox: CheckBox) => {
         setState(addCheckBox(kanban, list, card, checkbox));
       },
-      [kanban]
+      [kanban],
     );
   },
   useUpdateCheckBox: () => {
@@ -355,7 +355,7 @@ export const kanbanActions = {
       (list: List, card: Card, checkbox: CheckBox) => {
         setState(updateCheckBox(kanban, list, card, checkbox));
       },
-      [kanban]
+      [kanban],
     );
   },
   useDeleteCheckBox: () => {
@@ -364,7 +364,7 @@ export const kanbanActions = {
       (list: List, card: Card, id: string) => {
         setState(deleteCheckBox(kanban, list, card, id));
       },
-      [kanban]
+      [kanban],
     );
   },
   useMoveCheckBox: () => {
@@ -374,7 +374,7 @@ export const kanbanActions = {
         listId: string,
         cardId: string,
         fromCheckBoxIndex: number,
-        toCheckBoxIndex: number
+        toCheckBoxIndex: number,
       ) => {
         setState(
           moveCheckBox(
@@ -382,11 +382,11 @@ export const kanbanActions = {
             listId,
             cardId,
             fromCheckBoxIndex,
-            toCheckBoxIndex
-          )
+            toCheckBoxIndex,
+          ),
         );
       },
-      [kanban]
+      [kanban],
     );
   },
   useAddLabel: () => {
@@ -395,7 +395,7 @@ export const kanbanActions = {
       (list: List, card: Card, label: Label) => {
         setState(addLabel(kanban, list, card, label));
       },
-      [kanban]
+      [kanban],
     );
   },
   useUpdateLabel: () => {
@@ -404,7 +404,7 @@ export const kanbanActions = {
       (list: List, card: Card, label: Label) => {
         setState(updateLabel(kanban, list, card, label));
       },
-      [kanban]
+      [kanban],
     );
   },
   useDeleteLabel: () => {
@@ -413,7 +413,7 @@ export const kanbanActions = {
       (list: List, card: Card, id: string) => {
         setState(deleteLabel(kanban, list, card, id));
       },
-      [kanban]
+      [kanban],
     );
   },
   useAddComments: () => {
@@ -422,7 +422,7 @@ export const kanbanActions = {
       (list: List, card: Card, comment: Comment) => {
         setState(addComments(kanban, list, card, comment));
       },
-      [kanban]
+      [kanban],
     );
   },
   useUpdateComments: () => {
@@ -431,7 +431,7 @@ export const kanbanActions = {
       (list: List, card: Card, comment: Comment) => {
         setState(updateComments(kanban, list, card, comment));
       },
-      [kanban]
+      [kanban],
     );
   },
   useDeleteComments: () => {
@@ -440,7 +440,7 @@ export const kanbanActions = {
       (list: List, card: Card, id: string) => {
         setState(deleteComments(kanban, list, card, id));
       },
-      [kanban]
+      [kanban],
     );
   },
   useUpdateSettings: () => {
@@ -449,7 +449,7 @@ export const kanbanActions = {
       (settings: Settings) => {
         setState(updateSettings(kanban, settings));
       },
-      [kanban]
+      [kanban],
     );
   },
 };

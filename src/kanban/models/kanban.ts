@@ -7,6 +7,7 @@ import {
   boolean,
   union,
   constant,
+  oneOf,
 } from '@mojotech/json-type-validation';
 
 import { uuid } from '../utils';
@@ -34,7 +35,7 @@ export type Card = {
   listId: string;
   title: string;
   description: string;
-  dueDate: Date | undefined;
+  dueDate: Date | undefined | null;
   labels: Label[];
   checkboxes: CheckBox[];
   comments: Comment[];
@@ -70,7 +71,7 @@ export const colors: ReadonlyArray<`#${string}`> = [
   '#344563',
 ] as const;
 
-export type Color = typeof colors[number];
+export type Color = (typeof colors)[number];
 
 export const newCard = (id: string, listId: string) => {
   return {
@@ -110,7 +111,7 @@ export const updateList = (kanban: Kanban, list: List): Kanban => {
 export const moveList = (
   kanban: Kanban,
   fromListId: number,
-  toListId: number
+  toListId: number,
 ): Kanban => {
   const list = kanban.lists[fromListId];
   const lists = kanban.lists.filter((l) => l.id !== list.id);
@@ -149,7 +150,7 @@ export const archiveAllCardInList = (kanban: Kanban, list: List): Kanban => {
       cards: [...kanban.archive.cards, ...list.cards],
     },
     lists: kanban.lists.map((l) =>
-      l.id === list.id ? { ...l, cards: [] } : l
+      l.id === list.id ? { ...l, cards: [] } : l,
     ),
   };
 };
@@ -174,7 +175,7 @@ export const restoreList = (kanban: Kanban, list: List): Kanban => {
 export const moveAllCardsToList = (
   kanban: Kanban,
   fromList: List,
-  toList: List
+  toList: List,
 ): Kanban => {
   return {
     ...kanban,
@@ -188,8 +189,8 @@ export const moveAllCardsToList = (
             ],
           }
         : l.id === fromList.id
-        ? { ...fromList, cards: [] }
-        : l
+          ? { ...fromList, cards: [] }
+          : l,
     ),
   };
 };
@@ -202,7 +203,7 @@ export const addCard = (kanban: Kanban, list: List, card: Card): Kanban => {
   return {
     ...kanban,
     lists: kanban.lists.map((l) =>
-      l.id === list.id ? { ...list, cards: [...list.cards, card] } : l
+      l.id === list.id ? { ...list, cards: [...list.cards, card] } : l,
     ),
   };
 };
@@ -220,7 +221,7 @@ export const updateCard = (kanban: Kanban, list: List, card: Card): Kanban => {
             ...list,
             cards: list.cards.map((c) => (c.id === card.id ? card : c)),
           }
-        : l
+        : l,
     ),
   };
 };
@@ -244,7 +245,7 @@ export const copyCard = (kanban: Kanban, card: Card): Kanban => {
             ...l,
             cards: [...l.cards, { ...card, id: uuid() }],
           }
-        : l
+        : l,
     ),
   };
 };
@@ -254,7 +255,7 @@ export const moveCardAcrossList = (
   fromListId: string,
   fromCardIndex: number,
   toListId: string,
-  toCardIndex: number
+  toCardIndex: number,
 ): Kanban => {
   const fromList = kanban.lists.filter((l) => l.id === fromListId)[0];
   const fromCard = fromList.cards[fromCardIndex];
@@ -276,8 +277,8 @@ export const moveCardAcrossList = (
       l.id === fromList.id
         ? { ...fromList, cards: fromCards }
         : l.id === toList.id
-        ? { ...toList, cards: toCards }
-        : l
+          ? { ...toList, cards: toCards }
+          : l,
     ),
   };
 };
@@ -286,7 +287,7 @@ export const moveCard = (
   kanban: Kanban,
   listId: string,
   fromCardIndex: number,
-  toCardIndex: number
+  toCardIndex: number,
 ): Kanban => {
   const list = kanban.lists.filter((l) => l.id === listId)[0];
   const fromCard = list?.cards[fromCardIndex];
@@ -302,7 +303,7 @@ export const moveCard = (
     lists: kanban.lists.map((l) =>
       l.id === list.id
         ? { ...list, cards: insert(movedCards, toCardIndex, fromCard) }
-        : l
+        : l,
     ),
   };
 };
@@ -314,7 +315,7 @@ export const archiveCard = (kanban: Kanban, list: List, card: Card): Kanban => {
     lists: kanban.lists.map((l) =>
       l.id === list.id
         ? { ...list, cards: l.cards.filter((c) => c.id !== card.id) }
-        : l
+        : l,
     ),
   };
 };
@@ -327,7 +328,7 @@ export const restoreCard = (kanban: Kanban, card: Card): Kanban => {
       cards: kanban.archive.cards.filter((a) => a.id !== card.id),
     },
     lists: kanban.lists.map((l) =>
-      l.id === card.listId ? { ...l, cards: [...l.cards, card] } : l
+      l.id === card.listId ? { ...l, cards: [...l.cards, card] } : l,
     ),
   };
 };
@@ -336,7 +337,7 @@ export const addCheckBox = (
   kanban: Kanban,
   list: List,
   card: Card,
-  checkbox: CheckBox
+  checkbox: CheckBox,
 ): Kanban => {
   if (!checkbox.title) {
     return kanban;
@@ -354,10 +355,10 @@ export const addCheckBox = (
                     ...card,
                     checkboxes: [...card.checkboxes, checkbox],
                   }
-                : c
+                : c,
             ),
           }
-        : l
+        : l,
     ),
   };
 };
@@ -366,7 +367,7 @@ export const updateCheckBox = (
   kanban: Kanban,
   list: List,
   card: Card,
-  checkbox: CheckBox
+  checkbox: CheckBox,
 ): Kanban => {
   if (!checkbox.title) {
     return kanban;
@@ -383,13 +384,13 @@ export const updateCheckBox = (
                 ? {
                     ...card,
                     checkboxes: card.checkboxes.map((check) =>
-                      check.id === checkbox.id ? checkbox : check
+                      check.id === checkbox.id ? checkbox : check,
                     ),
                   }
-                : c
+                : c,
             ),
           }
-        : l
+        : l,
     ),
   };
 };
@@ -398,7 +399,7 @@ export const deleteCheckBox = (
   kanban: Kanban,
   list: List,
   card: Card,
-  id: string
+  id: string,
 ): Kanban => {
   return {
     ...kanban,
@@ -411,13 +412,13 @@ export const deleteCheckBox = (
                 ? {
                     ...card,
                     checkboxes: card.checkboxes.filter(
-                      (check) => check.id !== id
+                      (check) => check.id !== id,
                     ),
                   }
-                : c
+                : c,
             ),
           }
-        : l
+        : l,
     ),
   };
 };
@@ -427,13 +428,13 @@ export const moveCheckBox = (
   listId: string,
   cardId: string,
   fromCheckboxIndex: number,
-  toCheckboxIndex: number
+  toCheckboxIndex: number,
 ): Kanban => {
   const list = kanban.lists.filter((l) => l.id === listId)[0];
   const card = list.cards.filter((c) => c.id === cardId)[0];
   const checkbox = card.checkboxes[fromCheckboxIndex];
   const movedCheckBox = card.checkboxes.filter(
-    (_, i) => i !== fromCheckboxIndex
+    (_, i) => i !== fromCheckboxIndex,
   );
 
   return {
@@ -449,13 +450,13 @@ export const moveCheckBox = (
                     checkboxes: insert(
                       movedCheckBox,
                       toCheckboxIndex,
-                      checkbox
+                      checkbox,
                     ),
                   }
-                : c
+                : c,
             ),
           }
-        : l
+        : l,
     ),
   };
 };
@@ -464,7 +465,7 @@ export const addLabel = (
   kanban: Kanban,
   list: List,
   card: Card,
-  label: Label
+  label: Label,
 ): Kanban => {
   if (!label.title) {
     return kanban;
@@ -482,10 +483,10 @@ export const addLabel = (
                     ...card,
                     labels: [...card.labels, label],
                   }
-                : c
+                : c,
             ),
           }
-        : l
+        : l,
     ),
   };
 };
@@ -494,7 +495,7 @@ export const updateLabel = (
   kanban: Kanban,
   list: List,
   card: Card,
-  label: Label
+  label: Label,
 ): Kanban => {
   if (!label.title) {
     return kanban;
@@ -511,13 +512,13 @@ export const updateLabel = (
                 ? {
                     ...card,
                     labels: card.labels.map((l) =>
-                      l.id === label.id ? label : l
+                      l.id === label.id ? label : l,
                     ),
                   }
-                : c
+                : c,
             ),
           }
-        : l
+        : l,
     ),
   };
 };
@@ -526,7 +527,7 @@ export const deleteLabel = (
   kanban: Kanban,
   list: List,
   card: Card,
-  id: string
+  id: string,
 ): Kanban => {
   return {
     ...kanban,
@@ -540,10 +541,10 @@ export const deleteLabel = (
                     ...card,
                     labels: card.labels.filter((l) => l.id !== id),
                   }
-                : c
+                : c,
             ),
           }
-        : l
+        : l,
     ),
   };
 };
@@ -552,7 +553,7 @@ export const addComments = (
   kanban: Kanban,
   list: List,
   card: Card,
-  comment: Comment
+  comment: Comment,
 ): Kanban => {
   if (!comment.comment) {
     return kanban;
@@ -570,10 +571,10 @@ export const addComments = (
                     ...card,
                     comments: [...card.comments, comment],
                   }
-                : c
+                : c,
             ),
           }
-        : l
+        : l,
     ),
   };
 };
@@ -582,7 +583,7 @@ export const updateComments = (
   kanban: Kanban,
   list: List,
   card: Card,
-  comment: Comment
+  comment: Comment,
 ): Kanban => {
   if (!comment.comment) {
     return kanban;
@@ -599,13 +600,13 @@ export const updateComments = (
                 ? {
                     ...card,
                     comments: c.comments.map((cc) =>
-                      cc.id === comment.id ? comment : cc
+                      cc.id === comment.id ? comment : cc,
                     ),
                   }
-                : c
+                : c,
             ),
           }
-        : l
+        : l,
     ),
   };
 };
@@ -614,7 +615,7 @@ export const deleteComments = (
   kanban: Kanban,
   list: List,
   card: Card,
-  id: string
+  id: string,
 ): Kanban => {
   return {
     ...kanban,
@@ -628,10 +629,10 @@ export const deleteComments = (
                     ...card,
                     comments: c.comments.filter((cc) => cc.id !== id),
                   }
-                : c
+                : c,
             ),
           }
-        : l
+        : l,
     ),
   };
 };
@@ -669,8 +670,8 @@ const colorDecoder: Decoder<Color> = union(
     constant('#c377e0'),
     constant('#0079bf'),
     constant('#00c2e0'),
-    constant('#51e898')
-  )
+    constant('#51e898'),
+  ),
 );
 
 const labelDecoder: Decoder<Label> = object({

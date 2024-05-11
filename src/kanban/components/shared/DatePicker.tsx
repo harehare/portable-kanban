@@ -5,7 +5,7 @@ import { Input } from './Input';
 
 type Props = {
   value?: Date;
-  onChange: (date: Date) => void;
+  onChange: (date?: Date) => void;
 };
 
 export const DatePicker = ({ value, onChange }: Props) => {
@@ -23,10 +23,14 @@ export const DatePicker = ({ value, onChange }: Props) => {
       style={{ width: 'calc(100% - 16px)', marginLeft: '8px' }}
       value={date}
       onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-        try {
-          onChange(new Date(Date.parse(e.target.value)));
-        } catch {
-          onChange(new Date());
+        if (e.target.value !== '') {
+          try {
+            onChange(new Date(Date.parse(e.target.value)));
+          } catch {
+            onChange(undefined);
+          }
+        } else {
+          onChange(undefined);
         }
       }}
     />

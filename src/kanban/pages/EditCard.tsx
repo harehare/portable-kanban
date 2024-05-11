@@ -236,7 +236,7 @@ const EditCard = ({ kanban }: Props) => {
   );
 
   const handleEditDate = React.useCallback(
-    (date: Date) => {
+    (date?: Date) => {
       if (!kanban || !list || !card) {
         return;
       }
@@ -432,13 +432,16 @@ const EditCard = ({ kanban }: Props) => {
                 <TextBaseBold>Task List</TextBaseBold>
               </Head>
               <div style={{ margin: '8px -16px 8px -16px' }}>
-                <ProgressBar
-                  progress={
-                    ((card?.checkboxes.filter((c) => c.checked).length ?? 0.0) /
-                      (card?.checkboxes.length ?? 1.0)) *
-                    100
-                  }
-                />
+                {card && card.checkboxes.length > 0 && (
+                  <ProgressBar
+                    progress={
+                      ((card.checkboxes.filter((c) => c.checked).length ??
+                        0.0) /
+                        (card.checkboxes.length ?? 1.0)) *
+                      100
+                    }
+                  />
+                )}
               </div>
               <Droppable droppableId={card?.id || ''} type="tasks">
                 {(provided) => (

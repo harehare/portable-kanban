@@ -146,15 +146,6 @@ export const Card = ({
     [state.card.dueDate],
   );
 
-  console.log(
-    format(
-      sub(state.card.dueDate ?? Date.now(), {
-        days: 1,
-      }),
-      'yyyy-MM-dd',
-    ),
-  );
-
   const isDueDate = React.useMemo(
     () =>
       state.card.dueDate
