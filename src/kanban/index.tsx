@@ -1,14 +1,16 @@
-import * as ReactDOM from 'react-dom';
+import * as React from 'react';
+import { createRoot } from 'react-dom/client';
 import { BrowserRouter as Router } from 'react-router-dom';
-import { RecoilRoot } from 'recoil';
+import { Provider } from 'jotai';
 
 import KanbanApp from './App';
 
-ReactDOM.render(
-  <RecoilRoot>
+const root = createRoot(document.getElementById('root') as HTMLElement);
+
+root.render(
+  <Provider>
     <Router>
       <KanbanApp />
     </Router>
-  </RecoilRoot>,
-  document.getElementById('root') as HTMLElement
+  </Provider>,
 );

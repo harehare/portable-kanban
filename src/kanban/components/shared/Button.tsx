@@ -13,13 +13,13 @@ const ButtonBase = styled.button<{
   border-radius: var(--border-radius);
   line-height: 20px;
   padding: 6px 12px;
-  ${({ background }) =>
-    background === 'primary'
+  ${(props) =>
+    props.background === 'primary'
       ? css`
           color: var(--light-text-color);
           background-color: var(--primary-color);
         `
-      : background === 'danger'
+      : props.background === 'danger'
         ? css`
             color: var(--light-text-color);
             background-color: var(--danger-color);
@@ -29,12 +29,12 @@ const ButtonBase = styled.button<{
             background-color: var(--button-color);
           `}
   &:hover {
-    ${({ background }) =>
-      background === 'primary'
+    ${(props) =>
+      props.background === 'primary'
         ? css`
             background-color: #285f8f !important;
           `
-        : background === 'danger'
+        : props.background === 'danger'
           ? css`
               background-color: #c02a33 !important;
             `

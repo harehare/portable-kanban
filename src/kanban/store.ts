@@ -38,15 +38,18 @@ import {
   copyCard,
   moveCheckBox,
   moveAllCardsToList,
+  ArchiveList,
 } from './models/kanban';
+import { focusAtom } from 'jotai-optics';
 
 const titleAtom = atom('');
 const addCardAtom = atom<Card | undefined>(undefined);
-const filterAtom = atom<{ text: string; labels: Set<string> } | undefined>(
-  undefined,
-);
-const showModalState = atom<boolean>(false);
-const menuState = atom<string | null>(null);
+const filterAtom = atom<{ text: string; labels: Set<string> }>({
+  text: '',
+  labels: new Set([]),
+});
+const showModalAtom = atom<boolean>(false);
+const menuAtom = atom<string | null>(null);
 const kanbanAtom = atom<Kanban>({
   lists: [],
   archive: { lists: [], cards: [] },
@@ -73,29 +76,23 @@ const cardSelector = atomFamily(
         ?.cards.find((v) => v.id === cardId),
     ),
 );
-
-const filteredTextState = selectAtom(
-  filterAtom,
-  (filter: { text: string; labels: Set<string> } | undefined) =>
-    filter ? filter.text : '',
+const filteredTextSelector = focusAtom(filterAtom, (optic) =>
+  optic.prop('text'),
 );
-
-const filteredLabelState = selectAtom(
-  filterAtom,
-  (filter: { text: string; labels: Set<string> } | undefined) =>
-    filter ? filter.labels : new Set([]),
+const filteredLabelSelector = focusAtom(filterAtom, (optic) =>
+  optic.prop('labels'),
 );
 
 export const selectors = {
   useTitle: () => useAtomValue(titleAtom),
-  useFilterText: () => useAtomValue(filteredTextState),
-  useFilterLabels: () => useAtomValue(filteredLabelState),
-  useShowModal: () => useAtomValue(showModalState),
+  useFilterText: () => useAtomValue(filteredTextSelector),
+  useFilterLabels: () => useAtomValue(filteredLabelSelector),
+  useShowModal: () => useAtomValue(showModalAtom),
   useAddCard: () => useAtomValue(addCardAtom),
   useKanban: () => useAtomValue(kanbanState),
   useCard: (listId: string, cardId: string) =>
     useAtomValue(cardSelector({ listId, cardId })),
-  useMenu: () => useAtomValue(menuState),
+  useMenu: () => useAtomValue(menuAtom),
 };
 
 export const actions = {
@@ -115,7 +112,7 @@ export const actions = {
     );
   },
   useSetShowModal: () => {
-    const setState = useSetAtom(showModalState);
+    const setState = useSetAtom(showModalAtom);
     return React.useCallback((showModal: boolean) => setState(showModal), []);
   },
   useSetAddingCard: () => {
@@ -123,11 +120,11 @@ export const actions = {
     return React.useCallback((card: Card | undefined) => setState(card), []);
   },
   useSetMenu: () => {
-    const setState = useSetAtom(menuState);
+    const setState = useSetAtom(menuAtom);
     return React.useCallback((menuId: string) => setState(menuId), []);
   },
   useMenuClose: () => {
-    const setState = useSetAtom(menuState);
+    const setState = useSetAtom(menuAtom);
     return React.useCallback(() => setState(''), []);
   },
 };

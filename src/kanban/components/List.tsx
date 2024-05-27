@@ -234,8 +234,8 @@ export const List = ({ kanban, list }: Props) => {
                 {filteredCards.length === 1
                   ? '1 card'
                   : filteredCards.length > 1
-                  ? `${filteredCards.length} cards`
-                  : ''}
+                    ? `${filteredCards.length} cards`
+                    : ''}
               </TextXs>
               <div
                 style={{
