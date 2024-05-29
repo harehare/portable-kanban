@@ -9,7 +9,7 @@ export class KanbanEditorProvider implements vscode.CustomTextEditorProvider {
     const providerRegistration = vscode.window.registerCustomEditorProvider(
       KanbanEditorProvider.viewType,
       provider,
-      { webviewOptions: { retainContextWhenHidden: true } }
+      { webviewOptions: { retainContextWhenHidden: true } },
     );
     return providerRegistration;
   }
@@ -21,7 +21,7 @@ export class KanbanEditorProvider implements vscode.CustomTextEditorProvider {
   public async resolveCustomTextEditor(
     document: vscode.TextDocument,
     webviewPanel: vscode.WebviewPanel,
-    _token: vscode.CancellationToken
+    _token: vscode.CancellationToken,
   ): Promise<void> {
     let initialized = false;
 
@@ -67,7 +67,7 @@ export class KanbanEditorProvider implements vscode.CustomTextEditorProvider {
 
   private getHtmlForWebview(webview: vscode.Webview): string {
     const scriptUri = webview.asWebviewUri(
-      vscode.Uri.joinPath(this.context.extensionUri, 'dist', 'kanban.js')
+      vscode.Uri.joinPath(this.context.extensionUri, 'dist', 'kanban.js'),
     );
     const theme = vscode.workspace
       .getConfiguration()
@@ -85,8 +85,8 @@ export class KanbanEditorProvider implements vscode.CustomTextEditorProvider {
         this.context.extensionUri,
         'assets',
         'css',
-        'main.css'
-      )
+        'main.css',
+      ),
     );
     const themeUri = webview.asWebviewUri(
       vscode.Uri.joinPath(
@@ -96,9 +96,9 @@ export class KanbanEditorProvider implements vscode.CustomTextEditorProvider {
         theme === 'dark'
           ? 'dark.css'
           : theme === 'light'
-          ? 'light.css'
-          : 'system.css'
-      )
+            ? 'light.css'
+            : 'system.css',
+      ),
     );
     const nonce = uuidv4();
 
@@ -140,7 +140,7 @@ export class KanbanEditorProvider implements vscode.CustomTextEditorProvider {
     edit.replace(
       document.uri,
       new vscode.Range(0, 0, document.lineCount, 0),
-      toJson(kanban)
+      text,
     );
 
     return vscode.workspace.applyEdit(edit);

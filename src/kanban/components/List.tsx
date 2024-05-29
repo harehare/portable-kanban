@@ -139,11 +139,14 @@ export const List = ({ kanban, list }: Props) => {
             ? kanban.settings.labels.filter((l) => l.title === labelName)
             : [];
 
-          return addCardToKanban(arr, newList ?? list, {
-            ...newCard(uuid(), list.id),
-            title,
-            labels,
-          });
+          return {
+            ...arr,
+            lists: addCardToKanban(arr.lists, newList ?? list, {
+              ...newCard(uuid(), list.id),
+              title,
+              labels,
+            }),
+          };
         }, kanban),
       );
     },
@@ -171,12 +174,13 @@ export const List = ({ kanban, list }: Props) => {
                     fontSize={'medium'}
                     width={180}
                     onEnter={(text) => {
-                      setKanban(
-                        updateList(kanban, {
+                      setKanban({
+                        ...kanban,
+                        lists: updateList(kanban.lists, {
                           ...list,
                           title: text,
                         }),
-                      );
+                      });
                     }}
                   />
                   <Menu
