@@ -30,7 +30,6 @@ import {
   updateList,
   updateComments,
   deleteComments,
-  updateSettings,
   Settings,
   archiveList,
   restoreList,
@@ -54,7 +53,7 @@ const menuAtom = atom<string | null>(null);
 const lists = atom<List[]>([]);
 const archiveLists = atom<ArchiveList[]>([]);
 const archiveCards = atom<Card[]>([]);
-const labels = atom<Label[]>([]);
+const settings = atom<Settings>({ labels: [] });
 
 const listsAtom = atom(
   (get) => get(lists),
@@ -92,18 +91,18 @@ const archiveCardsAtom = atom(
     set(archiveCards, newValue);
   },
 );
-const labelsAtom = atom(
-  (get) => get(archiveCards),
-  (get, set, newValue: Card[]) => {
+const settingsAtom = atom(
+  (get) => get(settings),
+  (get, set, newValue: Settings) => {
     const kanban: Kanban = get(kanbanAtom);
     vscode.postMessage({
       type: 'edit',
       kanban: {
         ...kanban,
-        settings: { labels: newValue },
+        settings: newValue,
       },
     });
-    set(archiveCards, newValue);
+    set(settings, newValue);
   },
 );
 
@@ -111,9 +110,7 @@ const kanbanAtom = atom(
   (get) => ({
     lists: get(lists),
     archive: { lists: get(archiveLists), cards: get(archiveCards) },
-    settings: {
-      labels: get(labels),
-    },
+    settings: get(settings),
   }),
   (_get, set, newValue: Kanban) => {
     vscode.postMessage({
@@ -123,7 +120,7 @@ const kanbanAtom = atom(
     set(lists, newValue.lists);
     set(archiveLists, newValue.archive.lists);
     set(archiveCards, newValue.archive.cards);
-    set(labels, newValue.settings.labels);
+    set(settings, newValue.settings);
   },
 );
 
@@ -459,12 +456,12 @@ export const kanbanActions = {
     );
   },
   useUpdateSettings: () => {
-    const [kanban, setKanban] = useAtom(kanbanAtom);
+    const [settings, setSettings] = useAtom(settingsAtom);
     return React.useCallback(
       (settings: Settings) => {
-        setKanban(updateSettings(kanban, settings));
+        setSettings(settings);
       },
-      [kanban],
+      [settings],
     );
   },
 };

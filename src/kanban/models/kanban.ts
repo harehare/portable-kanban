@@ -565,13 +565,6 @@ export const deleteComments = (
   );
 };
 
-export const updateSettings = (kanban: Kanban, settings: Settings): Kanban => {
-  return {
-    ...kanban,
-    settings,
-  };
-};
-
 export const toJson = (kanban: Kanban) => {
   return JSON.stringify(kanban, null, 2);
 };
