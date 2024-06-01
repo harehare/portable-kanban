@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { atom, useAtom, useAtomValue, useSetAtom } from 'jotai';
-import { atomFamily, selectAtom } from 'jotai/utils';
+import { atomFamily } from 'jotai/utils';
 
 import { vscode } from '../vscode';
 import {

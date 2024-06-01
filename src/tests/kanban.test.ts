@@ -17,7 +17,7 @@ describe('fromJson', () => {
         lists: [],
         settings: { labels: [] },
         archive: { lists: [], cards: [] },
-      })
+      }),
     );
 
   const newList = () => ({
@@ -69,7 +69,7 @@ describe('fromJson', () => {
           labels: [],
         },
         archive: { lists: [], cards: [] },
-      })
+      }),
     );
     expect(data?.lists.length).toBe(1);
     expect(data?.lists[0].cards.length).toBe(1);
@@ -81,35 +81,35 @@ describe('fromJson', () => {
     const checkBox = { id: 'checkbox', title: 'checkbox', checked: true };
     const list = newList();
     const card = newCard(list.id);
-    const kanban = addCheckBox(
-      addCard(addList(data, list), list, card),
+    const lists = addCheckBox(
+      addCard(addList(data.lists, list), list, card),
       list,
       card,
-      checkBox
+      checkBox,
     );
-    expect(kanban.lists.length).toBe(1);
-    expect(kanban.lists[0].cards.length).toBe(1);
-    expect(kanban.lists[0].cards[0].checkboxes.length).toBe(1);
+    const kanban = { ...data, lists };
+    expect(lists.length).toBe(1);
+    expect(lists[0].cards.length).toBe(1);
+    expect(lists[0].cards[0].checkboxes.length).toBe(1);
     expect(
-      updateCard(kanban, kanban.lists[0], { ...card, title: 'updated' })
-        .lists[0].cards[0].title
+      updateCard(lists, lists[0], { ...card, title: 'updated' })[0].cards[0]
+        .title,
     ).toBe('updated');
-    expect(
-      archiveCard(kanban, kanban.lists[0], card).archive.cards.length
-    ).toBe(1);
+    expect(archiveCard(kanban, lists[0], card).archive.cards.length).toBe(1);
   });
 
   it('archive and restore cards', async () => {
     const data = await emptyKanban();
     const list = newList();
     const card = newCard(list.id);
-    const kanban = addCard(addList(data, list), list, card);
+    const lists = addCard(addList(data.lists, list), list, card);
+    const kanban = { ...data, lists };
     expect(
-      archiveCard(kanban, kanban.lists[0], card).archive.cards.length
+      archiveCard(kanban, kanban.lists[0], card).archive.cards.length,
     ).toBe(1);
     expect(
       restoreCard(archiveCard(kanban, kanban.lists[0], card), card).archive
-        .cards.length
+        .cards.length,
     ).toBe(0);
   });
 });
