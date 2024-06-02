@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { MdAdd } from 'react-icons/md';
-import styled from 'styled-components';
-
+import { styled } from 'styled-components';
 import { AddButton } from './AddButton';
 import { Input } from './Input';
 
@@ -36,7 +35,7 @@ const Icon = styled.div`
   margin: 4px 4px 0 0;
 `;
 
-type Props = {
+type Properties = {
   enableContinuousInput?: boolean;
   addText: string;
   placeholder: string;
@@ -44,13 +43,7 @@ type Props = {
   onEnter: (text: string) => void;
 };
 
-export const AddItem = ({
-  enableContinuousInput = false,
-  addText,
-  placeholder,
-  type,
-  onEnter,
-}: Props) => {
+export const AddItem = ({ enableContinuousInput = false, addText, placeholder, type, onEnter }: Properties) => {
   const [isAddItem, setIsAddItem] = React.useState(false);
   const [name, setName] = React.useState('');
   const [isComposing, setIsComposing] = React.useState(false);
@@ -120,7 +113,8 @@ export const AddItem = ({
     <AddItemLabel
       onClick={() => {
         setIsAddItem(true);
-      }}>
+      }}
+    >
       <Icon>
         <MdAdd />
       </Icon>

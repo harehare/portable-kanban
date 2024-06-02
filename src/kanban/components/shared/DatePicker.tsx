@@ -1,6 +1,5 @@
 import { format } from 'date-fns/format';
 import * as React from 'react';
-
 import { Input } from './Input';
 
 type Props = {
@@ -23,14 +22,14 @@ export const DatePicker = ({ value, onChange }: Props) => {
       style={{ width: 'calc(100% - 16px)', marginLeft: '8px' }}
       value={date}
       onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.value !== '') {
+        if (e.target.value === '') {
+          onChange(undefined);
+        } else {
           try {
             onChange(new Date(Date.parse(e.target.value)));
           } catch {
             onChange(undefined);
           }
-        } else {
-          onChange(undefined);
         }
       }}
     />

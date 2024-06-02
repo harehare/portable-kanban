@@ -1,10 +1,5 @@
 import * as React from 'react';
-import {
-  DragDropContext,
-  Draggable,
-  Droppable,
-  DropResult,
-} from 'react-beautiful-dnd';
+import { DragDropContext, Draggable, Droppable, type DropResult } from 'react-beautiful-dnd';
 import {
   MdClose,
   MdComment,
@@ -13,11 +8,11 @@ import {
   MdCheck,
   MdOutlineDeleteOutline,
   MdRestore,
+  MdContentCopy,
+  MdOutlineArchive,
 } from 'react-icons/md';
-import { MdContentCopy, MdOutlineArchive } from 'react-icons/md';
 import { useParams, useNavigate } from 'react-router-dom';
-import styled from 'styled-components';
-
+import { styled } from 'styled-components';
 import { vscode } from '../../vscode';
 import { Comment } from '../components/Comment';
 import { LabelList } from '../components/Label/List';
@@ -30,10 +25,7 @@ import { Description } from '../components/shared/Description';
 import { ProgressBar } from '../components/shared/ProgressBar';
 import { TextBaseBold } from '../components/shared/Text';
 import { Title } from '../components/shared/Title';
-import {
-  Kanban as KanbanModel,
-  Comment as CommentModel,
-} from '../models/kanban';
+import { type Kanban as KanbanModel, type Comment as CommentModel } from '../models/kanban';
 import { selectors, actions, kanbanActions } from '../store';
 import { uuid } from '../utils';
 
@@ -109,11 +101,11 @@ const BUttons = styled.div`
   margin: 16px;
 `;
 
-type Props = {
+type Properties = {
   kanban?: KanbanModel;
 };
 
-const EditCard = ({ kanban }: Props) => {
+const EditCard = ({ kanban }: Properties) => {
   const showModal = selectors.useShowModal();
   const setShowModal = actions.useSetShowModal();
   const navigate = useNavigate();
@@ -133,34 +125,21 @@ const EditCard = ({ kanban }: Props) => {
   const copyCard = kanbanActions.useCopyCard();
 
   const { listId, cardId } = useParams();
-  const list = React.useMemo(
-    () => kanban?.lists.filter((l) => l.id === listId)[0],
-    [listId, kanban?.lists],
-  );
-  const card = React.useMemo(
-    () => list?.cards.filter((c) => c.id === cardId)[0],
-    [cardId, list?.cards],
-  );
+  const list = React.useMemo(() => kanban?.lists.find((l) => l.id === listId), [listId, kanban?.lists]);
+  const card = React.useMemo(() => list?.cards.find((c) => c.id === cardId), [cardId, list?.cards]);
 
-  const comments = React.useMemo(
-    () => [...(card?.comments ?? [])].reverse(),
-    [card],
-  );
+  const comments = React.useMemo(() => [...(card?.comments ?? [])].reverse(), [card]);
   const archivedCard = React.useMemo(
-    () =>
-      card ? null : kanban?.archive.cards.filter((c) => c.id === cardId)[0],
-    [cardId, list?.cards],
+    () => (card ? null : kanban?.archive.cards.find((c) => c.id === cardId)),
+    [cardId, list?.cards]
   );
-  const [isArchived, setArchived] = React.useState(!!archivedCard);
+  const [isArchived, setArchived] = React.useState(Boolean(archivedCard));
   const taskList = React.useMemo(
     () =>
       card?.checkboxes.map((c, index) => (
         <Draggable key={c.id} draggableId={c.id} index={index}>
           {(provided) => (
-            <div
-              ref={provided.innerRef}
-              {...provided.draggableProps}
-              {...provided.dragHandleProps}>
+            <div ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps}>
               <Task
                 key={c.id}
                 checkbox={c}
@@ -183,6 +162,7 @@ const EditCard = ({ kanban }: Props) => {
                   if (!kanban || !list || !card) {
                     return;
                   }
+
                   updateCheckBox(list, card, {
                     ...c,
                     checked,
@@ -192,6 +172,7 @@ const EditCard = ({ kanban }: Props) => {
                   if (!kanban || !list || !card) {
                     return;
                   }
+
                   deleteCheckBox(list, card, checkbox.id);
                 }}
               />
@@ -199,7 +180,7 @@ const EditCard = ({ kanban }: Props) => {
           )}
         </Draggable>
       )),
-    [card?.checkboxes],
+    [card?.checkboxes]
   );
 
   const onDragEnd = React.useCallback(
@@ -209,17 +190,13 @@ const EditCard = ({ kanban }: Props) => {
       }
 
       switch (result.type) {
-        case 'tasks':
-          moveCheckBox(
-            list.id,
-            card.id,
-            result.source.index,
-            result.destination.index,
-          );
+        case 'tasks': {
+          moveCheckBox(list.id, card.id, result.source.index, result.destination.index);
           break;
+        }
       }
     },
-    [kanban],
+    [kanban]
   );
 
   const handleEditDescription = React.useCallback(
@@ -227,12 +204,13 @@ const EditCard = ({ kanban }: Props) => {
       if (!kanban || !list || !card) {
         return;
       }
+
       updateCard(list, {
         ...card,
         description,
       });
     },
-    [kanban, list, card],
+    [kanban, list, card]
   );
 
   const handleEditDate = React.useCallback(
@@ -240,9 +218,10 @@ const EditCard = ({ kanban }: Props) => {
       if (!kanban || !list || !card) {
         return;
       }
+
       updateCardDueDate(list, card, date);
     },
-    [kanban, list, card],
+    [kanban, list, card]
   );
 
   const handleAddTask = React.useCallback(
@@ -250,13 +229,14 @@ const EditCard = ({ kanban }: Props) => {
       if (!kanban || !list || !card) {
         return;
       }
+
       addCheckBox(list, card, {
         id: uuid(),
         title: text,
         checked: false,
       });
     },
-    [kanban, list, card],
+    [kanban, list, card]
   );
 
   const handleAddComment = React.useCallback(
@@ -264,12 +244,13 @@ const EditCard = ({ kanban }: Props) => {
       if (!kanban || !list || !card) {
         return;
       }
+
       addComments(list, card, {
         id: uuid(),
         comment,
       });
     },
-    [kanban, list, card],
+    [kanban, list, card]
   );
 
   const handleEditComment = React.useCallback(
@@ -277,12 +258,13 @@ const EditCard = ({ kanban }: Props) => {
       if (!kanban || !list || !card) {
         return;
       }
+
       updateComments(list, card, {
         ...c,
         comment: text,
       });
     },
-    [kanban, list, card],
+    [kanban, list, card]
   );
 
   const handleDeleteComment = React.useCallback(
@@ -290,15 +272,17 @@ const EditCard = ({ kanban }: Props) => {
       if (!kanban || !list || !card) {
         return;
       }
+
       deleteComments(list, card, comment.id);
     },
-    [kanban, list, card],
+    [kanban, list, card]
   );
 
   const handleCopyCard = React.useCallback(() => {
     if (!kanban || !list || !card) {
       return;
     }
+
     copyCard(card);
   }, [kanban, list, card]);
 
@@ -306,6 +290,7 @@ const EditCard = ({ kanban }: Props) => {
     if (!kanban || !list || !card) {
       return;
     }
+
     archiveCard(list, card);
     setArchived(true);
   }, [kanban, list, card]);
@@ -314,6 +299,7 @@ const EditCard = ({ kanban }: Props) => {
     if (!kanban || !list || !archivedCard) {
       return;
     }
+
     restoreCard(archivedCard);
     setArchived(false);
   }, [kanban, list, card]);
@@ -322,6 +308,7 @@ const EditCard = ({ kanban }: Props) => {
     if (!kanban || !list || !archivedCard) {
       return;
     }
+
     deleteCard(archivedCard);
     vscode.postMessage({
       type: 'info-message',
@@ -342,20 +329,25 @@ const EditCard = ({ kanban }: Props) => {
           if (kanban && list && card) {
             updateCard(list, card);
           }
+
           navigate('/');
-        }}>
+        }}
+      >
         <Container
-          onClick={(e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+          onClick={(e: React.MouseEvent<HTMLDivElement>) => {
             if (showModal) {
               setShowModal(false);
               return;
             }
+
             e.stopPropagation();
-          }}>
+          }}
+        >
           <CloseButton
             onClick={() => {
               navigate('/');
-            }}>
+            }}
+          >
             <MdClose />
           </CloseButton>
           {isArchived && (
@@ -381,6 +373,7 @@ const EditCard = ({ kanban }: Props) => {
                   if (!kanban || !list || !card) {
                     return;
                   }
+
                   updateCard(list, {
                     ...card,
                     title,
@@ -397,11 +390,7 @@ const EditCard = ({ kanban }: Props) => {
                 </Icon>
                 <TextBaseBold>Description</TextBaseBold>
               </Head>
-              <Description
-                description={card?.description ?? ''}
-                fontSize="medium"
-                onEnter={handleEditDescription}
-              />
+              <Description description={card?.description ?? ''} fontSize="medium" onEnter={handleEditDescription} />
             </Line>
           )}
           {kanban && list && card ? (
@@ -418,10 +407,7 @@ const EditCard = ({ kanban }: Props) => {
               </Icon>
               <TextBaseBold>Due Date</TextBaseBold>
             </Head>
-            <DatePicker
-              value={card?.dueDate ? card.dueDate : undefined}
-              onChange={handleEditDate}
-            />
+            <DatePicker value={card?.dueDate ? card.dueDate : undefined} onChange={handleEditDate} />
           </Line>
           {window.settings.showTaskList && (
             <Line>
@@ -435,19 +421,14 @@ const EditCard = ({ kanban }: Props) => {
                 {card && card.checkboxes.length > 0 && (
                   <ProgressBar
                     progress={
-                      ((card.checkboxes.filter((c) => c.checked).length ??
-                        0.0) /
-                        (card.checkboxes.length ?? 1.0)) *
-                      100
+                      ((card.checkboxes.filter((c) => c.checked).length ?? 0) / (card.checkboxes.length ?? 1)) * 100
                     }
                   />
                 )}
               </div>
               <Droppable droppableId={card?.id || ''} type="tasks">
                 {(provided) => (
-                  <div
-                    ref={provided.innerRef}
-                    style={{ width: 'calc(100% - 16px)' }}>
+                  <div ref={provided.innerRef} style={{ width: 'calc(100% - 16px)' }}>
                     <div>
                       {taskList} {provided.placeholder}
                     </div>
@@ -472,44 +453,17 @@ const EditCard = ({ kanban }: Props) => {
               </Icon>
               <TextBaseBold>Comments</TextBaseBold>
             </Head>
-            <AddComment
-              addText="Save"
-              placeholder="Enter a comment"
-              type="primary"
-              onEnter={handleAddComment}
-            />
+            <AddComment addText="Save" placeholder="Enter a comment" type="primary" onEnter={handleAddComment} />
             {comments.map((c) => (
-              <Comment
-                key={c.id}
-                comment={c}
-                onEnter={handleEditComment(c)}
-                onDelete={handleDeleteComment}
-              />
+              <Comment key={c.id} comment={c} onEnter={handleEditComment(c)} onDelete={handleDeleteComment} />
             ))}
           </Line>
           <BUttons>
-            <Button
-              text="Copy"
-              icon={<MdContentCopy />}
-              disabled={false}
-              onClick={handleCopyCard}
-            />
+            <Button text="Copy" icon={<MdContentCopy />} disabled={false} onClick={handleCopyCard} />
             {!isArchived && (
-              <Button
-                text="Archive"
-                icon={<MdOutlineArchive />}
-                disabled={false}
-                onClick={handleArchiveCard}
-              />
+              <Button text="Archive" icon={<MdOutlineArchive />} disabled={false} onClick={handleArchiveCard} />
             )}
-            {isArchived && (
-              <Button
-                text="Restore"
-                icon={<MdRestore />}
-                disabled={false}
-                onClick={handleRestoreCard}
-              />
-            )}
+            {isArchived && <Button text="Restore" icon={<MdRestore />} disabled={false} onClick={handleRestoreCard} />}
             {isArchived && (
               <Button
                 text="Delete"

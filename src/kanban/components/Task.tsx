@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { IoMdTrash } from 'react-icons/io';
-import styled from 'styled-components';
-
-import { CheckBox as CheckBoxModel } from '../models/kanban';
+import { styled } from 'styled-components';
+import { type CheckBox as CheckBoxModel } from '../models/kanban';
 import { CheckBox } from './shared/CheckBox';
 import { IconButton } from './shared/IconButton';
 import { Title } from './shared/Title';
@@ -34,15 +33,11 @@ export const Task = ({ checkbox, onChecked, onEnter, onDelete }: Props) => {
       }}
       onMouseLeave={() => {
         setShowDeleteButton(false);
-      }}>
+      }}
+    >
       <div style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
         <CheckBox checked={checkbox.checked} onChange={onChecked} />
-        <Title
-          title={checkbox.title}
-          fontSize="small"
-          width="100%"
-          onEnter={onEnter}
-        />
+        <Title title={checkbox.title} fontSize="small" width="100%" onEnter={onEnter} />
       </div>
       {showDeleteButton && (
         <div style={{ marginTop: '4px', color: 'var(--text-color)' }}>

@@ -1,6 +1,5 @@
 import * as React from 'react';
 import ReactLinkify from 'react-linkify';
-
 import { vscode } from '../../../vscode';
 
 type Props = {
@@ -17,14 +16,17 @@ export const Linkify = ({ child }: Props) => {
           key={key}
           rel="noopener noreferrer"
           onClick={() => {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
             vscode.postMessage({
               type: 'open',
               url: decoratedHref,
             });
-          }}>
+          }}
+        >
           {decoratedText}
         </a>
-      )}>
+      )}
+    >
       {child}
     </ReactLinkify>
   );

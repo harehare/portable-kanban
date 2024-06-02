@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { MdArchive, MdFilterAlt, MdMenu, MdSearch } from 'react-icons/md';
 import { useNavigate, useLocation } from 'react-router-dom';
-import styled from 'styled-components';
-
+import { styled } from 'styled-components';
 import LogoImage from '../assets/icon.svg';
 import { actions, selectors } from '../store';
 import { IconButton } from './shared/IconButton';
@@ -107,16 +106,15 @@ export const Header = ({ title }: Props) => {
           alignItems: 'center',
           justifyContent: 'center',
           padding: '8px',
-        }}>
+        }}
+      >
         <IconButton
           icon={<MdFilterAlt />}
           onClick={() => {
             navigate('/filters', { state: { backgroundLocation: location } });
           }}
         />
-        {(searchLabels.size ?? 0) > 0 && (
-          <TextXs style={{ marginBottom: '4px' }}>{searchLabels.size}</TextXs>
-        )}
+        {(searchLabels.size ?? 0) > 0 && <TextXs style={{ marginBottom: '4px' }}>{searchLabels.size}</TextXs>}
       </div>
       <div style={{ padding: '2px', paddingRight: '16px' }}>
         <Menu

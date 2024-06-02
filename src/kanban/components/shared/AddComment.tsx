@@ -1,6 +1,5 @@
 import * as React from 'react';
-import styled from 'styled-components';
-
+import { styled } from 'styled-components';
 import { AddButton } from './AddButton';
 
 const AddItemForm = styled.div`
@@ -27,14 +26,14 @@ const TextArea = styled.textarea`
   }
 `;
 
-type Props = {
+type Properties = {
   addText: string;
   placeholder: string;
   type: 'primary' | 'secondary' | 'danger';
   onEnter: (text: string) => void;
 };
 
-export const AddComment = ({ addText, placeholder, type, onEnter }: Props) => {
+export const AddComment = ({ addText, placeholder, type, onEnter }: Properties) => {
   const [text, setText] = React.useState('');
   return (
     <AddItemForm>

@@ -1,10 +1,9 @@
 import * as React from 'react';
-import { useNavigate } from 'react-router';
-import styled from 'styled-components';
-
+import { useNavigate } from 'react-router-dom';
+import { styled } from 'styled-components';
 import { CheckBox } from '../components/shared/CheckBox';
 import { TextBaseBold } from '../components/shared/Text';
-import { Settings } from '../models/kanban';
+import { type Settings } from '../models/kanban';
 import { actions, selectors } from '../store';
 
 const Overlay = styled.div`
@@ -46,11 +45,11 @@ const LabelItem = styled.div`
   justify-content: space-between;
 `;
 
-type Props = {
+type Properties = {
   settings: Settings;
 };
 
-export const Filter = ({ settings }: Props) => {
+export const Filter = ({ settings }: Properties) => {
   const filteredText = selectors.useFilterText();
   const filteredLabels = selectors.useFilterLabels();
   const setFilter = actions.useSetFilter();
@@ -60,11 +59,13 @@ export const Filter = ({ settings }: Props) => {
     <Overlay
       onClick={() => {
         navigate('/');
-      }}>
+      }}
+    >
       <Container
-        onClick={(e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+        onClick={(e: React.MouseEvent<HTMLDivElement>) => {
           e.stopPropagation();
-        }}>
+        }}
+      >
         <div style={{ width: '100%', padding: '8px', textAlign: 'center' }}>
           <TextBaseBold>Filter Cards</TextBaseBold>
         </div>
@@ -75,31 +76,31 @@ export const Filter = ({ settings }: Props) => {
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-            }}>
+            }}
+          >
             <div style={{ marginBottom: '8px' }}>
               <CheckBox
-                checked={!!filteredLabels.has(label.title)}
-                onChange={() => {}}
+                checked={Boolean(filteredLabels.has(label.title))}
+                onChange={() => {
+                  if (filteredLabels.has(label.title)) {
+                    setFilter(filteredText, new Set([...filteredLabels].filter((l) => l !== label.title)));
+                  } else {
+                    setFilter(filteredText, new Set([...filteredLabels, label.title]));
+                  }
+                }}
               />
             </div>
             <LabelItem
               style={{ backgroundColor: label.color }}
-              onClick={(e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+              onClick={(e: React.MouseEvent<HTMLDivElement>) => {
                 e.stopPropagation();
                 if (filteredLabels.has(label.title)) {
-                  setFilter(
-                    filteredText,
-                    new Set(
-                      [...filteredLabels].filter((l) => l !== label.title),
-                    ),
-                  );
+                  setFilter(filteredText, new Set([...filteredLabels].filter((l) => l !== label.title)));
                 } else {
-                  setFilter(
-                    filteredText,
-                    new Set([...filteredLabels, label.title]),
-                  );
+                  setFilter(filteredText, new Set([...filteredLabels, label.title]));
                 }
-              }}>
+              }}
+            >
               {label.title}
             </LabelItem>
           </div>

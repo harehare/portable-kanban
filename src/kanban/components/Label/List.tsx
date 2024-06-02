@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { MdAdd } from 'react-icons/md';
-import styled from 'styled-components';
-
-import { Card, List, Settings } from '../../models/kanban';
+import { styled } from 'styled-components';
+import { type Card, type List } from '../../models/kanban';
 import { selectors, actions } from '../../store';
 import { LabelSelect } from './Select';
 
@@ -36,12 +35,12 @@ const AddButton = styled.div`
   height: 24px;
 `;
 
-type Props = {
+type Properties = {
   list: List;
   card: Card;
 };
 
-export const LabelList = ({ list, card }: Props) => {
+export const LabelList = ({ list, card }: Properties) => {
   const showModal = selectors.useShowModal();
   const setShowModal = actions.useSetShowModal();
 
@@ -51,18 +50,20 @@ export const LabelList = ({ list, card }: Props) => {
         <LabelItem
           key={l.id}
           style={{ backgroundColor: l.color, cursor: 'pointer' }}
-          onClick={(e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+          onClick={(e: React.MouseEvent<HTMLDivElement>) => {
             e.stopPropagation();
             setShowModal(true);
-          }}>
+          }}
+        >
           {l.title}
         </LabelItem>
       ))}
       <AddButton
-        onClick={(e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+        onClick={(e: React.MouseEvent<HTMLDivElement>) => {
           e.stopPropagation();
           setShowModal(true);
-        }}>
+        }}
+      >
         <MdAdd />
       </AddButton>
       {showModal && <LabelSelect list={list} card={card} />}

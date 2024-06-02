@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { IoMdTrash } from 'react-icons/io';
-import styled from 'styled-components';
-
-import { Comment as CommentModel } from '../models/kanban';
+import { styled } from 'styled-components';
+import { type Comment as CommentModel } from '../models/kanban';
 import { Description } from './shared/Description';
 import { IconButton } from './shared/IconButton';
 
@@ -17,13 +16,13 @@ const Container = styled.div`
   margin-bottom: 16px;
 `;
 
-type Props = {
+type Properties = {
   comment: CommentModel;
   onEnter: (title: string) => void;
   onDelete: (comment: CommentModel) => void;
 };
 
-export const Comment = ({ comment, onEnter, onDelete }: Props) => {
+export const Comment = ({ comment, onEnter, onDelete }: Properties) => {
   const [showDeleteButton, setShowDeleteButton] = React.useState(false);
 
   return (
@@ -33,13 +32,10 @@ export const Comment = ({ comment, onEnter, onDelete }: Props) => {
       }}
       onMouseLeave={() => {
         setShowDeleteButton(false);
-      }}>
+      }}
+    >
       <div style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
-        <Description
-          description={comment.comment ?? ''}
-          fontSize="medium"
-          onEnter={onEnter}
-        />
+        <Description description={comment.comment ?? ''} fontSize="medium" onEnter={onEnter} />
       </div>
       {showDeleteButton && (
         <div
@@ -48,7 +44,8 @@ export const Comment = ({ comment, onEnter, onDelete }: Props) => {
             right: '8px',
             top: '8px',
             color: 'var(--text-color)',
-          }}>
+          }}
+        >
           <IconButton
             icon={<IoMdTrash />}
             onClick={() => {

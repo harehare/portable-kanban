@@ -1,5 +1,5 @@
 import * as React from 'react';
-import styled, { css } from 'styled-components';
+import { styled, css } from 'styled-components';
 
 const ButtonBase = styled.button<{
   background: 'primary' | 'secondary' | 'danger';
@@ -13,13 +13,13 @@ const ButtonBase = styled.button<{
   border-radius: var(--border-radius);
   line-height: 20px;
   padding: 6px 12px;
-  ${(props) =>
-    props.background === 'primary'
+  ${(properties) =>
+    properties.background === 'primary'
       ? css`
           color: var(--light-text-color);
           background-color: var(--primary-color);
         `
-      : props.background === 'danger'
+      : properties.background === 'danger'
         ? css`
             color: var(--light-text-color);
             background-color: var(--danger-color);
@@ -29,12 +29,12 @@ const ButtonBase = styled.button<{
             background-color: var(--button-color);
           `}
   &:hover {
-    ${(props) =>
-      props.background === 'primary'
+    ${(properties) =>
+      properties.background === 'primary'
         ? css`
             background-color: #285f8f !important;
           `
-        : props.background === 'danger'
+        : properties.background === 'danger'
           ? css`
               background-color: #c02a33 !important;
             `
@@ -52,7 +52,7 @@ const Label = styled.div`
   background-color: transparent;
 `;
 
-type Props = {
+type Properties = {
   text: string;
   icon?: React.ReactElement;
   type?: 'primary' | 'secondary' | 'danger';
@@ -60,21 +60,16 @@ type Props = {
   onClick: () => void;
 };
 
-export const Button = ({
-  text,
-  icon = undefined,
-  type = 'secondary',
-  disabled = false,
-  onClick,
-}: Props) => {
+export const Button = ({ text, icon = undefined, type = 'secondary', disabled = false, onClick }: Properties) => {
   return (
     <ButtonBase
       background={type}
       disabled={disabled}
-      onClick={(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+      onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
         e.stopPropagation();
         onClick();
-      }}>
+      }}
+    >
       {icon}
       <Label>{text}</Label>
     </ButtonBase>

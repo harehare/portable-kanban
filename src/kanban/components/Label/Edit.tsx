@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { MdCheck } from 'react-icons/md';
-import styled from 'styled-components';
-
-import { Color, colors, Label } from '../../models/kanban';
+import { styled } from 'styled-components';
+import { type Color, colors, type Label } from '../../models/kanban';
 import { uuid } from '../../utils';
 import { Button } from '../shared/Button';
 import { Input } from '../shared/Input';
@@ -60,16 +59,15 @@ type Props = {
 };
 
 export const LabelEdit = ({ label, onEdit, onDelete }: Props) => {
-  const [selectedColor, setSelectedColor] = React.useState(
-    label ? label.color : ('#ff9f1a' as Color),
-  );
+  const [selectedColor, setSelectedColor] = React.useState(label ? label.color : ('#ff9f1a' as Color));
   const [labelText, setLabelText] = React.useState(label ? label.title : '');
 
   return (
     <Modal
-      onClick={(e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+      onClick={(e: React.MouseEvent<HTMLDivElement>) => {
         e.stopPropagation();
-      }}>
+      }}
+    >
       <Line>
         <Title>
           <TextSm>Label name</TextSm>
@@ -96,15 +94,12 @@ export const LabelEdit = ({ label, onEdit, onDelete }: Props) => {
             <LabelItem
               key={c}
               style={{ backgroundColor: c }}
-              onClick={(e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+              onClick={(e: React.MouseEvent<HTMLDivElement>) => {
                 e.stopPropagation();
                 setSelectedColor(c);
-              }}>
-              {c === selectedColor ? (
-                <MdCheck style={{ fontSize: '1.1rem', fontWeight: 600 }} />
-              ) : (
-                <></>
-              )}
+              }}
+            >
+              {c === selectedColor ? <MdCheck style={{ fontSize: '1.1rem', fontWeight: 600 }} /> : <></>}
             </LabelItem>
           ))}
         </Labels>
@@ -123,7 +118,7 @@ export const LabelEdit = ({ label, onEdit, onDelete }: Props) => {
                       id: uuid(),
                       title: labelText,
                       color: selectedColor,
-                    },
+                    }
               );
             }}
           />
@@ -136,6 +131,7 @@ export const LabelEdit = ({ label, onEdit, onDelete }: Props) => {
                 if (!onDelete) {
                   return;
                 }
+
                 onDelete(label);
               }}
             />
