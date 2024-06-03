@@ -194,6 +194,10 @@ const EditCard = ({ kanban }: Properties) => {
           moveCheckBox(list.id, card.id, result.source.index, result.destination.index);
           break;
         }
+
+        default: {
+          throw new Error('invalid type');
+        }
       }
     },
     [kanban]
@@ -310,6 +314,7 @@ const EditCard = ({ kanban }: Properties) => {
     }
 
     deleteCard(archivedCard);
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     vscode.postMessage({
       type: 'info-message',
       message: `Delete ${archivedCard.title}`,
@@ -407,7 +412,7 @@ const EditCard = ({ kanban }: Properties) => {
               </Icon>
               <TextBaseBold>Due Date</TextBaseBold>
             </Head>
-            <DatePicker value={card?.dueDate ? card.dueDate : undefined} onChange={handleEditDate} />
+            <DatePicker value={card?.dueDate} onChange={handleEditDate} />
           </Line>
           {window.settings.showTaskList && (
             <Line>
@@ -426,7 +431,7 @@ const EditCard = ({ kanban }: Properties) => {
                   />
                 )}
               </div>
-              <Droppable droppableId={card?.id || ''} type="tasks">
+              <Droppable droppableId={card?.id ?? ''} type="tasks">
                 {(provided) => (
                   <div ref={provided.innerRef} style={{ width: 'calc(100% - 16px)' }}>
                     <div>

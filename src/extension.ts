@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { KanbanEditorProvider } from './KanbanEditor';
+import { KanbanEditorProvider } from './kanbanEditor';
 
 export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(

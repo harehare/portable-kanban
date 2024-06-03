@@ -69,7 +69,9 @@ export const Header = ({ title }: Props) => {
     const timer = setTimeout(() => {
       setFilter(searchInput, searchLabels);
     }, 300);
-    return () => clearTimeout(timer);
+    return () => {
+      clearTimeout(timer);
+    };
   }, [searchInput]);
 
   return (
@@ -129,7 +131,7 @@ export const Header = ({ title }: Props) => {
             {
               icon: <MdArchive />,
               text: 'Archived List',
-              onClick: () => {
+              onClick() {
                 navigate('/archive/lists', {
                   state: { backgroundLocation: location },
                 });
@@ -138,7 +140,7 @@ export const Header = ({ title }: Props) => {
             {
               icon: <MdArchive />,
               text: 'Archived cards',
-              onClick: () => {
+              onClick() {
                 navigate('/archive/cards', {
                   state: { backgroundLocation: location },
                 });

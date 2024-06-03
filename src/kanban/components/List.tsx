@@ -114,6 +114,7 @@ export const List = ({ kanban, list }: Properties) => {
   const handleAddCard = React.useCallback(
     (card: CardModel) => {
       setKanban(
+        // eslint-disable-next-line unicorn/no-array-reduce
         card.title.split('\n').reduce((array, v) => {
           const newList = array.lists.find((l) => l.id === list.id);
           const tokens = v.split(':').filter(Boolean);

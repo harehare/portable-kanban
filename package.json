@@ -138,9 +138,18 @@
     "space": 2,
     "useTabs": false,
     "bracketSpacing": true,
-    "max-params": 6,
+    "ignores": [
+      "webpack.config.js",
+      "babel.config.js",
+      "src/vscode.ts",
+      "src/extension.ts"
+    ],
     "rules": {
+      "max-params": "off",
       "import/extensions": "off",
+      "no-bitwise": "off",
+      "@typescript-eslint/consistent-type-definitions": "off",
+      "unicorn/prefer-string-replace-all": "off",
       "@typescript-eslint/naming-convention": [
         "error",
         {

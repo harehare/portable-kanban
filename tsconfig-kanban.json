@@ -2,15 +2,11 @@
   "compilerOptions": {
     "module": "esnext",
     "target": "es2019",
-    "lib": ["ES2020", "dom"],
+    "lib": ["ES2021", "dom"],
     "strict": true,
     "jsx": "react-jsx",
     "moduleResolution": "node"
   },
-  "include": [
-    "./src/kanban/**/*.ts",
-    "./src/kanban/**/*.tsx",
-    "./src/kanban/index.d.ts"
-  ],
+  "include": ["./src/kanban/**/*.ts", "./src/kanban/**/*.tsx", "./src/kanban/index.d.ts"],
   "exclude": ["node_modules", "**/*.test.ts"]
 }
