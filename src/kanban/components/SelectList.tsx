@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { MdList } from 'react-icons/md';
-import styled from 'styled-components';
-
-import { List } from '../models/kanban';
+import { styled } from 'styled-components';
+import { type List } from '../models/kanban';
 import { selectors, actions } from '../store';
 import { MenuItem } from './shared/MenuItem';
 
@@ -28,10 +27,7 @@ type Props = {
 
 export const SelectList = ({ menuId, listId, lists, onClick }: Props) => {
   const currentMenuId = selectors.useMenu();
-  const targetLists = React.useMemo(
-    () => lists.filter((l) => l.id !== listId),
-    [listId, lists]
-  );
+  const targetLists = React.useMemo(() => lists.filter((l) => l.id !== listId), [listId, lists]);
 
   return currentMenuId === menuId ? (
     <Items>

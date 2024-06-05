@@ -1,7 +1,7 @@
 import * as React from 'react';
 import ReactMarkdown from 'react-markdown';
 import TextareaAutosize from 'react-textarea-autosize';
-import styled from 'styled-components';
+import { styled } from 'styled-components';
 
 const Container = styled.div`
   width: 100%;
@@ -21,11 +21,7 @@ type Props = {
   onEnter: (text: string) => void;
 };
 
-export const Description = ({
-  description: defaultDescription,
-  fontSize,
-  onEnter,
-}: Props) => {
+export const Description = ({ description: defaultDescription, fontSize, onEnter }: Props) => {
   const [isEdit, setEdit] = React.useState(false);
   const [description, setDescription] = React.useState(defaultDescription);
   const handleBlur = React.useCallback(() => {
@@ -80,7 +76,8 @@ export const Description = ({
           onClick={(e) => {
             e.stopPropagation();
             setEdit(true);
-          }}>
+          }}
+        >
           <ReactMarkdown>{description}</ReactMarkdown>
         </div>
       )}

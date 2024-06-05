@@ -1,17 +1,11 @@
 import * as React from 'react';
-import {
-  DragDropContext,
-  Droppable,
-  Draggable,
-  DropResult,
-} from 'react-beautiful-dnd';
+import { DragDropContext, Droppable, Draggable, type DropResult } from 'react-beautiful-dnd';
 import { ScrollContainer } from 'react-indiana-drag-scroll';
-import styled from 'styled-components';
-
+import { styled } from 'styled-components';
 import { Header } from '../components/Header';
 import { List } from '../components/List';
 import { AddItem } from '../components/shared/AddItem';
-import { Kanban as KanbanModel } from '../models/kanban';
+import { type Kanban as KanbanModel } from '../models/kanban';
 import { selectors, kanbanActions, actions } from '../store';
 import { uuid } from '../utils';
 
@@ -33,11 +27,11 @@ const Contents = styled.div`
   align-content: flex-start;
 `;
 
-type Props = {
+type Properties = {
   kanban: KanbanModel;
 };
 
-const Board = ({ kanban }: Props) => {
+const Board = ({ kanban }: Properties) => {
   const title = selectors.useTitle();
   const setAddCard = actions.useSetAddingCard();
   const moveList = kanbanActions.useMoveList();
@@ -50,11 +44,7 @@ const Board = ({ kanban }: Props) => {
       kanban?.lists.map((l, index) => (
         <Draggable key={l.id} draggableId={l.id} index={index}>
           {(provided) => (
-            <div
-              className="list"
-              ref={provided.innerRef}
-              {...provided.draggableProps}
-              {...provided.dragHandleProps}>
+            <div className="list" ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps}>
               <List kanban={kanban} list={l} />
             </div>
           )}
@@ -69,17 +59,14 @@ const Board = ({ kanban }: Props) => {
       }
 
       switch (result.type) {
-        case 'lists':
+        case 'lists': {
           moveList(result.source.index, result.destination.index);
           break;
+        }
 
-        case 'cards':
+        case 'cards': {
           if (result.source.droppableId === result.destination.droppableId) {
-            moveCard(
-              result.source.droppableId,
-              result.source.index,
-              result.destination.index
-            );
+            moveCard(result.source.droppableId, result.source.index, result.destination.index);
             break;
           } else {
             moveCardAcrossList(
@@ -90,6 +77,11 @@ const Board = ({ kanban }: Props) => {
             );
             break;
           }
+        }
+
+        default: {
+          throw new Error('invalid type');
+        }
       }
     },
     [kanban]
@@ -100,7 +92,8 @@ const Board = ({ kanban }: Props) => {
       onClick={() => {
         setAddCard(undefined);
         menuClose();
-      }}>
+      }}
+    >
       <Header title={title ?? 'untitled'} />
       <DragDropContext onDragEnd={onDragEnd}>
         <Droppable droppableId="list" direction="horizontal" type="lists">
@@ -116,7 +109,8 @@ const Board = ({ kanban }: Props) => {
                   overflowX: 'auto',
                   alignItems: 'flex-start',
                   alignContent: 'flex-start',
-                }}>
+                }}
+              >
                 {list}
                 {provided.placeholder}
                 <div style={{ margin: '8px' }}>

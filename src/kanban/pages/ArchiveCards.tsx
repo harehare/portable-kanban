@@ -1,10 +1,9 @@
 import * as React from 'react';
-import { useNavigate } from 'react-router';
-import styled from 'styled-components';
-
+import { useNavigate } from 'react-router-dom';
+import { styled } from 'styled-components';
 import { Card } from '../components/Card';
 import { TextBaseBold } from '../components/shared/Text';
-import { Card as CardModel } from '../models/kanban';
+import { type Card as CardModel } from '../models/kanban';
 import { kanbanActions } from '../store';
 
 const Overlay = styled.div`
@@ -40,11 +39,11 @@ const MenuItem = styled.div`
   cursor: pointer;
 `;
 
-type Props = {
+type Properties = {
   cards: CardModel[];
 };
 
-export const ArchiveCards = ({ cards }: Props) => {
+export const ArchiveCards = ({ cards }: Properties) => {
   const restoreCard = kanbanActions.useRestoreCard();
   const deleteCard = kanbanActions.useDeleteCard();
   const navigate = useNavigate();
@@ -53,7 +52,8 @@ export const ArchiveCards = ({ cards }: Props) => {
     <Overlay
       onClick={() => {
         navigate('/');
-      }}>
+      }}
+    >
       <ArchiveMenu>
         <div style={{ width: '100%', padding: '8px', textAlign: 'center' }}>
           <TextBaseBold>Archive Cards</TextBaseBold>
@@ -63,17 +63,19 @@ export const ArchiveCards = ({ cards }: Props) => {
             <Card card={c} isEdit={false} editable={false} />
             <Menus>
               <MenuItem
-                onClick={(e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+                onClick={(e: React.MouseEvent<HTMLDivElement>) => {
                   e.stopPropagation();
                   restoreCard(c);
-                }}>
+                }}
+              >
                 Restore
               </MenuItem>
               <MenuItem
-                onClick={(e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+                onClick={(e: React.MouseEvent<HTMLDivElement>) => {
                   e.stopPropagation();
                   deleteCard(c);
-                }}>
+                }}
+              >
                 Delete
               </MenuItem>
             </Menus>

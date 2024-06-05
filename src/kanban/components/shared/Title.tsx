@@ -1,6 +1,5 @@
 import * as React from 'react';
-import styled from 'styled-components';
-
+import { styled } from 'styled-components';
 import { Input } from './Input';
 import { Linkify } from './Linkify';
 
@@ -12,7 +11,7 @@ const Container = styled.div`
   background-color: transparent;
 `;
 
-type Props = {
+type Properties = {
   title: string;
   fontSize: 'small' | 'medium' | 'large';
   width: number | '100%';
@@ -20,15 +19,10 @@ type Props = {
   onEnter: (text: string) => void;
 };
 
-export const Title = ({
-  title: defaultTitle,
-  fontSize,
-  width,
-  onEnter,
-}: Props) => {
+export const Title = ({ title: defaultTitle, fontSize, width, onEnter }: Properties) => {
   const [isEdit, setEdit] = React.useState(false);
   const [title, setTitle] = React.useState(defaultTitle);
-  const refDefaultTitle = React.useRef(defaultTitle);
+  const referenceDefaultTitle = React.useRef(defaultTitle);
   const [isComposing, setIsComposing] = React.useState(false);
   const handleKeyDown = React.useCallback(
     (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -37,21 +31,22 @@ export const Title = ({
       }
 
       if (title === '') {
-        setTitle(refDefaultTitle.current);
+        setTitle(referenceDefaultTitle.current);
         setEdit(false);
         return;
       }
 
-      onEnter(title === '' ? refDefaultTitle.current : title);
+      onEnter(title === '' ? referenceDefaultTitle.current : title);
       setEdit(false);
     },
-    [title, isComposing],
+    [title, isComposing]
   );
   const handleBlur = React.useCallback(() => {
     if (title === '') {
-      setTitle(refDefaultTitle.current);
+      setTitle(referenceDefaultTitle.current);
     }
-    onEnter(title === '' ? refDefaultTitle.current : title);
+
+    onEnter(title === '' ? referenceDefaultTitle.current : title);
     setEdit(false);
   }, [title]);
 
@@ -73,12 +68,7 @@ export const Title = ({
             fontFamily: 'var(--font-family)',
             backgroundColor: 'var(--secondary-background-color)',
             color: 'var(--text-color)',
-            fontSize:
-              fontSize === 'medium'
-                ? '1rem'
-                : fontSize === 'small'
-                ? '0.875rem'
-                : '1.5rem',
+            fontSize: fontSize === 'medium' ? '1rem' : fontSize === 'small' ? '0.875rem' : '1.5rem',
             lineHeight: '1.3rem',
           }}
           onCompositionStart={() => {
@@ -95,21 +85,17 @@ export const Title = ({
       ) : (
         <Container
           style={{
-            fontSize:
-              fontSize === 'medium'
-                ? '1rem'
-                : fontSize === 'small'
-                ? '0.875rem'
-                : '1.5rem',
+            fontSize: fontSize === 'medium' ? '1rem' : fontSize === 'small' ? '0.875rem' : '1.5rem',
             color: 'var(--text-color)',
             width: width === '100%' ? '100%' : `${width}px`,
             padding: '4px',
             cursor: 'pointer',
           }}
-          onClick={(e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+          onClick={(e: React.MouseEvent<HTMLDivElement>) => {
             e.stopPropagation();
             setEdit(true);
-          }}>
+          }}
+        >
           <Linkify child={<>{title}</>} />
         </Container>
       )}

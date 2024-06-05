@@ -1,5 +1,4 @@
-import * as React from 'react';
-import styled from 'styled-components';
+import { styled } from 'styled-components';
 
 const Container = styled.div`
   width: 100%;
@@ -11,7 +10,7 @@ const Progress = styled.div<{
   progress: number;
 }>`
   background-color: var(--primary-color);
-  width: ${({ progress }) => `${isNaN(progress) ? 0 : progress}%`};
+  width: ${({ progress }) => `${Number.isNaN(progress) ? 0 : progress}%`};
   height: 8px;
 `;
 

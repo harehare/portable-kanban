@@ -1,6 +1,5 @@
 import * as React from 'react';
-import styled from 'styled-components';
-
+import { styled } from 'styled-components';
 import { actions } from '../../store';
 
 const Item = styled.div`
@@ -35,7 +34,8 @@ export const MenuItem = ({ onClick, text, icon }: Props) => {
           fontSize: '1.2rem',
           marginTop: '2px',
           marginRight: '8px',
-        }}>
+        }}
+      >
         {icon}
       </div>
       <div>{text}</div>

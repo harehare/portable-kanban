@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import { styled } from 'styled-components';
 
 export const TextXs = styled.div`
   font-size: 0.75rem;

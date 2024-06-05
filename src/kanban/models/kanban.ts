@@ -1,5 +1,5 @@
 import {
-  Decoder,
+  type Decoder,
   object,
   string,
   optional,
@@ -7,14 +7,12 @@ import {
   boolean,
   union,
   constant,
-  oneOf,
 } from '@mojotech/json-type-validation';
-
 import { uuid } from '../utils';
 
 export type Kanban = {
   lists: List[];
-  archive: { lists: Pick<List, 'id' | 'title'>[]; cards: Card[] };
+  archive: { lists: Array<Pick<List, 'id' | 'title'>>; cards: Card[] };
   settings: Settings;
 };
 
@@ -35,7 +33,7 @@ export type Card = {
   listId: string;
   title: string;
   description: string;
-  dueDate: Date | undefined | null;
+  dueDate: Date | undefined;
   labels: Label[];
   checkboxes: CheckBox[];
   comments: Comment[];
@@ -86,50 +84,30 @@ export const newCard = (id: string, listId: string) => {
   };
 };
 
-export const addList = (kanban: Kanban, list: List): Kanban => {
+export const addList = (lists: List[], list: List): List[] => {
   if (!list.title) {
-    return kanban;
+    return lists;
   }
 
-  return {
-    ...kanban,
-    lists: [...kanban.lists, list],
-  };
+  return [...lists, list];
 };
 
-export const updateList = (kanban: Kanban, list: List): Kanban => {
+export const updateList = (lists: List[], list: List): List[] => {
   if (!list.title) {
-    return kanban;
+    return lists;
   }
 
-  return {
-    ...kanban,
-    lists: kanban.lists.map((l) => (l.id === list.id ? list : l)),
-  };
+  return lists.map((l) => (l.id === list.id ? list : l));
 };
 
-export const moveList = (
-  kanban: Kanban,
-  fromListId: number,
-  toListId: number,
-): Kanban => {
-  const list = kanban.lists[fromListId];
-  const lists = kanban.lists.filter((l) => l.id !== list.id);
-  return {
-    ...kanban,
-    lists: insert(lists, toListId, list),
-  };
+export const moveList = (lists: List[], fromListId: number, toListId: number): List[] => {
+  const list = lists[fromListId];
+  const newLists = lists.filter((l) => l.id !== list.id);
+  return insert(newLists, toListId, list);
 };
 
-export const removeList = (kanban: Kanban, listId: string): Kanban => {
-  return {
-    ...kanban,
-    archive: {
-      ...kanban.archive,
-      lists: kanban.archive.lists.filter((l) => l.id !== listId),
-    },
-  };
-};
+export const removeArchivedList = (archivedLists: ArchiveList[], listId: string): ArchiveList[] =>
+  archivedLists.filter((l) => l.id !== listId);
 
 export const archiveList = (kanban: Kanban, list: List): Kanban => {
   return {
@@ -149,9 +127,7 @@ export const archiveAllCardInList = (kanban: Kanban, list: List): Kanban => {
       ...kanban.archive,
       cards: [...kanban.archive.cards, ...list.cards],
     },
-    lists: kanban.lists.map((l) =>
-      l.id === list.id ? { ...l, cards: [] } : l,
-    ),
+    lists: kanban.lists.map((l) => (l.id === list.id ? { ...l, cards: [] } : l)),
   };
 };
 
@@ -172,97 +148,70 @@ export const restoreList = (kanban: Kanban, list: List): Kanban => {
   };
 };
 
-export const moveAllCardsToList = (
-  kanban: Kanban,
-  fromList: List,
-  toList: List,
-): Kanban => {
-  return {
-    ...kanban,
-    lists: kanban.lists.map((l) =>
-      l.id === toList.id
-        ? {
-            ...l,
-            cards: [
-              ...l.cards,
-              ...fromList.cards.map((c) => ({ ...c, listId: toList.id })),
-            ],
-          }
-        : l.id === fromList.id
-          ? { ...fromList, cards: [] }
-          : l,
-    ),
-  };
+export const moveAllCardsToList = (lists: List[], fromList: List, toList: List): List[] => {
+  return lists.map((l) =>
+    l.id === toList.id
+      ? {
+          ...l,
+          cards: [...l.cards, ...fromList.cards.map((c) => ({ ...c, listId: toList.id }))],
+        }
+      : l.id === fromList.id
+        ? { ...fromList, cards: [] }
+        : l
+  );
 };
 
-export const addCard = (kanban: Kanban, list: List, card: Card): Kanban => {
+export const addCard = (lists: List[], list: List, card: Card): List[] => {
   if (!card.title) {
-    return kanban;
+    return lists;
   }
 
-  return {
-    ...kanban,
-    lists: kanban.lists.map((l) =>
-      l.id === list.id ? { ...list, cards: [...list.cards, card] } : l,
-    ),
-  };
+  return lists.map((l) => (l.id === list.id ? { ...list, cards: [...list.cards, card] } : l));
 };
 
-export const updateCard = (kanban: Kanban, list: List, card: Card): Kanban => {
+export const updateCard = (lists: List[], list: List, card: Card): List[] => {
   if (!card.title) {
-    return kanban;
+    return lists;
   }
 
-  return {
-    ...kanban,
-    lists: kanban.lists.map((l) =>
-      l.id === list.id
-        ? {
-            ...list,
-            cards: list.cards.map((c) => (c.id === card.id ? card : c)),
-          }
-        : l,
-    ),
-  };
+  return lists.map((l) =>
+    l.id === list.id
+      ? {
+          ...list,
+          cards: list.cards.map((c) => (c.id === card.id ? card : c)),
+        }
+      : l
+  );
 };
 
-export const deleteCard = (kanban: Kanban, card: Card): Kanban => {
-  return {
-    ...kanban,
-    archive: {
-      ...kanban.archive,
-      cards: kanban.archive.cards.filter((c) => c.id !== card.id),
-    },
-  };
+export const deleteCard = (archiveCards: Card[], card: Card): Card[] => {
+  return archiveCards.filter((c) => c.id !== card.id);
 };
 
-export const copyCard = (kanban: Kanban, card: Card): Kanban => {
-  return {
-    ...kanban,
-    lists: kanban.lists.map((l) =>
-      l.id === card.listId
-        ? {
-            ...l,
-            cards: [...l.cards, { ...card, id: uuid() }],
-          }
-        : l,
-    ),
-  };
+export const copyCard = (lists: List[], card: Card): List[] => {
+  return lists.map((l) =>
+    l.id === card.listId
+      ? {
+          ...l,
+          cards: [...l.cards, { ...card, id: uuid() }],
+        }
+      : l
+  );
 };
 
 export const moveCardAcrossList = (
-  kanban: Kanban,
+  lists: List[],
   fromListId: string,
   fromCardIndex: number,
   toListId: string,
-  toCardIndex: number,
-): Kanban => {
-  const fromList = kanban.lists.filter((l) => l.id === fromListId)[0];
-  const fromCard = fromList.cards[fromCardIndex];
-  const toList = kanban.lists.filter((l) => l.id === toListId)[0];
+  toCardIndex: number
+): List[] => {
+  const fromList = lists.find((l) => l.id === fromListId);
+  const fromCard = fromList?.cards[fromCardIndex];
+  const toList = lists.find((l) => l.id === toListId);
 
   if (!fromList || !toList || !fromCard) {
-    return kanban;
+    return lists;
   }
 
   const fromCards = fromList.cards?.filter((_, i) => i !== fromCardIndex);
@@ -271,41 +220,22 @@ export const moveCardAcrossList = (
     listId: toList.id,
   });
 
-  return {
-    ...kanban,
-    lists: kanban.lists.map((l) =>
-      l.id === fromList.id
-        ? { ...fromList, cards: fromCards }
-        : l.id === toList.id
-          ? { ...toList, cards: toCards }
-          : l,
-    ),
-  };
+  return lists.map((l) =>
+    l.id === fromList.id ? { ...fromList, cards: fromCards } : l.id === toList.id ? { ...toList, cards: toCards } : l
+  );
 };
 
-export const moveCard = (
-  kanban: Kanban,
-  listId: string,
-  fromCardIndex: number,
-  toCardIndex: number,
-): Kanban => {
-  const list = kanban.lists.filter((l) => l.id === listId)[0];
+export const moveCard = (lists: List[], listId: string, fromCardIndex: number, toCardIndex: number): List[] => {
+  const list = lists.find((l) => l.id === listId);
   const fromCard = list?.cards[fromCardIndex];
 
   if (!list || !fromCard) {
-    return kanban;
+    return lists;
   }
 
   const movedCards = list?.cards?.filter((_, i) => i !== fromCardIndex);
 
-  return {
-    ...kanban,
-    lists: kanban.lists.map((l) =>
-      l.id === list.id
-        ? { ...list, cards: insert(movedCards, toCardIndex, fromCard) }
-        : l,
-    ),
-  };
+  return lists.map((l) => (l.id === list.id ? { ...list, cards: insert(movedCards, toCardIndex, fromCard) } : l));
 };
 
 export const archiveCard = (kanban: Kanban, list: List, card: Card): Kanban => {
@@ -313,9 +243,7 @@ export const archiveCard = (kanban: Kanban, list: List, card: Card): Kanban => {
     ...kanban,
     archive: { ...kanban.archive, cards: [...kanban.archive.cards, card] },
     lists: kanban.lists.map((l) =>
-      l.id === list.id
-        ? { ...list, cards: l.cards.filter((c) => c.id !== card.id) }
-        : l,
+      l.id === list.id ? { ...list, cards: l.cards.filter((c) => c.id !== card.id) } : l
     ),
   };
 };
@@ -327,321 +255,227 @@ export const restoreCard = (kanban: Kanban, card: Card): Kanban => {
       ...kanban.archive,
       cards: kanban.archive.cards.filter((a) => a.id !== card.id),
     },
-    lists: kanban.lists.map((l) =>
-      l.id === card.listId ? { ...l, cards: [...l.cards, card] } : l,
-    ),
+    lists: kanban.lists.map((l) => (l.id === card.listId ? { ...l, cards: [...l.cards, card] } : l)),
   };
 };
 
-export const addCheckBox = (
-  kanban: Kanban,
-  list: List,
-  card: Card,
-  checkbox: CheckBox,
-): Kanban => {
+export const addCheckBox = (lists: List[], list: List, card: Card, checkbox: CheckBox): List[] => {
   if (!checkbox.title) {
-    return kanban;
+    return lists;
   }
 
-  return {
-    ...kanban,
-    lists: kanban.lists.map((l) =>
-      l.id === list.id
-        ? {
-            ...list,
-            cards: l.cards.map((c) =>
-              card.id === c.id
-                ? {
-                    ...card,
-                    checkboxes: [...card.checkboxes, checkbox],
-                  }
-                : c,
-            ),
-          }
-        : l,
-    ),
-  };
+  return lists.map((l) =>
+    l.id === list.id
+      ? {
+          ...list,
+          cards: l.cards.map((c) =>
+            card.id === c.id
+              ? {
+                  ...card,
+                  checkboxes: [...card.checkboxes, checkbox],
+                }
+              : c
+          ),
+        }
+      : l
+  );
 };
 
-export const updateCheckBox = (
-  kanban: Kanban,
-  list: List,
-  card: Card,
-  checkbox: CheckBox,
-): Kanban => {
+export const updateCheckBox = (lists: List[], list: List, card: Card, checkbox: CheckBox): List[] => {
   if (!checkbox.title) {
-    return kanban;
+    return lists;
   }
 
-  return {
-    ...kanban,
-    lists: kanban.lists.map((l) =>
-      l.id === list.id
-        ? {
-            ...list,
-            cards: l.cards.map((c) =>
-              card.id === c.id
-                ? {
-                    ...card,
-                    checkboxes: card.checkboxes.map((check) =>
-                      check.id === checkbox.id ? checkbox : check,
-                    ),
-                  }
-                : c,
-            ),
-          }
-        : l,
-    ),
-  };
+  return lists.map((l) =>
+    l.id === list.id
+      ? {
+          ...list,
+          cards: l.cards.map((c) =>
+            card.id === c.id
+              ? {
+                  ...card,
+                  checkboxes: card.checkboxes.map((check) => (check.id === checkbox.id ? checkbox : check)),
+                }
+              : c
+          ),
+        }
+      : l
+  );
 };
 
-export const deleteCheckBox = (
-  kanban: Kanban,
-  list: List,
-  card: Card,
-  id: string,
-): Kanban => {
-  return {
-    ...kanban,
-    lists: kanban.lists.map((l) =>
-      l.id === list.id
-        ? {
-            ...list,
-            cards: l.cards.map((c) =>
-              card.id === c.id
-                ? {
-                    ...card,
-                    checkboxes: card.checkboxes.filter(
-                      (check) => check.id !== id,
-                    ),
-                  }
-                : c,
-            ),
-          }
-        : l,
-    ),
-  };
+export const deleteCheckBox = (lists: List[], list: List, card: Card, id: string): List[] => {
+  return lists.map((l) =>
+    l.id === list.id
+      ? {
+          ...list,
+          cards: l.cards.map((c) =>
+            card.id === c.id
+              ? {
+                  ...card,
+                  checkboxes: card.checkboxes.filter((check) => check.id !== id),
+                }
+              : c
+          ),
+        }
+      : l
+  );
 };
 
 export const moveCheckBox = (
-  kanban: Kanban,
+  lists: List[],
   listId: string,
   cardId: string,
   fromCheckboxIndex: number,
-  toCheckboxIndex: number,
-): Kanban => {
-  const list = kanban.lists.filter((l) => l.id === listId)[0];
-  const card = list.cards.filter((c) => c.id === cardId)[0];
-  const checkbox = card.checkboxes[fromCheckboxIndex];
-  const movedCheckBox = card.checkboxes.filter(
-    (_, i) => i !== fromCheckboxIndex,
+  toCheckboxIndex: number
+): List[] => {
+  const list = lists.find((l) => l.id === listId);
+  const card = list?.cards.find((c) => c.id === cardId);
+  const checkbox = card?.checkboxes[fromCheckboxIndex];
+  const movedCheckBox = card?.checkboxes.filter((_, i) => i !== fromCheckboxIndex);
+
+  if (!list || !card || !checkbox || !movedCheckBox) {
+    return lists;
+  }
+
+  return lists.map((l) =>
+    l.id === list.id
+      ? {
+          ...list,
+          cards: l.cards.map((c) =>
+            card.id === c.id
+              ? {
+                  ...card,
+                  checkboxes: insert(movedCheckBox, toCheckboxIndex, checkbox),
+                }
+              : c
+          ),
+        }
+      : l
   );
-
-  return {
-    ...kanban,
-    lists: kanban.lists.map((l) =>
-      l.id === list.id
-        ? {
-            ...list,
-            cards: l.cards.map((c) =>
-              card.id === c.id
-                ? {
-                    ...card,
-                    checkboxes: insert(
-                      movedCheckBox,
-                      toCheckboxIndex,
-                      checkbox,
-                    ),
-                  }
-                : c,
-            ),
-          }
-        : l,
-    ),
-  };
 };
 
-export const addLabel = (
-  kanban: Kanban,
-  list: List,
-  card: Card,
-  label: Label,
-): Kanban => {
+export const addLabel = (lists: List[], list: List, card: Card, label: Label): List[] => {
   if (!label.title) {
-    return kanban;
+    return lists;
   }
 
-  return {
-    ...kanban,
-    lists: kanban.lists.map((l) =>
-      l.id === list.id
-        ? {
-            ...list,
-            cards: l.cards.map((c) =>
-              card.id === c.id
-                ? {
-                    ...card,
-                    labels: [...card.labels, label],
-                  }
-                : c,
-            ),
-          }
-        : l,
-    ),
-  };
+  return lists.map((l) =>
+    l.id === list.id
+      ? {
+          ...list,
+          cards: l.cards.map((c) =>
+            card.id === c.id
+              ? {
+                  ...card,
+                  labels: [...card.labels, label],
+                }
+              : c
+          ),
+        }
+      : l
+  );
 };
 
-export const updateLabel = (
-  kanban: Kanban,
-  list: List,
-  card: Card,
-  label: Label,
-): Kanban => {
+export const updateLabel = (lists: List[], list: List, card: Card, label: Label): List[] => {
   if (!label.title) {
-    return kanban;
+    return lists;
   }
 
-  return {
-    ...kanban,
-    lists: kanban.lists.map((l) =>
-      l.id === list.id
-        ? {
-            ...list,
-            cards: l.cards.map((c) =>
-              card.id === c.id
-                ? {
-                    ...card,
-                    labels: card.labels.map((l) =>
-                      l.id === label.id ? label : l,
-                    ),
-                  }
-                : c,
-            ),
-          }
-        : l,
-    ),
-  };
+  return lists.map((l) =>
+    l.id === list.id
+      ? {
+          ...list,
+          cards: l.cards.map((c) =>
+            card.id === c.id
+              ? {
+                  ...card,
+                  labels: card.labels.map((l) => (l.id === label.id ? label : l)),
+                }
+              : c
+          ),
+        }
+      : l
+  );
 };
 
-export const deleteLabel = (
-  kanban: Kanban,
-  list: List,
-  card: Card,
-  id: string,
-): Kanban => {
-  return {
-    ...kanban,
-    lists: kanban.lists.map((l) =>
-      l.id === list.id
-        ? {
-            ...list,
-            cards: l.cards.map((c) =>
-              card.id === c.id
-                ? {
-                    ...card,
-                    labels: card.labels.filter((l) => l.id !== id),
-                  }
-                : c,
-            ),
-          }
-        : l,
-    ),
-  };
+export const deleteLabel = (lists: List[], list: List, card: Card, id: string): List[] => {
+  return lists.map((l) =>
+    l.id === list.id
+      ? {
+          ...list,
+          cards: l.cards.map((c) =>
+            card.id === c.id
+              ? {
+                  ...card,
+                  labels: card.labels.filter((l) => l.id !== id),
+                }
+              : c
+          ),
+        }
+      : l
+  );
 };
 
-export const addComments = (
-  kanban: Kanban,
-  list: List,
-  card: Card,
-  comment: Comment,
-): Kanban => {
+export const addComments = (lists: List[], list: List, card: Card, comment: Comment): List[] => {
   if (!comment.comment) {
-    return kanban;
+    return lists;
   }
 
-  return {
-    ...kanban,
-    lists: kanban.lists.map((l) =>
-      l.id === list.id
-        ? {
-            ...list,
-            cards: l.cards.map((c) =>
-              card.id === c.id
-                ? {
-                    ...card,
-                    comments: [...card.comments, comment],
-                  }
-                : c,
-            ),
-          }
-        : l,
-    ),
-  };
+  return lists.map((l) =>
+    l.id === list.id
+      ? {
+          ...list,
+          cards: l.cards.map((c) =>
+            card.id === c.id
+              ? {
+                  ...card,
+                  comments: [...card.comments, comment],
+                }
+              : c
+          ),
+        }
+      : l
+  );
 };
 
-export const updateComments = (
-  kanban: Kanban,
-  list: List,
-  card: Card,
-  comment: Comment,
-): Kanban => {
+export const updateComments = (lists: List[], list: List, card: Card, comment: Comment): List[] => {
   if (!comment.comment) {
-    return kanban;
+    return lists;
   }
 
-  return {
-    ...kanban,
-    lists: kanban.lists.map((l) =>
-      l.id === list.id
-        ? {
-            ...list,
-            cards: l.cards.map((c) =>
-              card.id === c.id
-                ? {
-                    ...card,
-                    comments: c.comments.map((cc) =>
-                      cc.id === comment.id ? comment : cc,
-                    ),
-                  }
-                : c,
-            ),
-          }
-        : l,
-    ),
-  };
+  return lists.map((l) =>
+    l.id === list.id
+      ? {
+          ...list,
+          cards: l.cards.map((c) =>
+            card.id === c.id
+              ? {
+                  ...card,
+                  comments: c.comments.map((cc) => (cc.id === comment.id ? comment : cc)),
+                }
+              : c
+          ),
+        }
+      : l
+  );
 };
 
-export const deleteComments = (
-  kanban: Kanban,
-  list: List,
-  card: Card,
-  id: string,
-): Kanban => {
-  return {
-    ...kanban,
-    lists: kanban.lists.map((l) =>
-      l.id === list.id
-        ? {
-            ...list,
-            cards: l.cards.map((c) =>
-              card.id === c.id
-                ? {
-                    ...card,
-                    comments: c.comments.filter((cc) => cc.id !== id),
-                  }
-                : c,
-            ),
-          }
-        : l,
-    ),
-  };
-};
-
-export const updateSettings = (kanban: Kanban, settings: Settings): Kanban => {
-  return {
-    ...kanban,
-    settings,
-  };
+export const deleteComments = (lists: List[], list: List, card: Card, id: string): List[] => {
+  return lists.map((l) =>
+    l.id === list.id
+      ? {
+          ...list,
+          cards: l.cards.map((c) =>
+            card.id === c.id
+              ? {
+                  ...card,
+                  comments: c.comments.filter((cc) => cc.id !== id),
+                }
+              : c
+          ),
+        }
+      : l
+  );
 };
 
 export const toJson = (kanban: Kanban) => {
@@ -649,14 +483,7 @@ export const toJson = (kanban: Kanban) => {
 };
 
 export const fromJson = async (json: string): Promise<Kanban> => {
-  return new Promise(async (resolve, reject) => {
-    try {
-      resolve(await kanbanDecoder.runPromise(JSON.parse(json)));
-    } catch (e) {
-      // @ts-expect-error
-      reject(`invalid input json ${e.message}`);
-    }
-  });
+  return kanbanDecoder.runPromise(JSON.parse(json));
 };
 
 const colorDecoder: Decoder<Color> = union(
@@ -670,8 +497,8 @@ const colorDecoder: Decoder<Color> = union(
     constant('#c377e0'),
     constant('#0079bf'),
     constant('#00c2e0'),
-    constant('#51e898'),
-  ),
+    constant('#51e898')
+  )
 );
 
 const labelDecoder: Decoder<Label> = object({
@@ -726,8 +553,4 @@ const kanbanDecoder: Decoder<Kanban> = object({
   settings: settingsDecoder,
 });
 
-const insert = <T>(arr: T[], index: number, newItem: T) => [
-  ...arr.slice(0, index),
-  newItem,
-  ...arr.slice(index),
-];
+const insert = <T>(arr: T[], index: number, newItem: T) => [...arr.slice(0, index), newItem, ...arr.slice(index)];

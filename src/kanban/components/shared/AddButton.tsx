@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { MdClose } from 'react-icons/md';
-import styled from 'styled-components';
-
+import { styled } from 'styled-components';
 import { Button } from './Button';
 
 const Icon = styled.div`
@@ -23,7 +22,7 @@ const Buttons = styled.div`
   justify-content: flex-start;
 `;
 
-type Props = {
+type Properties = {
   text: string;
   type: 'primary' | 'secondary' | 'danger';
   canClose: boolean;
@@ -32,30 +31,19 @@ type Props = {
   onCancel?: () => void;
 };
 
-export const AddButton = ({
-  text,
-  type,
-  canClose,
-  disabled = false,
-  onAddClick,
-  onCancel,
-}: Props) => {
+export const AddButton = ({ text, type, canClose, disabled = false, onAddClick, onCancel }: Properties) => {
   return (
     <Buttons>
-      <Button
-        text={text}
-        type={type}
-        onClick={onAddClick}
-        disabled={disabled}
-      />
+      <Button text={text} type={type} onClick={onAddClick} disabled={disabled} />
       {canClose ? (
         <Icon
-          onClick={(e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+          onClick={(e: React.MouseEvent<HTMLDivElement>) => {
             e.stopPropagation();
             if (onCancel) {
               onCancel();
             }
-          }}>
+          }}
+        >
           <MdClose />
         </Icon>
       ) : (

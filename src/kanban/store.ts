@@ -1,34 +1,28 @@
 import * as React from 'react';
-import {
-  atom,
-  selector,
-  selectorFamily,
-  useRecoilState,
-  useRecoilValue,
-  useSetRecoilState,
-} from 'recoil';
-
+import { atom, useAtom, useAtomValue, useSetAtom } from 'jotai';
+import { atomFamily } from 'jotai/utils';
+import { focusAtom } from 'jotai-optics';
 import { vscode } from '../vscode';
 import {
-  Comment,
+  type Comment,
   addCard,
   addCheckBox,
   addComments,
   addLabel,
   addList,
   archiveCard,
-  Card,
-  CheckBox,
+  type Card,
+  type CheckBox,
   deleteCard,
   deleteCheckBox,
   deleteLabel,
-  Kanban,
-  Label,
-  List,
+  type Kanban,
+  type Label,
+  type List,
   moveCard,
   moveCardAcrossList,
   moveList,
-  removeList,
+  removeArchivedList,
   restoreCard,
   updateCard,
   updateCheckBox,
@@ -36,420 +30,421 @@ import {
   updateList,
   updateComments,
   deleteComments,
-  updateSettings,
-  Settings,
+  type Settings,
   archiveList,
   restoreList,
   archiveAllCardInList,
   copyCard,
   moveCheckBox,
   moveAllCardsToList,
+  type ArchiveList,
 } from './models/kanban';
 
-const titleState = atom({
-  key: 'titleState',
-  default: '',
+const titleAtom = atom('');
+const addCardAtom = atom<Card | undefined>(undefined);
+const filterAtom = atom<{ text: string; labels: Set<string> }>({
+  text: '',
+  labels: new Set([]),
 });
+const showModalAtom = atom<boolean>(false);
+const menuAtom = atom<string | undefined>(undefined);
 
-const addCardState = atom<Card | undefined>({
-  key: 'addCardState',
-  default: undefined,
-});
+const lists = atom<List[]>([]);
+const archiveLists = atom<ArchiveList[]>([]);
+const archiveCards = atom<Card[]>([]);
+const settings = atom<Settings>({ labels: [] });
 
-const filterState = atom<{ text: string; labels: Set<string> } | undefined>({
-  key: 'filterState',
-  default: undefined,
-});
+const listsAtom = atom(
+  (get) => get(lists),
+  (get, set, newValue: List[]) => {
+    const kanban: Kanban = get(kanbanAtom);
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+    vscode.postMessage({
+      type: 'edit',
+      kanban: { ...kanban, lists: newValue },
+    });
+    set(lists, newValue);
+  }
+);
+const archiveListsAtom = atom(
+  (get) => get(archiveLists),
+  (get, set, newValue: ArchiveList[]) => {
+    const kanban: Kanban = get(kanbanAtom);
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+    vscode.postMessage({
+      type: 'edit',
+      kanban: { ...kanban, archive: { ...kanban.archive, lists: newValue } },
+    });
+    set(archiveLists, newValue);
+  }
+);
+const archiveCardsAtom = atom(
+  (get) => get(archiveCards),
+  (get, set, newValue: Card[]) => {
+    const kanban: Kanban = get(kanbanAtom);
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+    vscode.postMessage({
+      type: 'edit',
+      kanban: {
+        ...kanban,
+        archive: { ...kanban.archive, cards: newValue },
+      },
+    });
+    set(archiveCards, newValue);
+  }
+);
+const settingsAtom = atom(
+  (get) => get(settings),
+  (get, set, newValue: Settings) => {
+    const kanban: Kanban = get(kanbanAtom);
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+    vscode.postMessage({
+      type: 'edit',
+      kanban: {
+        ...kanban,
+        settings: newValue,
+      },
+    });
+    set(settings, newValue);
+  }
+);
 
-const showModalState = atom<boolean>({
-  key: 'showModalState',
-  default: false,
-});
+const kanbanAtom = atom(
+  (get) => ({
+    lists: get(lists),
+    archive: { lists: get(archiveLists), cards: get(archiveCards) },
+    settings: get(settings),
+  }),
+  (_get, set, newValue: Kanban) => {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+    vscode.postMessage({
+      type: 'edit',
+      kanban: newValue,
+    });
+    set(lists, newValue.lists);
+    set(archiveLists, newValue.archive.lists);
+    set(archiveCards, newValue.archive.cards);
+    set(settings, newValue.settings);
+  }
+);
 
-const menuState = atom<string | null>({
-  key: 'menuState',
-  default: null,
-});
-
-const kanbanState = atom<Kanban>({
-  key: 'kanbanState',
-  default: {
-    lists: [],
-    archive: { lists: [], cards: [] },
-    settings: {
-      labels: [],
-    },
-  },
-  effects_UNSTABLE: [
-    ({ onSet }) => {
-      onSet((kanban) => {
-        vscode.postMessage({
-          type: 'edit',
-          kanban: kanban,
-        });
-      });
-    },
-  ],
-});
-
-const cardSelector = selectorFamily<Card | undefined, string[]>({
-  key: 'cardSelector',
-  get:
-    ([listId, cardId]) =>
-    ({ get }) => {
-      return get(kanbanState)
-        .lists.find((v) => v.id === listId)
-        ?.cards.find((v) => v.id === cardId);
-    },
-});
-
-const filteredTextState = selector({
-  key: 'filteredTextState',
-  get: ({ get }) => {
-    const filter = get(filterState);
-    if (!filter) {
-      return '';
-    }
-
-    return filter.text;
-  },
-});
-
-const filteredLabelState = selector({
-  key: 'filteredLabelState',
-  get: ({ get }) => {
-    const filter = get(filterState);
-    if (!filter) {
-      return new Set([]);
-    }
-
-    return filter.labels;
-  },
-});
+const cardSelector = atomFamily(({ listId, cardId }: { listId: string; cardId: string }) =>
+  atom((get) =>
+    get(kanbanAtom)
+      .lists.find((v) => v.id === listId)
+      ?.cards.find((v) => v.id === cardId)
+  )
+);
+const filteredTextSelector = focusAtom(filterAtom, (optic) => optic.prop('text'));
+const filteredLabelSelector = focusAtom(filterAtom, (optic) => optic.prop('labels'));
 
 export const selectors = {
-  useTitle: () => useRecoilValue(titleState),
-  useFilterText: () => useRecoilValue(filteredTextState),
-  useFilterLabels: () => useRecoilValue(filteredLabelState),
-  useShowModal: () => useRecoilValue(showModalState),
-  useAddCard: () => useRecoilValue(addCardState),
-  useKanban: () => useRecoilValue(kanbanState),
-  useCard: (listId: string, cardId: string) =>
-    useRecoilValue(cardSelector([listId, cardId])),
-  useMenu: () => useRecoilValue(menuState),
+  useTitle: () => useAtomValue(titleAtom),
+  useFilterText: () => useAtomValue(filteredTextSelector),
+  useFilterLabels: () => useAtomValue(filteredLabelSelector),
+  useShowModal: () => useAtomValue(showModalAtom),
+  useAddCard: () => useAtomValue(addCardAtom),
+  useKanban: () => useAtomValue(kanbanAtom),
+  useCard: (listId: string, cardId: string) => useAtomValue(cardSelector({ listId, cardId })),
+  useMenu: () => useAtomValue(menuAtom),
 };
 
 export const actions = {
-  useSetTitle: () => {
-    const setState = useSetRecoilState(titleState);
-    return React.useCallback((title: string) => setState(title), []);
+  useSetTitle() {
+    const setState = useSetAtom(titleAtom);
+    return React.useCallback((title: string) => {
+      setState(title);
+    }, []);
   },
-  useSetKanban: () => {
-    const setState = useSetRecoilState(kanbanState);
-    return React.useCallback((kanban: Kanban) => setState(kanban), []);
+  useSetKanban() {
+    const setState = useSetAtom(kanbanAtom);
+    return React.useCallback((kanban: Kanban) => {
+      setState(kanban);
+    }, []);
   },
-  useSetFilter: () => {
-    const setState = useSetRecoilState(filterState);
-    return React.useCallback(
-      (text: string, labels: Set<string>) => setState({ text, labels }),
-      [],
-    );
+  useSetFilter() {
+    const setState = useSetAtom(filterAtom);
+    return React.useCallback((text: string, labels: Set<string>) => {
+      setState({ text, labels });
+    }, []);
   },
-  useSetShowModal: () => {
-    const setState = useSetRecoilState(showModalState);
-    return React.useCallback((showModal: boolean) => setState(showModal), []);
+  useSetShowModal() {
+    const setState = useSetAtom(showModalAtom);
+    return React.useCallback((showModal: boolean) => {
+      setState(showModal);
+    }, []);
   },
-  useSetAddingCard: () => {
-    const setState = useSetRecoilState(addCardState);
-    return React.useCallback((card: Card | undefined) => setState(card), []);
+  useSetAddingCard() {
+    const setState = useSetAtom(addCardAtom);
+    return React.useCallback((card: Card | undefined) => {
+      setState(card);
+    }, []);
   },
-  useSetMenu: () => {
-    const setState = useSetRecoilState(menuState);
-    return React.useCallback((menuId: string) => setState(menuId), []);
+  useSetMenu() {
+    const setState = useSetAtom(menuAtom);
+    return React.useCallback((menuId: string) => {
+      setState(menuId);
+    }, []);
   },
-  useMenuClose: () => {
-    const setState = useSetRecoilState(menuState);
-    return React.useCallback(() => setState(''), []);
+  useMenuClose() {
+    const setState = useSetAtom(menuAtom);
+    return React.useCallback(() => {
+      setState('');
+    }, []);
   },
 };
 
 export const kanbanActions = {
-  useAddList: () => {
-    const [kanban, setState] = useRecoilState(kanbanState);
+  useAddList() {
+    const [lists, setLists] = useAtom(listsAtom);
     return React.useCallback(
       (list: List) => {
-        setState(addList(kanban, list));
+        setLists(addList(lists, list));
       },
-      [kanban],
+      [lists]
     );
   },
-  useUpdateList: () => {
-    const [kanban, setState] = useRecoilState(kanbanState);
+  useUpdateList() {
+    const [lists, setLists] = useAtom(listsAtom);
     return React.useCallback(
       (list: List) => {
-        setState(updateList(kanban, list));
+        setLists(updateList(lists, list));
       },
-      [kanban],
+      [lists]
     );
   },
-  useMoveList: () => {
-    const [kanban, setState] = useRecoilState(kanbanState);
+  useMoveList() {
+    const [lists, setLists] = useAtom(listsAtom);
     return React.useCallback(
       (fromListId: number, toListId: number) => {
-        setState(moveList(kanban, fromListId, toListId));
+        setLists(moveList(lists, fromListId, toListId));
       },
-      [kanban],
+      [lists]
     );
   },
-  useRemoveList: () => {
-    const [kanban, setState] = useRecoilState(kanbanState);
+  useRemoveList() {
+    const [lists, setLists] = useAtom(archiveListsAtom);
     return React.useCallback(
       (listId: string) => {
-        setState(removeList(kanban, listId));
+        setLists(removeArchivedList(lists, listId));
       },
-      [kanban],
+      [lists]
     );
   },
-  useArchiveList: () => {
-    const [kanban, setState] = useRecoilState(kanbanState);
+  useArchiveList() {
+    const [kanban, setState] = useAtom(kanbanAtom);
     return React.useCallback(
       (list: List) => {
         setState(archiveList(kanban, list));
       },
-      [kanban],
+      [kanban]
     );
   },
-  useArchiveAllCardInList: () => {
-    const [kanban, setState] = useRecoilState(kanbanState);
+  useArchiveAllCardInList() {
+    const [kanban, setState] = useAtom(kanbanAtom);
     return React.useCallback(
       (list: List) => {
         setState(archiveAllCardInList(kanban, list));
       },
-      [kanban],
+      [kanban]
     );
   },
-  useRestoreList: () => {
-    const [kanban, setState] = useRecoilState(kanbanState);
+  useRestoreList() {
+    const [kanban, setState] = useAtom(kanbanAtom);
     return React.useCallback(
       (list: List) => {
         setState(restoreList(kanban, list));
       },
-      [kanban],
+      [kanban]
     );
   },
-  useMoveAllCardsToList: () => {
-    const [kanban, setState] = useRecoilState(kanbanState);
+  useMoveAllCardsToList() {
+    const [lists, setLists] = useAtom(listsAtom);
     return React.useCallback(
       (fromList: List, toList: List) => {
-        setState(moveAllCardsToList(kanban, fromList, toList));
+        setLists(moveAllCardsToList(lists, fromList, toList));
       },
-      [kanban],
+      [lists]
     );
   },
-  useAddCard: () => {
-    const [kanban, setState] = useRecoilState(kanbanState);
+  useAddCard() {
+    const [lists, setLists] = useAtom(listsAtom);
     return React.useCallback(
       (list: List, card: Card) => {
-        setState(addCard(kanban, list, card));
+        setLists(addCard(lists, list, card));
       },
-      [kanban],
+      [lists]
     );
   },
-  useUpdateCard: () => {
-    const [kanban, setState] = useRecoilState(kanbanState);
+  useUpdateCard() {
+    const [lists, setLists] = useAtom(listsAtom);
     return React.useCallback(
       (list: List, card: Card) => {
-        setState(updateCard(kanban, list, card));
+        setLists(updateCard(lists, list, card));
       },
-      [kanban],
+      [lists]
     );
   },
-  useDeleteCard: () => {
-    const [kanban, setState] = useRecoilState(kanbanState);
+  useDeleteCard() {
+    const [archiveCards, setArchiveCards] = useAtom(archiveCardsAtom);
     return React.useCallback(
       (card: Card) => {
-        setState(deleteCard(kanban, card));
+        setArchiveCards(deleteCard(archiveCards, card));
       },
-      [kanban],
+      [archiveCards]
     );
   },
-  useCopyCard: () => {
-    const [kanban, setState] = useRecoilState(kanbanState);
+  useCopyCard() {
+    const [lists, setLists] = useAtom(listsAtom);
     return React.useCallback(
       (card: Card) => {
-        setState(copyCard(kanban, card));
+        setLists(copyCard(lists, card));
       },
-      [kanban],
+      [lists]
     );
   },
-  useMoveCard: () => {
-    const [kanban, setState] = useRecoilState(kanbanState);
+  useMoveCard() {
+    const [lists, setLists] = useAtom(listsAtom);
     return React.useCallback(
       (listId: string, fromCardIndex: number, toCardIndex: number) => {
-        setState(moveCard(kanban, listId, fromCardIndex, toCardIndex));
+        setLists(moveCard(lists, listId, fromCardIndex, toCardIndex));
       },
-      [kanban],
+      [lists]
     );
   },
-  useMoveCardAcrossList: () => {
-    const [kanban, setState] = useRecoilState(kanbanState);
+  useMoveCardAcrossList() {
+    const [lists, setLists] = useAtom(listsAtom);
     return React.useCallback(
-      (
-        fromListId: string,
-        fromCardIndex: number,
-        toListId: string,
-        toCardIndex: number,
-      ) => {
-        setState(
-          moveCardAcrossList(
-            kanban,
-            fromListId,
-            fromCardIndex,
-            toListId,
-            toCardIndex,
-          ),
-        );
+      (fromListId: string, fromCardIndex: number, toListId: string, toCardIndex: number) => {
+        setLists(moveCardAcrossList(lists, fromListId, fromCardIndex, toListId, toCardIndex));
       },
-      [kanban],
+      [lists]
     );
   },
-  useArchiveCard: () => {
-    const [kanban, setState] = useRecoilState(kanbanState);
+  useArchiveCard() {
+    const [kanban, setKanban] = useAtom(kanbanAtom);
     return React.useCallback(
       (list: List, card: Card) => {
-        setState(archiveCard(kanban, list, card));
+        setKanban(archiveCard(kanban, list, card));
       },
-      [kanban],
+      [kanban]
     );
   },
-  useRestoreCard: () => {
-    const [kanban, setState] = useRecoilState(kanbanState);
+  useRestoreCard() {
+    const [kanban, setKanban] = useAtom(kanbanAtom);
     return React.useCallback(
       (card: Card) => {
-        setState(restoreCard(kanban, card));
+        setKanban(restoreCard(kanban, card));
       },
-      [kanban],
+      [kanban]
     );
   },
-  useUpdateCardDueDate: () => {
-    const [kanban, setState] = useRecoilState(kanbanState);
+  useUpdateCardDueDate() {
+    const [lists, setLists] = useAtom(listsAtom);
     return React.useCallback(
       (list: List, card: Card, dueDate?: Date) => {
-        setState(updateCard(kanban, list, { ...card, dueDate }));
+        setLists(updateCard(lists, list, { ...card, dueDate }));
       },
-      [kanban],
+      [lists]
     );
   },
-  useAddCheckBox: () => {
-    const [kanban, setState] = useRecoilState(kanbanState);
+  useAddCheckBox() {
+    const [lists, setLists] = useAtom(listsAtom);
     return React.useCallback(
       (list: List, card: Card, checkbox: CheckBox) => {
-        setState(addCheckBox(kanban, list, card, checkbox));
+        setLists(addCheckBox(lists, list, card, checkbox));
       },
-      [kanban],
+      [lists]
     );
   },
-  useUpdateCheckBox: () => {
-    const [kanban, setState] = useRecoilState(kanbanState);
+  useUpdateCheckBox() {
+    const [lists, setLists] = useAtom(listsAtom);
     return React.useCallback(
       (list: List, card: Card, checkbox: CheckBox) => {
-        setState(updateCheckBox(kanban, list, card, checkbox));
+        setLists(updateCheckBox(lists, list, card, checkbox));
       },
-      [kanban],
+      [lists]
     );
   },
-  useDeleteCheckBox: () => {
-    const [kanban, setState] = useRecoilState(kanbanState);
+  useDeleteCheckBox() {
+    const [lists, setLists] = useAtom(listsAtom);
     return React.useCallback(
       (list: List, card: Card, id: string) => {
-        setState(deleteCheckBox(kanban, list, card, id));
+        setLists(deleteCheckBox(lists, list, card, id));
       },
-      [kanban],
+      [lists]
     );
   },
-  useMoveCheckBox: () => {
-    const [kanban, setState] = useRecoilState(kanbanState);
+  useMoveCheckBox() {
+    const [lists, setLists] = useAtom(listsAtom);
     return React.useCallback(
-      (
-        listId: string,
-        cardId: string,
-        fromCheckBoxIndex: number,
-        toCheckBoxIndex: number,
-      ) => {
-        setState(
-          moveCheckBox(
-            kanban,
-            listId,
-            cardId,
-            fromCheckBoxIndex,
-            toCheckBoxIndex,
-          ),
-        );
+      (listId: string, cardId: string, fromCheckBoxIndex: number, toCheckBoxIndex: number) => {
+        setLists(moveCheckBox(lists, listId, cardId, fromCheckBoxIndex, toCheckBoxIndex));
       },
-      [kanban],
+      [lists]
     );
   },
-  useAddLabel: () => {
-    const [kanban, setState] = useRecoilState(kanbanState);
+  useAddLabel() {
+    const [lists, setLists] = useAtom(listsAtom);
     return React.useCallback(
       (list: List, card: Card, label: Label) => {
-        setState(addLabel(kanban, list, card, label));
+        setLists(addLabel(lists, list, card, label));
       },
-      [kanban],
+      [lists]
     );
   },
-  useUpdateLabel: () => {
-    const [kanban, setState] = useRecoilState(kanbanState);
+  useUpdateLabel() {
+    const [lists, setLists] = useAtom(listsAtom);
     return React.useCallback(
       (list: List, card: Card, label: Label) => {
-        setState(updateLabel(kanban, list, card, label));
+        setLists(updateLabel(lists, list, card, label));
       },
-      [kanban],
+      [lists]
     );
   },
-  useDeleteLabel: () => {
-    const [kanban, setState] = useRecoilState(kanbanState);
+  useDeleteLabel() {
+    const [lists, setLists] = useAtom(listsAtom);
     return React.useCallback(
       (list: List, card: Card, id: string) => {
-        setState(deleteLabel(kanban, list, card, id));
+        setLists(deleteLabel(lists, list, card, id));
       },
-      [kanban],
+      [lists]
     );
   },
-  useAddComments: () => {
-    const [kanban, setState] = useRecoilState(kanbanState);
+  useAddComments() {
+    const [lists, setLists] = useAtom(listsAtom);
     return React.useCallback(
       (list: List, card: Card, comment: Comment) => {
-        setState(addComments(kanban, list, card, comment));
+        setLists(addComments(lists, list, card, comment));
       },
-      [kanban],
+      [lists]
     );
   },
-  useUpdateComments: () => {
-    const [kanban, setState] = useRecoilState(kanbanState);
+  useUpdateComments() {
+    const [lists, setLists] = useAtom(listsAtom);
     return React.useCallback(
       (list: List, card: Card, comment: Comment) => {
-        setState(updateComments(kanban, list, card, comment));
+        setLists(updateComments(lists, list, card, comment));
       },
-      [kanban],
+      [lists]
     );
   },
-  useDeleteComments: () => {
-    const [kanban, setState] = useRecoilState(kanbanState);
+  useDeleteComments() {
+    const [lists, setLists] = useAtom(listsAtom);
     return React.useCallback(
       (list: List, card: Card, id: string) => {
-        setState(deleteComments(kanban, list, card, id));
+        setLists(deleteComments(lists, list, card, id));
       },
-      [kanban],
+      [lists]
     );
   },
-  useUpdateSettings: () => {
-    const [kanban, setState] = useRecoilState(kanbanState);
+  useUpdateSettings() {
+    const [settings, setSettings] = useAtom(settingsAtom);
     return React.useCallback(
       (settings: Settings) => {
-        setState(updateSettings(kanban, settings));
+        setSettings(settings);
       },
-      [kanban],
+      [settings]
     );
   },
 };

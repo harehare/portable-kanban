@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { MdCheck, MdEdit } from 'react-icons/md';
-import styled from 'styled-components';
-
-import { Card, Label, List } from '../../models/kanban';
+import { styled } from 'styled-components';
+import { type Card, type Label, type List } from '../../models/kanban';
 import { selectors, kanbanActions } from '../../store';
 import { IconButton } from '../shared/IconButton';
 import { LabelEdit } from './Edit';
@@ -56,12 +55,12 @@ const AddLabel = styled.div`
   max-width: 140px;
 `;
 
-type Props = {
+type Properties = {
   list: List;
   card: Card;
 };
 
-export const LabelSelect = ({ list, card }: Props) => {
+export const LabelSelect = ({ list, card }: Properties) => {
   const kanban = selectors.useKanban();
   const addLabel = kanbanActions.useAddLabel();
   const updateLabel = kanbanActions.useUpdateLabel();
@@ -74,10 +73,7 @@ export const LabelSelect = ({ list, card }: Props) => {
     label: undefined,
     show: false,
   });
-  const selectedLabelNames = React.useMemo(
-    () => card.labels.map((l) => l.title),
-    [card.labels],
-  );
+  const selectedLabelNames = React.useMemo(() => card.labels.map((l) => l.title), [card.labels]);
   const handleCreate = React.useCallback((label: Label) => {
     if (kanban.settings.labels.map((l) => l.title).includes(label.title)) {
       return;
@@ -93,9 +89,7 @@ export const LabelSelect = ({ list, card }: Props) => {
   const handleEdit = React.useCallback((label: Label) => {
     updateLabel(list, card, label);
     updateSettings({
-      labels: kanban.settings.labels.map((l) =>
-        l.id === label.id ? label : l,
-      ),
+      labels: kanban.settings.labels.map((l) => (l.id === label.id ? label : l)),
     });
     setShowEditLabel({ show: false });
   }, []);
@@ -123,7 +117,7 @@ export const LabelSelect = ({ list, card }: Props) => {
               <LabelItem
                 key={l.id}
                 style={{ backgroundColor: l.color }}
-                onClick={(e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+                onClick={(e: React.MouseEvent<HTMLDivElement>) => {
                   e.stopPropagation();
                   const isSelected = selectedLabelNames.includes(l.title);
                   if (isSelected) {
@@ -131,17 +125,17 @@ export const LabelSelect = ({ list, card }: Props) => {
                   } else {
                     addLabel(list, card, l);
                   }
-                }}>
+                }}
+              >
                 {l.title}
-                {selectedLabelNames.includes(l.title) && (
-                  <MdCheck style={{ fontSize: '1.1rem' }} />
-                )}
+                {selectedLabelNames.includes(l.title) && <MdCheck style={{ fontSize: '1.1rem' }} />}
               </LabelItem>
               <div
                 style={{
                   marginBottom: '8px',
                   marginLeft: '8px',
-                }}>
+                }}
+              >
                 <IconButton
                   icon={<MdEdit />}
                   onClick={() => {
@@ -153,10 +147,11 @@ export const LabelSelect = ({ list, card }: Props) => {
           ))}
           <AddLabel
             style={{ width: '131px' }}
-            onClick={(e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+            onClick={(e: React.MouseEvent<HTMLDivElement>) => {
               e.stopPropagation();
               setShowEditLabel({ show: true, label: undefined });
-            }}>
+            }}
+          >
             Add new label
           </AddLabel>
         </Modal>

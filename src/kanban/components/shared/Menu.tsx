@@ -1,8 +1,7 @@
 import * as React from 'react';
-import styled from 'styled-components';
-
+import { styled } from 'styled-components';
 import { selectors, actions } from '../../store';
-import { MenuItem, Props as MenuItemProps } from './MenuItem';
+import { MenuItem, type Props as MenuItemProperties } from './MenuItem';
 
 const MenuIcon = styled.div`
   font-size: 1.1rem;
@@ -40,14 +39,14 @@ const Separator = styled.div`
   background-color: rgba(0, 0, 0, 0.1);
 `;
 
-type Props = {
+type Properties = {
   id: string;
   position: 'left' | 'right';
   icon: React.ReactElement;
-  items: (MenuItemProps | 'separator')[];
+  items: Array<MenuItemProperties | 'separator'>;
 };
 
-export const Menu = ({ id, icon, position, items }: Props) => {
+export const Menu = ({ id, icon, position, items }: Properties) => {
   const menuId = selectors.useMenu();
   const setMenu = actions.useSetMenu();
   const closeMenu = actions.useMenuClose();
@@ -55,30 +54,30 @@ export const Menu = ({ id, icon, position, items }: Props) => {
   return (
     <>
       <MenuIcon
-        onClick={(e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+        onClick={(e: React.MouseEvent<HTMLDivElement>) => {
           e.stopPropagation();
           setMenu(id);
-        }}>
+        }}
+      >
         {icon}
         {id === menuId && (
           <MenuItems position={position}>
-            {items.map((i, index) =>
-              i === 'separator' ? (
+            {items.map((index_, index) =>
+              index_ === 'separator' ? (
                 <Separator key={index} />
               ) : (
                 <div
-                  key={i.text}
+                  key={index_.text}
                   style={{
                     borderTopLeftRadius: index === 0 ? '8px' : '0',
                     borderTopRightRadius: index === 0 ? '8px' : '0',
-                    borderBottomLeftRadius:
-                      items.length - 1 === index ? '8px' : '0',
-                    borderBottomRightRadius:
-                      items.length - 1 === index ? '8px' : '0',
-                  }}>
-                  <MenuItem text={i.text} icon={i.icon} onClick={i.onClick} />
+                    borderBottomLeftRadius: items.length - 1 === index ? '8px' : '0',
+                    borderBottomRightRadius: items.length - 1 === index ? '8px' : '0',
+                  }}
+                >
+                  <MenuItem text={index_.text} icon={index_.icon} onClick={index_.onClick} />
                 </div>
-              ),
+              )
             )}
           </MenuItems>
         )}

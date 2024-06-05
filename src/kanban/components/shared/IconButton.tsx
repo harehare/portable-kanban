@@ -1,5 +1,5 @@
 import * as React from 'react';
-import styled from 'styled-components';
+import { styled } from 'styled-components';
 
 const Button = styled.div`
   cursor: pointer;
@@ -14,10 +14,11 @@ type Props = {
 export const IconButton = ({ icon, onClick }: Props) => {
   return (
     <Button
-      onClick={(e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+      onClick={(e: React.MouseEvent<HTMLDivElement>) => {
         e.stopPropagation();
         onClick();
-      }}>
+      }}
+    >
       {icon}
     </Button>
   );

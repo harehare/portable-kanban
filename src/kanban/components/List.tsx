@@ -2,19 +2,12 @@ import Fuse from 'fuse.js';
 import * as React from 'react';
 import { Droppable, Draggable } from 'react-beautiful-dnd';
 import { FiPlus } from 'react-icons/fi';
+import { MdAdd, MdArchive, MdDriveFileMoveOutline, MdMenu, MdOutlineArchive } from 'react-icons/md';
+import { styled } from 'styled-components';
 import {
-  MdAdd,
-  MdArchive,
-  MdDriveFileMoveOutline,
-  MdMenu,
-  MdOutlineArchive,
-} from 'react-icons/md';
-import styled from 'styled-components';
-
-import {
-  Kanban as KanbanModel,
-  List as ListModel,
-  Card as CardModel,
+  type Kanban as KanbanModel,
+  type List as ListModel,
+  type Card as CardModel,
   addCard as addCardToKanban,
   newCard,
   updateList,
@@ -74,10 +67,9 @@ const Icon = styled.div`
 `;
 
 const isLabelMatch = (card: CardModel, labels: Set<string>): boolean =>
-  labels.size === 0 ||
-  [...card.labels.map((l) => l.title)].filter((x) => labels.has(x)).length > 0;
+  labels.size === 0 || card.labels.map((l) => l.title).some((x) => labels.has(x));
 
-type Props = {
+type Properties = {
   kanban: KanbanModel;
   list: ListModel;
 };
@@ -87,7 +79,7 @@ const searchOptions = {
   keys: ['title', 'description', 'comments.comment'],
 };
 
-export const List = ({ kanban, list }: Props) => {
+export const List = ({ kanban, list }: Properties) => {
   const setKanban = actions.useSetKanban();
   const setAddCard = actions.useSetAddingCard();
   const archiveList = kanbanActions.useArchiveList();
@@ -97,57 +89,51 @@ export const List = ({ kanban, list }: Props) => {
   const filteredText = selectors.useFilterText();
   const filteredLabels = selectors.useFilterLabels();
   const setMenu = actions.useSetMenu();
-  const searcher = React.useMemo(
-    () => new Fuse(list.cards, searchOptions),
-    [list.cards],
-  );
+  const searcher = React.useMemo(() => new Fuse(list.cards, searchOptions), [list.cards]);
   const filteredCards = React.useMemo(() => {
     if (!filteredText) {
       return list.cards.filter((c) => isLabelMatch(c, filteredLabels));
     }
 
     const result = searcher.search(filteredText || '');
-    return result
-      .filter((c) => isLabelMatch(c.item, filteredLabels))
-      .map((r) => r.item);
+    return result.filter((c) => isLabelMatch(c.item, filteredLabels)).map((r) => r.item);
   }, [searcher, kanban, list, filteredText, filteredLabels]);
   const cardList = React.useMemo(
     () =>
       filteredCards.map((c, index) => (
         <Draggable key={c.id} draggableId={c.id} index={index}>
           {(provided) => (
-            <div
-              ref={provided.innerRef}
-              {...provided.draggableProps}
-              {...provided.dragHandleProps}>
+            <div ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps}>
               <Card key={c.id} card={c} />
             </div>
           )}
         </Draggable>
       )),
-    [filteredCards],
+    [filteredCards]
   );
   const handleAddCard = React.useCallback(
     (card: CardModel) => {
       setKanban(
-        card.title.split('\n').reduce((arr, v) => {
-          const newList = arr.lists.find((l) => l.id === list.id);
-          const tokens = v.split(':').filter((x) => !!x);
+        // eslint-disable-next-line unicorn/no-array-reduce
+        card.title.split('\n').reduce((array, v) => {
+          const newList = array.lists.find((l) => l.id === list.id);
+          const tokens = v.split(':').filter(Boolean);
           const title = tokens.length > 1 ? tokens[1] : v;
           const labelName = tokens.length > 1 ? tokens[0] : undefined;
-          const labels = labelName
-            ? kanban.settings.labels.filter((l) => l.title === labelName)
-            : [];
+          const labels = labelName ? kanban.settings.labels.filter((l) => l.title === labelName) : [];
 
-          return addCardToKanban(arr, newList ?? list, {
-            ...newCard(uuid(), list.id),
-            title,
-            labels,
-          });
-        }, kanban),
+          return {
+            ...array,
+            lists: addCardToKanban(array.lists, newList ?? list, {
+              ...newCard(uuid(), list.id),
+              title,
+              labels,
+            }),
+          };
+        }, kanban)
       );
     },
-    [kanban, setKanban],
+    [kanban, setKanban]
   );
 
   return (
@@ -165,18 +151,20 @@ export const List = ({ kanban, list }: Props) => {
                     paddingLeft: '8px',
                     paddingBottom: '8px',
                     position: 'relative',
-                  }}>
+                  }}
+                >
                   <Title
                     title={list.title}
                     fontSize={'medium'}
                     width={180}
                     onEnter={(text) => {
-                      setKanban(
-                        updateList(kanban, {
+                      setKanban({
+                        ...kanban,
+                        lists: updateList(kanban.lists, {
                           ...list,
                           title: text,
                         }),
-                      );
+                      });
                     }}
                   />
                   <Menu
@@ -187,7 +175,7 @@ export const List = ({ kanban, list }: Props) => {
                       {
                         icon: <MdAdd />,
                         text: 'Add Card',
-                        onClick: () => {
+                        onClick() {
                           setAddCard(newCard(uuid(), list.id));
                         },
                       },
@@ -195,7 +183,7 @@ export const List = ({ kanban, list }: Props) => {
                       {
                         icon: <MdDriveFileMoveOutline />,
                         text: 'Move all cards in this list',
-                        onClick: () => {
+                        onClick() {
                           setMenu(`select-list-${list.id}`);
                         },
                       },
@@ -203,14 +191,14 @@ export const List = ({ kanban, list }: Props) => {
                       {
                         icon: <MdArchive />,
                         text: 'Archive this list',
-                        onClick: () => {
+                        onClick() {
                           archiveList(list);
                         },
                       },
                       {
                         icon: <MdOutlineArchive />,
                         text: 'Archive all cards in the list',
-                        onClick: () => {
+                        onClick() {
                           archiveAllCardInList(list);
                         },
                       },
@@ -230,18 +218,20 @@ export const List = ({ kanban, list }: Props) => {
                 style={{
                   color: 'var(--dark-text-color)',
                   marginTop: '-2px',
-                }}>
+                }}
+              >
                 {filteredCards.length === 1
                   ? '1 card'
                   : filteredCards.length > 1
-                  ? `${filteredCards.length} cards`
-                  : ''}
+                    ? `${filteredCards.length} cards`
+                    : ''}
               </TextXs>
               <div
                 style={{
                   maxHeight: 'calc(100vh - var(--header-height) - 112px)',
                   overflowY: 'auto',
-                }}>
+                }}
+              >
                 <Cards>
                   {cardList}
                   {provided.placeholder}
@@ -263,10 +253,7 @@ export const List = ({ kanban, list }: Props) => {
                 <AddButton
                   text="Add a card"
                   type="primary"
-                  disabled={
-                    addCard?.title === undefined ||
-                    addCard?.title?.replace('\n', '') === ''
-                  }
+                  disabled={addCard?.title === undefined || addCard?.title?.replace('\n', '') === ''}
                   canClose={true}
                   onAddClick={() => {
                     setAddCard(undefined);
@@ -279,12 +266,11 @@ export const List = ({ kanban, list }: Props) => {
                 />
               ) : (
                 <AddLabel
-                  onClick={(
-                    e: React.MouseEvent<HTMLDivElement, MouseEvent>,
-                  ) => {
+                  onClick={(e: React.MouseEvent<HTMLDivElement>) => {
                     e.stopPropagation();
                     setAddCard(newCard(uuid(), list.id));
-                  }}>
+                  }}
+                >
                   <Icon>
                     <FiPlus />
                   </Icon>

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import styled, { css } from 'styled-components';
+import { styled, css } from 'styled-components';
 
 const Input = styled.input`
   height: 0;
@@ -51,12 +51,12 @@ const Indicator = styled.div<{ checked: boolean }>`
   }
 `;
 
-type Props = {
+type Properties = {
   checked: boolean;
   onChange: (checked: boolean) => void;
 };
 
-export const CheckBox = ({ checked, onChange }: Props) => {
+export const CheckBox = ({ checked, onChange }: Properties) => {
   return (
     <Label>
       <Input
