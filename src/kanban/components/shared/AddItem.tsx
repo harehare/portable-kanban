@@ -36,6 +36,7 @@ const Icon = styled.div`
 `;
 
 type Properties = {
+  showInput?: boolean;
   enableContinuousInput?: boolean;
   addText: string;
   placeholder: string;
@@ -43,8 +44,15 @@ type Properties = {
   onEnter: (text: string) => void;
 };
 
-export const AddItem = ({ enableContinuousInput = false, addText, placeholder, type, onEnter }: Properties) => {
-  const [isAddItem, setIsAddItem] = React.useState(false);
+export const AddItem = ({
+  showInput = false,
+  enableContinuousInput = false,
+  addText,
+  placeholder,
+  type,
+  onEnter,
+}: Properties) => {
+  const [isAddItem, setIsAddItem] = React.useState(showInput);
   const [name, setName] = React.useState('');
   const [isComposing, setIsComposing] = React.useState(false);
   const handleKeyDown = React.useCallback(
@@ -70,6 +78,10 @@ export const AddItem = ({ enableContinuousInput = false, addText, placeholder, t
     },
     [name, isComposing]
   );
+
+  React.useEffect(() => {
+    setIsAddItem(showInput);
+  }, [showInput]);
 
   return isAddItem ? (
     <AddItemForm>

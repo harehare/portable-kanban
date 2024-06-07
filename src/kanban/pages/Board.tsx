@@ -39,6 +39,7 @@ const Board = ({ kanban }: Properties) => {
   const moveCardAcrossList = kanbanActions.useMoveCardAcrossList();
   const addList = kanbanActions.useAddList();
   const menuClose = actions.useMenuClose();
+  const [showAddListInput, setShowAddListInput] = React.useState(false);
   const list = React.useMemo(
     () =>
       kanban?.lists.map((l, index) => (
@@ -91,7 +92,11 @@ const Board = ({ kanban }: Properties) => {
     <Container
       onClick={() => {
         setAddCard(undefined);
+        setShowAddListInput(false);
         menuClose();
+      }}
+      onDoubleClick={() => {
+        setShowAddListInput(!showAddListInput);
       }}
     >
       <Header title={title ?? 'untitled'} />
@@ -115,6 +120,7 @@ const Board = ({ kanban }: Properties) => {
                 {provided.placeholder}
                 <div style={{ margin: '8px' }}>
                   <AddItem
+                    showInput={showAddListInput}
                     addText="Add List"
                     placeholder="Enter list title"
                     type="primary"
