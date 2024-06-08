@@ -4,14 +4,7 @@ import { Droppable, Draggable } from 'react-beautiful-dnd';
 import { FiPlus } from 'react-icons/fi';
 import { MdAdd, MdArchive, MdDriveFileMoveOutline, MdMenu, MdOutlineArchive } from 'react-icons/md';
 import { styled } from 'styled-components';
-import {
-  type Kanban as KanbanModel,
-  type List as ListModel,
-  type Card as CardModel,
-  addCard as addCardToKanban,
-  newCard,
-  updateList,
-} from '../models/kanban';
+import { type Kanban as KanbanModel, type List as ListModel, type Card as CardModel, newCard } from '../models/kanban';
 import { selectors, actions, kanbanActions } from '../store';
 import { uuid } from '../utils';
 import { Card } from './Card';
@@ -81,11 +74,15 @@ const searchOptions = {
 
 export const List = ({ kanban, list }: Properties) => {
   const setKanban = actions.useSetKanban();
+
+  const addCards = kanbanActions.useAddCards();
+  const updateList = kanbanActions.useUpdateList();
   const setAddCard = actions.useSetAddingCard();
   const archiveList = kanbanActions.useArchiveList();
+
   const moveAllCardsToList = kanbanActions.useMoveAllCardsToList();
   const archiveAllCardInList = kanbanActions.useArchiveAllCardInList();
-  const addCard = selectors.useAddCard();
+  const addingCard = selectors.useAddingCard();
   const filteredText = selectors.useFilterText();
   const filteredLabels = selectors.useFilterLabels();
   const setMenu = actions.useSetMenu();
@@ -113,27 +110,23 @@ export const List = ({ kanban, list }: Properties) => {
   );
   const handleAddCard = React.useCallback(
     (card: CardModel) => {
-      setKanban(
-        // eslint-disable-next-line unicorn/no-array-reduce
-        card.title.split('\n').reduce((array, v) => {
-          const newList = array.lists.find((l) => l.id === list.id);
+      addCards(
+        list,
+        card.title.split('\n').map((v) => {
           const tokens = v.split(':').filter(Boolean);
           const title = tokens.length > 1 ? tokens[1] : v;
           const labelName = tokens.length > 1 ? tokens[0] : undefined;
           const labels = labelName ? kanban.settings.labels.filter((l) => l.title === labelName) : [];
 
           return {
-            ...array,
-            lists: addCardToKanban(array.lists, newList ?? list, {
-              ...newCard(uuid(), list.id),
-              title,
-              labels,
-            }),
+            ...newCard(uuid(), list.id),
+            title,
+            labels,
           };
-        }, kanban)
+        })
       );
     },
-    [kanban, setKanban]
+    [list]
   );
 
   return (
@@ -158,12 +151,9 @@ export const List = ({ kanban, list }: Properties) => {
                     fontSize={'medium'}
                     width={180}
                     onEnter={(text) => {
-                      setKanban({
-                        ...kanban,
-                        lists: updateList(kanban.lists, {
-                          ...list,
-                          title: text,
-                        }),
+                      updateList({
+                        ...list,
+                        title: text,
                       });
                     }}
                   />
@@ -237,9 +227,9 @@ export const List = ({ kanban, list }: Properties) => {
                   {provided.placeholder}
                 </Cards>
               </div>
-              {list.id === addCard?.listId ? (
+              {list.id === addingCard?.listId ? (
                 <Card
-                  card={addCard}
+                  card={addingCard}
                   isEdit={true}
                   onEnter={(c) => {
                     setAddCard(undefined);
@@ -249,15 +239,15 @@ export const List = ({ kanban, list }: Properties) => {
               ) : (
                 <></>
               )}
-              {list.id === addCard?.listId ? (
+              {list.id === addingCard?.listId ? (
                 <AddButton
                   text="Add a card"
                   type="primary"
-                  disabled={addCard?.title === undefined || addCard?.title?.replace('\n', '') === ''}
+                  disabled={addingCard?.title === undefined || addingCard?.title?.replace('\n', '') === ''}
                   canClose={true}
                   onAddClick={() => {
                     setAddCard(undefined);
-                    handleAddCard(addCard);
+                    handleAddCard(addingCard);
                   }}
                   onCancel={() => {
                     setAddCard(undefined);

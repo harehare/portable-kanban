@@ -1,5 +1,13 @@
 import { randomUUID } from 'node:crypto';
-import { addCard, addCheckBox, addList, archiveCard, fromJson, restoreCard, updateCard } from '../kanban/models/kanban';
+import {
+  addCards,
+  addCheckBox,
+  addList,
+  archiveCard,
+  fromJson,
+  restoreCard,
+  updateCard,
+} from '../kanban/models/kanban';
 
 describe('fromJson', () => {
   const emptyKanban = fromJson(
@@ -71,7 +79,7 @@ describe('fromJson', () => {
     const checkBox = { id: 'checkbox', title: 'checkbox', checked: true };
     const list = newList();
     const card = newCard(list.id);
-    const lists = addCheckBox(addCard(addList(data.lists, list), list, card), list, card, checkBox);
+    const lists = addCheckBox(addCards(addList(data.lists, list), list, [card]), list, card, checkBox);
     const kanban = { ...data, lists };
     expect(lists.length).toBe(1);
     expect(lists[0].cards.length).toBe(1);
@@ -84,7 +92,7 @@ describe('fromJson', () => {
     const data = await emptyKanban;
     const list = newList();
     const card = newCard(list.id);
-    const lists = addCard(addList(data.lists, list), list, card);
+    const lists = addCards(addList(data.lists, list), list, [card]);
     const kanban = { ...data, lists };
     expect(archiveCard(kanban, kanban.lists[0], card).archive.cards.length).toBe(1);
     expect(restoreCard(archiveCard(kanban, kanban.lists[0], card), card).archive.cards.length).toBe(0);

@@ -5,7 +5,6 @@ import { focusAtom } from 'jotai-optics';
 import { vscode } from '../vscode';
 import {
   type Comment,
-  addCard,
   addCheckBox,
   addComments,
   addLabel,
@@ -38,10 +37,11 @@ import {
   moveCheckBox,
   moveAllCardsToList,
   type ArchiveList,
+  addCards,
 } from './models/kanban';
 
 const titleAtom = atom('');
-const addCardAtom = atom<Card | undefined>(undefined);
+const addingCardAtom = atom<Card | undefined>(undefined);
 const filterAtom = atom<{ text: string; labels: Set<string> }>({
   text: '',
   labels: new Set([]),
@@ -143,7 +143,7 @@ export const selectors = {
   useFilterText: () => useAtomValue(filteredTextSelector),
   useFilterLabels: () => useAtomValue(filteredLabelSelector),
   useShowModal: () => useAtomValue(showModalAtom),
-  useAddCard: () => useAtomValue(addCardAtom),
+  useAddingCard: () => useAtomValue(addingCardAtom),
   useKanban: () => useAtomValue(kanbanAtom),
   useCard: (listId: string, cardId: string) => useAtomValue(cardSelector({ listId, cardId })),
   useMenu: () => useAtomValue(menuAtom),
@@ -175,7 +175,7 @@ export const actions = {
     }, []);
   },
   useSetAddingCard() {
-    const setState = useSetAtom(addCardAtom);
+    const setState = useSetAtom(addingCardAtom);
     return React.useCallback((card: Card | undefined) => {
       setState(card);
     }, []);
@@ -267,11 +267,11 @@ export const kanbanActions = {
       [lists]
     );
   },
-  useAddCard() {
+  useAddCards() {
     const [lists, setLists] = useAtom(listsAtom);
     return React.useCallback(
-      (list: List, card: Card) => {
-        setLists(addCard(lists, list, card));
+      (list: List, cards: Card[]) => {
+        setLists(addCards(lists, list, cards));
       },
       [lists]
     );

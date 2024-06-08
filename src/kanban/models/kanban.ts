@@ -161,12 +161,14 @@ export const moveAllCardsToList = (lists: List[], fromList: List, toList: List):
   );
 };
 
-export const addCard = (lists: List[], list: List, card: Card): List[] => {
-  if (!card.title) {
+export const addCards = (lists: List[], list: List, cards: Card[]): List[] => {
+  const addCards = cards.filter((c) => c.title);
+
+  if (addCards.length === 0) {
     return lists;
   }
 
-  return lists.map((l) => (l.id === list.id ? { ...list, cards: [...list.cards, card] } : l));
+  return updateList(lists, { ...list, cards: [...list.cards, ...cards] });
 };
 
 export const updateCard = (lists: List[], list: List, card: Card): List[] => {
