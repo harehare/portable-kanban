@@ -96,7 +96,14 @@ const Board = ({ kanban }: Properties) => {
         menuClose();
       }}
       onDoubleClick={() => {
-        setShowAddListInput(!showAddListInput);
+        setShowAddListInput(true);
+      }}
+      onKeyDown={(e: React.KeyboardEvent<HTMLDivElement>) => {
+        if (e.key === 'Escape') {
+          setAddCard(undefined);
+          setShowAddListInput(false);
+          menuClose();
+        }
       }}
     >
       <Header title={title ?? 'untitled'} />

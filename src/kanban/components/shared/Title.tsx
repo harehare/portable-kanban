@@ -77,6 +77,12 @@ export const Title = ({ title: defaultTitle, fontSize, width, onEnter }: Propert
           onCompositionEnd={() => {
             setIsComposing(false);
           }}
+          onClick={(e: React.MouseEvent<HTMLInputElement>) => {
+            e.stopPropagation();
+          }}
+          onDoubleClick={(e: React.MouseEvent<HTMLInputElement>) => {
+            e.stopPropagation();
+          }}
           value={title}
           autoFocus={true}
           onKeyDown={handleKeyDown}

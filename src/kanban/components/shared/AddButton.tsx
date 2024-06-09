@@ -43,6 +43,9 @@ export const AddButton = ({ text, type, canClose, disabled = false, onAddClick, 
               onCancel();
             }
           }}
+          onDoubleClick={(e: React.MouseEvent<HTMLDivElement>) => {
+            e.stopPropagation();
+          }}
         >
           <MdClose />
         </Icon>
