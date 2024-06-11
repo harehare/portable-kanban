@@ -112,18 +112,21 @@ export const List = ({ kanban, list }: Properties) => {
     (card: CardModel) => {
       addCards(
         list,
-        card.title.split('\n').map((v) => {
-          const tokens = v.split(':').filter(Boolean);
-          const title = tokens.length > 1 ? tokens[1] : v;
-          const labelName = tokens.length > 1 ? tokens[0] : undefined;
-          const labels = labelName ? kanban.settings.labels.filter((l) => l.title === labelName) : [];
+        card.title
+          .split('\n')
+          .map((v) => {
+            const tokens = v.split(':').filter(Boolean);
+            const title = tokens.length > 1 ? tokens[1] : v;
+            const labelName = tokens.length > 1 ? tokens[0] : undefined;
+            const labels = labelName ? kanban.settings.labels.filter((l) => l.title === labelName) : [];
 
-          return {
-            ...newCard(uuid(), list.id),
-            title,
-            labels,
-          };
-        })
+            return {
+              ...newCard(uuid(), list.id),
+              title,
+              labels,
+            };
+          })
+          .filter((c) => c.title !== '')
       );
     },
     [list]
