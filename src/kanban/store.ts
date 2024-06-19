@@ -58,30 +58,31 @@ const listsAtom = atom(
   (get) => get(lists),
   (get, set, newValue: List[]) => {
     const kanban: Kanban = get(kanbanAtom);
+    set(lists, newValue);
     // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     vscode.postMessage({
       type: 'edit',
       kanban: { ...kanban, lists: newValue },
     });
-    set(lists, newValue);
   }
 );
 const archiveListsAtom = atom(
   (get) => get(archiveLists),
   (get, set, newValue: ArchiveList[]) => {
     const kanban: Kanban = get(kanbanAtom);
+    set(archiveLists, newValue);
     // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     vscode.postMessage({
       type: 'edit',
       kanban: { ...kanban, archive: { ...kanban.archive, lists: newValue } },
     });
-    set(archiveLists, newValue);
   }
 );
 const archiveCardsAtom = atom(
   (get) => get(archiveCards),
   (get, set, newValue: Card[]) => {
     const kanban: Kanban = get(kanbanAtom);
+    set(archiveCards, newValue);
     // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     vscode.postMessage({
       type: 'edit',
@@ -90,13 +91,13 @@ const archiveCardsAtom = atom(
         archive: { ...kanban.archive, cards: newValue },
       },
     });
-    set(archiveCards, newValue);
   }
 );
 const settingsAtom = atom(
   (get) => get(settings),
   (get, set, newValue: Settings) => {
     const kanban: Kanban = get(kanbanAtom);
+    set(settings, newValue);
     // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     vscode.postMessage({
       type: 'edit',
@@ -105,7 +106,6 @@ const settingsAtom = atom(
         settings: newValue,
       },
     });
-    set(settings, newValue);
   }
 );
 
@@ -116,15 +116,15 @@ const kanbanAtom = atom(
     settings: get(settings),
   }),
   (_get, set, newValue: Kanban) => {
+    set(lists, newValue.lists);
+    set(archiveLists, newValue.archive.lists);
+    set(archiveCards, newValue.archive.cards);
+    set(settings, newValue.settings);
     // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     vscode.postMessage({
       type: 'edit',
       kanban: newValue,
     });
-    set(lists, newValue.lists);
-    set(archiveLists, newValue.archive.lists);
-    set(archiveCards, newValue.archive.cards);
-    set(settings, newValue.settings);
   }
 );
 
