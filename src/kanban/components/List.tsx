@@ -110,8 +110,9 @@ export const List = ({ kanban, list }: Properties) => {
   );
   const handleAddCard = React.useCallback(
     (card: CardModel) => {
+      const newList = kanban.lists.find((l) => l.id === list.id);
       addCards(
-        list,
+        newList ?? list,
         card.title
           .split('\n')
           .map((v) => {
@@ -129,7 +130,7 @@ export const List = ({ kanban, list }: Properties) => {
           .filter((c) => c.title !== '')
       );
     },
-    [list]
+    [kanban, list]
   );
 
   return (
