@@ -145,6 +145,10 @@ export const selectors = {
   useShowModal: () => useAtomValue(showModalAtom),
   useAddingCard: () => useAtomValue(addingCardAtom),
   useKanban: () => useAtomValue(kanbanAtom),
+  useLists: () => useAtomValue(listsAtom),
+  useArchiveLists: () => useAtomValue(archiveListsAtom),
+  useArchiveCards: () => useAtomValue(archiveCardsAtom),
+  useSettings: () => useAtomValue(settingsAtom),
   useCard: (listId: string, cardId: string) => useAtomValue(cardSelector({ listId, cardId })),
   useMenu: () => useAtomValue(menuAtom),
 };

@@ -27,11 +27,9 @@ const Contents = styled.div`
   align-content: flex-start;
 `;
 
-type Properties = {
-  kanban: KanbanModel;
-};
-
-const Board = ({ kanban }: Properties) => {
+const Board = () => {
+  const kanban = selectors.useKanban();
+  const lists = selectors.useLists();
   const title = selectors.useTitle();
   const setAddCard = actions.useSetAddingCard();
   const moveList = kanbanActions.useMoveList();
@@ -42,7 +40,7 @@ const Board = ({ kanban }: Properties) => {
   const [showAddListInput, setShowAddListInput] = React.useState(false);
   const list = React.useMemo(
     () =>
-      kanban?.lists.map((l, index) => (
+      lists.map((l, index) => (
         <Draggable key={l.id} draggableId={l.id} index={index}>
           {(provided) => (
             <div className="list" ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps}>

@@ -73,6 +73,8 @@ const searchOptions = {
 };
 
 export const List = ({ kanban, list }: Properties) => {
+  const lists = selectors.useLists();
+  const settings = selectors.useSettings();
   const setKanban = actions.useSetKanban();
 
   const addCards = kanbanActions.useAddCards();
@@ -110,7 +112,7 @@ export const List = ({ kanban, list }: Properties) => {
   );
   const handleAddCard = React.useCallback(
     (card: CardModel) => {
-      const newList = kanban.lists.find((l) => l.id === list.id);
+      const newList = lists.find((l) => l.id === list.id);
       addCards(
         newList ?? list,
         card.title
@@ -119,7 +121,7 @@ export const List = ({ kanban, list }: Properties) => {
             const tokens = v.split(':').filter(Boolean);
             const title = tokens.length > 1 ? tokens[1] : v;
             const labelName = tokens.length > 1 ? tokens[0] : undefined;
-            const labels = labelName ? kanban.settings.labels.filter((l) => l.title === labelName) : [];
+            const labels = labelName ? settings.labels.filter((l) => l.title === labelName) : [];
 
             return {
               ...newCard(uuid(), list.id),
@@ -201,7 +203,7 @@ export const List = ({ kanban, list }: Properties) => {
                   <SelectList
                     menuId={`select-list-${list.id}`}
                     listId={list.id}
-                    lists={kanban.lists}
+                    lists={lists}
                     onClick={(toList) => {
                       moveAllCardsToList(list, toList);
                     }}

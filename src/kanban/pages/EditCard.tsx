@@ -25,7 +25,7 @@ import { Description } from '../components/shared/Description';
 import { ProgressBar } from '../components/shared/ProgressBar';
 import { TextBaseBold } from '../components/shared/Text';
 import { Title } from '../components/shared/Title';
-import { type Kanban as KanbanModel, type Comment as CommentModel } from '../models/kanban';
+import { type Comment as CommentModel } from '../models/kanban';
 import { selectors, actions, kanbanActions } from '../store';
 import { uuid } from '../utils';
 
@@ -101,12 +101,10 @@ const BUttons = styled.div`
   margin: 16px;
 `;
 
-type Properties = {
-  kanban?: KanbanModel;
-};
-
-const EditCard = ({ kanban }: Properties) => {
+const EditCard = () => {
   const showModal = selectors.useShowModal();
+  const archiveCards = selectors.useArchiveCards();
+  const lists = selectors.useLists();
   const setShowModal = actions.useSetShowModal();
   const navigate = useNavigate();
 
@@ -125,12 +123,12 @@ const EditCard = ({ kanban }: Properties) => {
   const copyCard = kanbanActions.useCopyCard();
 
   const { listId, cardId } = useParams();
-  const list = React.useMemo(() => kanban?.lists.find((l) => l.id === listId), [listId, kanban?.lists]);
+  const list = React.useMemo(() => lists.find((l) => l.id === listId), [listId, lists]);
   const card = React.useMemo(() => list?.cards.find((c) => c.id === cardId), [cardId, list?.cards]);
 
   const comments = React.useMemo(() => [...(card?.comments ?? [])].reverse(), [card]);
   const archivedCard = React.useMemo(
-    () => (card ? null : kanban?.archive.cards.find((c) => c.id === cardId)),
+    () => (card ? null : archiveCards.find((c) => c.id === cardId)),
     [cardId, list?.cards]
   );
   const [isArchived, setArchived] = React.useState(Boolean(archivedCard));
@@ -144,7 +142,7 @@ const EditCard = ({ kanban }: Properties) => {
                 key={c.id}
                 checkbox={c}
                 onEnter={(title) => {
-                  if (!kanban || !list || !card) {
+                  if (!list || !card) {
                     return;
                   }
 
@@ -159,7 +157,7 @@ const EditCard = ({ kanban }: Properties) => {
                   });
                 }}
                 onChecked={(checked) => {
-                  if (!kanban || !list || !card) {
+                  if (!list || !card) {
                     return;
                   }
 
@@ -169,7 +167,7 @@ const EditCard = ({ kanban }: Properties) => {
                   });
                 }}
                 onDelete={(checkbox) => {
-                  if (!kanban || !list || !card) {
+                  if (!list || !card) {
                     return;
                   }
 
@@ -185,7 +183,7 @@ const EditCard = ({ kanban }: Properties) => {
 
   const onDragEnd = React.useCallback(
     (result: DropResult) => {
-      if (!result.destination || !kanban || !list || !card) {
+      if (!result.destination || !list || !card) {
         return;
       }
 
@@ -200,12 +198,12 @@ const EditCard = ({ kanban }: Properties) => {
         }
       }
     },
-    [kanban]
+    [list, card]
   );
 
   const handleEditDescription = React.useCallback(
     (description: string) => {
-      if (!kanban || !list || !card) {
+      if (!list || !card) {
         return;
       }
 
@@ -214,23 +212,23 @@ const EditCard = ({ kanban }: Properties) => {
         description,
       });
     },
-    [kanban, list, card]
+    [list, card]
   );
 
   const handleEditDate = React.useCallback(
     (date?: Date) => {
-      if (!kanban || !list || !card) {
+      if (!list || !card) {
         return;
       }
 
       updateCardDueDate(list, card, date);
     },
-    [kanban, list, card]
+    [list, card]
   );
 
   const handleAddTask = React.useCallback(
     (text: string) => {
-      if (!kanban || !list || !card) {
+      if (!list || !card) {
         return;
       }
 
@@ -240,12 +238,12 @@ const EditCard = ({ kanban }: Properties) => {
         checked: false,
       });
     },
-    [kanban, list, card]
+    [list, card]
   );
 
   const handleAddComment = React.useCallback(
     (comment: string) => {
-      if (!kanban || !list || !card) {
+      if (!list || !card) {
         return;
       }
 
@@ -254,12 +252,12 @@ const EditCard = ({ kanban }: Properties) => {
         comment,
       });
     },
-    [kanban, list, card]
+    [list, card]
   );
 
   const handleEditComment = React.useCallback(
     (c: CommentModel) => (text: string) => {
-      if (!kanban || !list || !card) {
+      if (!list || !card) {
         return;
       }
 
@@ -268,59 +266,60 @@ const EditCard = ({ kanban }: Properties) => {
         comment: text,
       });
     },
-    [kanban, list, card]
+    [list, card]
   );
 
   const handleDeleteComment = React.useCallback(
     (comment: CommentModel) => {
-      if (!kanban || !list || !card) {
+      if (!list || !card) {
         return;
       }
 
       deleteComments(list, card, comment.id);
     },
-    [kanban, list, card]
+    [list, card]
   );
 
   const handleCopyCard = React.useCallback(() => {
-    if (!kanban || !list || !card) {
+    if (!list || !card) {
       return;
     }
 
     copyCard(card);
-  }, [kanban, list, card]);
+  }, [list, card]);
 
   const handleArchiveCard = React.useCallback(() => {
-    if (!kanban || !list || !card) {
+    if (!list || !card) {
       return;
     }
 
     archiveCard(list, card);
     setArchived(true);
-  }, [kanban, list, card]);
+  }, [list, card]);
 
   const handleRestoreCard = React.useCallback(() => {
-    if (!kanban || !list || !archivedCard) {
+    if (!list || !archivedCard) {
       return;
     }
 
     restoreCard(archivedCard);
     setArchived(false);
-  }, [kanban, list, card]);
+  }, [list, card]);
 
   const handleDeleteCard = React.useCallback(() => {
-    if (!kanban || !list || !archivedCard) {
+    if (!list || !archivedCard) {
       return;
     }
 
     deleteCard(archivedCard);
+    navigate('/');
+
     // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     vscode.postMessage({
       type: 'info-message',
       message: `Delete ${archivedCard.title}`,
     });
-    navigate('/');
-  }, [kanban, list, card]);
+  }, [list, card]);
 
   return (
     <DragDropContext onDragEnd={onDragEnd}>
@@ -331,7 +330,7 @@ const EditCard = ({ kanban }: Properties) => {
             return;
           }
 
-          if (kanban && list && card) {
+          if (list && card) {
             updateCard(list, card);
           }
 
@@ -375,7 +374,7 @@ const EditCard = ({ kanban }: Properties) => {
                 fontSize={'large'}
                 width={'100%'}
                 onEnter={(title) => {
-                  if (!kanban || !list || !card) {
+                  if (!list || !card) {
                     return;
                   }
 
@@ -398,7 +397,7 @@ const EditCard = ({ kanban }: Properties) => {
               <Description description={card?.description ?? ''} fontSize="medium" onEnter={handleEditDescription} />
             </Line>
           )}
-          {kanban && list && card ? (
+          {list && card ? (
             <Line>
               <LabelList list={list} card={card} />
             </Line>
