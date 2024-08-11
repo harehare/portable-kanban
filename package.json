@@ -150,6 +150,7 @@
       "no-bitwise": "off",
       "@typescript-eslint/consistent-type-definitions": "off",
       "unicorn/prefer-string-replace-all": "off",
+      "n/file-extension-in-import": "off",
       "@typescript-eslint/naming-convention": [
         "error",
         {
