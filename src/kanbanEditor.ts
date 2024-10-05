@@ -54,7 +54,12 @@ export class KanbanEditorProvider implements vscode.CustomTextEditorProvider {
               return;
             }
 
-            await this.updateTextDocument(document, e.kanban!);
+            const success = await this.updateTextDocument(document, e.kanban!);
+
+            if (!success) {
+              await vscode.window.showErrorMessage('Failed to update Kanban');
+            }
+
             break;
           }
 
@@ -119,7 +124,7 @@ export class KanbanEditorProvider implements vscode.CustomTextEditorProvider {
 			</html>`;
   }
 
-  private updateTextDocument(document: vscode.TextDocument, kanban: Kanban) {
+  private async updateTextDocument(document: vscode.TextDocument, kanban: Kanban) {
     const text = toJson(kanban);
 
     if (document.getText() === text) {
