@@ -127,7 +127,7 @@
     "react-linkify": "^1.0.0-alpha",
     "react-markdown": "^9.0.1",
     "react-router-dom": "^6.27.0",
-    "react-textarea-autosize": "^8.5.3",
+    "react-textarea-autosize": "^8.5.4",
     "styled-components": "^6.1.13",
     "uuid": "^10.0.0"
   },
