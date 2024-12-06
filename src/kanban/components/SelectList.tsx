@@ -26,6 +26,7 @@ type Props = {
 };
 
 export const SelectList = ({ menuId, listId, lists, onClick }: Props) => {
+  'use memo';
   const currentMenuId = selectors.useMenu();
   const targetLists = React.useMemo(() => lists.filter((l) => l.id !== listId), [listId, lists]);
 

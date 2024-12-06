@@ -112,8 +112,8 @@ export const Header = ({ title }: Props) => {
       >
         <IconButton
           icon={<MdFilterAlt />}
-          onClick={() => {
-            navigate('/filters', { state: { backgroundLocation: location } });
+          onClick={async () => {
+            await navigate('/filters', { state: { backgroundLocation: location } });
           }}
         />
         {(searchLabels.size ?? 0) > 0 && <TextXs style={{ marginBottom: '4px' }}>{searchLabels.size}</TextXs>}
@@ -131,8 +131,8 @@ export const Header = ({ title }: Props) => {
             {
               icon: <MdArchive />,
               text: 'Archived List',
-              onClick() {
-                navigate('/archive/lists', {
+              async onClick() {
+                await navigate('/archive/lists', {
                   state: { backgroundLocation: location },
                 });
               },
@@ -140,8 +140,8 @@ export const Header = ({ title }: Props) => {
             {
               icon: <MdArchive />,
               text: 'Archived cards',
-              onClick() {
-                navigate('/archive/cards', {
+              async onClick() {
+                await navigate('/archive/cards', {
                   state: { backgroundLocation: location },
                 });
               },

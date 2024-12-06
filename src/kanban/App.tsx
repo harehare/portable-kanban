@@ -32,7 +32,9 @@ const App = () => {
     };
 
     window.addEventListener('message', onMessage);
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
     navigate('/');
+
     // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     vscode.postMessage({
       type: 'load',

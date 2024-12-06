@@ -5,7 +5,6 @@ import { styled } from 'styled-components';
 import { Header } from '../components/Header';
 import { List } from '../components/List';
 import { AddItem } from '../components/shared/AddItem';
-import { type Kanban as KanbanModel } from '../models/kanban';
 import { selectors, kanbanActions, actions } from '../store';
 import { uuid } from '../utils';
 
@@ -28,6 +27,7 @@ const Contents = styled.div`
 `;
 
 const Board = () => {
+  'use memo';
   const kanban = selectors.useKanban();
   const lists = selectors.useLists();
   const title = selectors.useTitle();

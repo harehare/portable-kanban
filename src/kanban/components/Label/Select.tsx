@@ -61,6 +61,7 @@ type Properties = {
 };
 
 export const LabelSelect = ({ list, card }: Properties) => {
+  'use memo';
   const kanban = selectors.useKanban();
   const addLabel = kanbanActions.useAddLabel();
   const updateLabel = kanbanActions.useUpdateLabel();

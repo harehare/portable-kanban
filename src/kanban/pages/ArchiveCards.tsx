@@ -50,8 +50,8 @@ export const ArchiveCards = ({ cards }: Properties) => {
 
   return (
     <Overlay
-      onClick={() => {
-        navigate('/');
+      onClick={async () => {
+        await navigate('/');
       }}
     >
       <ArchiveMenu>

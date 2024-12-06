@@ -102,6 +102,7 @@ const BUttons = styled.div`
 `;
 
 const EditCard = () => {
+  'use memo';
   const showModal = selectors.useShowModal();
   const archiveCards = selectors.useArchiveCards();
   const lists = selectors.useLists();
@@ -306,13 +307,13 @@ const EditCard = () => {
     setArchived(false);
   }, [list, card]);
 
-  const handleDeleteCard = React.useCallback(() => {
+  const handleDeleteCard = React.useCallback(async () => {
     if (!list || !archivedCard) {
       return;
     }
 
     deleteCard(archivedCard);
-    navigate('/');
+    await navigate('/');
 
     // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     vscode.postMessage({
@@ -324,7 +325,7 @@ const EditCard = () => {
   return (
     <DragDropContext onDragEnd={onDragEnd}>
       <Overlay
-        onClick={() => {
+        onClick={async () => {
           if (showModal) {
             setShowModal(false);
             return;
@@ -334,7 +335,7 @@ const EditCard = () => {
             updateCard(list, card);
           }
 
-          navigate('/');
+          await navigate('/');
         }}
       >
         <Container
@@ -348,8 +349,8 @@ const EditCard = () => {
           }}
         >
           <CloseButton
-            onClick={() => {
-              navigate('/');
+            onClick={async () => {
+              await navigate('/');
             }}
           >
             <MdClose />

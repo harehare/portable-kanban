@@ -57,8 +57,8 @@ export const Filter = ({ settings }: Properties) => {
 
   return (
     <Overlay
-      onClick={() => {
-        navigate('/');
+      onClick={async () => {
+        await navigate('/');
       }}
     >
       <Container
