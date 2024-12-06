@@ -92,6 +92,7 @@ type Properties = {
 };
 
 export const Card = ({ card, onEnter, editable = true, isEdit = false }: Properties) => {
+  'use memo';
   const location = useLocation();
   const setAddCard = actions.useSetAddingCard();
   const [isComposing, setIsComposing] = React.useState(false);

@@ -3,6 +3,7 @@
 'use strict';
 
 const path = require('path');
+const { defineReactCompilerLoaderOption, reactCompilerLoader } = require('react-compiler-webpack');
 
 const extensionConfig = {
   mode: process.env.NODE_ENV,
@@ -92,6 +93,18 @@ const kanbanConfig = {
           },
         ],
       },
+       {
+        test: /\.(ts|tsx)$/,
+        exclude: /node_modules/,
+        use: [
+          {
+            loader: reactCompilerLoader,
+            options: defineReactCompilerLoaderOption({
+              compilationMode: "annotation",
+            })
+          }
+        ]
+      }
     ],
   },
   devtool: 'source-map',

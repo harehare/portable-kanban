@@ -1,3 +1,4 @@
+'use memo';
 import * as React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { styled } from 'styled-components';
@@ -50,8 +51,8 @@ export const ArchiveLists = ({ lists }: Properties) => {
 
   return (
     <Overlay
-      onClick={() => {
-        navigate('/');
+      onClick={async () => {
+        await navigate('/');
       }}
     >
       <ArchiveMenu>
