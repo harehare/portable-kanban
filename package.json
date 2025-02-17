@@ -81,7 +81,7 @@
     "test": "xo && jest --silent=false --verbose false"
   },
   "devDependencies": {
-    "@babel/preset-env": "^7.26.8",
+    "@babel/preset-env": "^7.26.9",
     "@babel/preset-typescript": "^7.26.0",
     "@svgr/webpack": "^8.1.0",
     "@trivago/prettier-plugin-sort-imports": "^5.2.2",
