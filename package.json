@@ -126,7 +126,7 @@
     "react-indiana-drag-scroll": "^3.0.3-alpha",
     "react-linkify": "^1.0.0-alpha",
     "react-markdown": "^10.1.0",
-    "react-router-dom": "^7.3.0",
+    "react-router-dom": "^7.4.0",
     "react-textarea-autosize": "^8.5.8",
     "styled-components": "^6.1.15",
     "uuid": "^11.1.0"
