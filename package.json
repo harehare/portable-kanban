@@ -119,7 +119,7 @@
     "jotai": "^2.12.2",
     "jotai-optics": "^0.4.0",
     "optics-ts": "^2.4.1",
-    "react": "^19.0.0",
+    "react": "^19.1.0",
     "react-beautiful-dnd": "^13.1.1",
     "react-dom": "^19.0.0",
     "react-icons": "^5.5.0",
