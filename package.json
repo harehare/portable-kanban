@@ -128,7 +128,7 @@
     "react-markdown": "^10.1.0",
     "react-router-dom": "^7.5.3",
     "react-textarea-autosize": "^8.5.9",
-    "styled-components": "^6.1.17",
+    "styled-components": "^6.1.18",
     "uuid": "^11.1.0"
   },
   "xo": {
