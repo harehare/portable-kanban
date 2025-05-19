@@ -91,7 +91,7 @@
     "@types/node": "22.x",
     "@types/react": "^19.1.4",
     "@types/react-beautiful-dnd": "^13.1.8",
-    "@types/react-dom": "^19.1.4",
+    "@types/react-dom": "^19.1.5",
     "@types/react-linkify": "^1.0.4",
     "@types/react-router-dom": "^5.3.3",
     "@types/styled-components": "^5.1.34",
