@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { atom, useAtom, useAtomValue, useSetAtom } from 'jotai';
+import { atom, PrimitiveAtom, useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { atomFamily } from 'jotai/utils';
 import { focusAtom } from 'jotai-optics';
 import { vscode } from '../vscode';
@@ -135,10 +135,25 @@ const cardSelector = atomFamily(({ listId, cardId }: { listId: string; cardId: s
       ?.cards.find((v) => v.id === cardId)
   )
 );
-const filteredTextSelector = focusAtom(filterAtom, (optic) => optic.prop('text'));
-const filteredLabelSelector = focusAtom(filterAtom, (optic) => optic.prop('labels'));
+const filteredTextSelector: PrimitiveAtom<string> = focusAtom(filterAtom, (optic) => optic.prop('text'));
+const filteredLabelSelector: PrimitiveAtom<Set<string>> = focusAtom(filterAtom, (optic) => optic.prop('labels'));
 
-export const selectors = {
+type Selectors = {
+  useTitle: () => string;
+  useFilterText: () => string;
+  useFilterLabels: () => Set<string>;
+  useShowModal: () => boolean;
+  useAddingCard: () => Card | undefined;
+  useKanban: () => Kanban;
+  useLists: () => List[];
+  useArchiveLists: () => ArchiveList[];
+  useArchiveCards: () => Card[];
+  useSettings: () => Settings;
+  useCard: (listId: string, cardId: string) => Card | undefined;
+  useMenu: () => string | undefined;
+};
+
+export const selectors: Selectors = {
   useTitle: () => useAtomValue(titleAtom),
   useFilterText: () => useAtomValue(filteredTextSelector),
   useFilterLabels: () => useAtomValue(filteredLabelSelector),
