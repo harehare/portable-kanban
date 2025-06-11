@@ -1,8 +1,8 @@
 {
   "compilerOptions": {
     "module": "commonjs",
-    "target": "ES2020",
-    "lib": ["es2021", "dom"],
+    "target": "es2023",
+    "lib": ["es2023", "dom"],
     "rootDir": "src",
     "strict": true,
     "jsx": "react-jsx"
