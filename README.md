@@ -29,3 +29,4 @@ Create new Kanban in the Command Pallet (ctrl+shift+P).
 - Sync with Github Project
 - Sync with Trello
 - Add a related card to a card
+- Optimization at to open files
