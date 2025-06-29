@@ -156,7 +156,14 @@ export const Card = ({ card, onEnter, editable = true, isEdit = false }: Propert
   );
 
   return (
-    <Container>
+    <Container
+      onClick={(e: React.MouseEvent<HTMLDivElement>) => {
+        // Prevent click from bubbling up when in edit mode
+        if (state.isEdit) {
+          e.stopPropagation();
+        }
+      }}
+    >
       {editable ? (
         state.isEdit ? (
           <Input

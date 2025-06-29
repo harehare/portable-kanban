@@ -152,7 +152,15 @@ export const List = ({ kanban, list }: Properties) => {
       <Contents>
         <Droppable droppableId={list.id} type="cards">
           {(provided) => (
-            <div ref={provided.innerRef}>
+            <div
+              ref={provided.innerRef}
+              onClick={(e: React.MouseEvent<HTMLDivElement>) => {
+                // Prevent click from bubbling up to Board container when adding a card
+                if (list.id === addingCard?.listId) {
+                  e.stopPropagation();
+                }
+              }}
+            >
               <Header>
                 <div
                   style={{
