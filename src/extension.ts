@@ -1,6 +1,7 @@
+import { Buffer } from 'node:buffer';
 import * as vscode from 'vscode';
 import { KanbanEditorProvider } from './kanbanEditor';
-import { Kanban } from './kanban/models/kanban';
+import { type Kanban } from './kanban/models/kanban';
 import { uuid } from './kanban/utils';
 
 export function activate(context: vscode.ExtensionContext) {
