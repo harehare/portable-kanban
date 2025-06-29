@@ -135,8 +135,20 @@ const cardSelector = atomFamily(({ listId, cardId }: { listId: string; cardId: s
       ?.cards.find((v) => v.id === cardId)
   )
 );
-const filteredTextSelector: PrimitiveAtom<string> = focusAtom(filterAtom, (optic) => optic.prop('text'));
-const filteredLabelSelector: PrimitiveAtom<Set<string>> = focusAtom(filterAtom, (optic) => optic.prop('labels'));
+const filteredTextSelector = atom(
+  (get) => get(filterAtom).text,
+  (get, set, newText: string) => {
+    const current = get(filterAtom);
+    set(filterAtom, { ...current, text: newText });
+  }
+);
+const filteredLabelSelector = atom(
+  (get) => get(filterAtom).labels,
+  (get, set, newLabels: Set<string>) => {
+    const current = get(filterAtom);
+    set(filterAtom, { ...current, labels: newLabels });
+  }
+);
 
 type Selectors = {
   useTitle: () => string;
