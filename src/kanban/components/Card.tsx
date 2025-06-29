@@ -150,6 +150,10 @@ export const Card = ({ card, onEnter, editable = true, isEdit = false }: Propert
     () => (isDueDate ? '#FF4500' : isOneDayLeft ? '#FF7F50' : 'var(--primary-color)'),
     [isDueDate, isOneDayLeft]
   );
+  const sortedLabels = React.useMemo(
+    () => state.card.labels.sort((a, b) => a.title.localeCompare(b.title)),
+    [state.card.labels]
+  );
 
   return (
     <Container>
@@ -183,9 +187,9 @@ export const Card = ({ card, onEnter, editable = true, isEdit = false }: Propert
             }}
             state={{ backgroundLocation: location }}
           >
-            {state.card.labels.length > 0 && (
+            {sortedLabels.length > 0 && (
               <Labels>
-                {state.card.labels.map((l) => (
+                {sortedLabels.map((l) => (
                   <Label key={l.id} style={{ backgroundColor: l.color }}>
                     {l.title}
                   </Label>

@@ -74,33 +74,48 @@ export const LabelSelect = ({ list, card }: Properties) => {
     show: false,
   });
   const selectedLabelNames = React.useMemo(() => card.labels.map((l) => l.title), [card.labels]);
-  const handleCreate = React.useCallback((label: Label) => {
-    if (kanban.settings.labels.map((l) => l.title).includes(label.title)) {
-      return;
-    }
+  const handleCreate = React.useCallback(
+    (label: Label) => {
+      if (kanban.settings.labels.map((l) => l.title).includes(label.title)) {
+        return;
+      }
 
-    addLabel(list, card, label);
-    updateSettings({
-      labels: [...kanban.settings.labels, label],
-    });
-    setShowEditLabel({ show: false });
-  }, []);
+      addLabel(list, card, label);
+      updateSettings({
+        labels: [...kanban.settings.labels, label],
+      });
+      setShowEditLabel({ show: false });
+    },
+    [kanban.settings.labels, addLabel, list, card, updateSettings]
+  );
 
-  const handleEdit = React.useCallback((label: Label) => {
-    updateLabel(list, card, label);
-    updateSettings({
-      labels: kanban.settings.labels.map((l) => (l.id === label.id ? label : l)),
-    });
-    setShowEditLabel({ show: false });
-  }, []);
+  const handleEdit = React.useCallback(
+    (label: Label) => {
+      updateLabel(list, card, label);
+      updateSettings({
+        labels: kanban.settings.labels.map((l) => (l.id === label.id ? label : l)),
+      });
+      setShowEditLabel({ show: false });
+    },
+    [kanban.settings.labels, updateLabel, list, card, updateSettings]
+  );
 
-  const handleDelete = React.useCallback((label: Label) => {
-    deleteLabel(list, card, label.id);
-    updateSettings({
-      labels: kanban.settings.labels.filter((l) => l.id !== label.id),
-    });
-    setShowEditLabel({ show: false });
-  }, []);
+  const handleDelete = React.useCallback(
+    (label: Label) => {
+      deleteLabel(list, card, label.id);
+      updateSettings({
+        labels: kanban.settings.labels.filter((l) => l.id !== label.id),
+      });
+      setShowEditLabel({ show: false });
+    },
+    [kanban.settings.labels, deleteLabel, list, card, updateSettings]
+  );
+
+  const sortedLabels = React.useMemo(
+    () =>
+      [...kanban.settings.labels].sort((a, b) => a.title.localeCompare(b.title, undefined, { sensitivity: 'base' })),
+    [kanban.settings.labels]
+  );
 
   return (
     <>
@@ -112,7 +127,7 @@ export const LabelSelect = ({ list, card }: Properties) => {
         />
       ) : (
         <Modal>
-          {kanban.settings.labels.map((l: Label) => (
+          {sortedLabels.map((l: Label) => (
             <Line key={l.id}>
               <LabelItem
                 key={l.id}
