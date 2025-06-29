@@ -119,14 +119,26 @@ export const List = ({ kanban, list }: Properties) => {
           .split('\n')
           .map((v) => {
             const tokens = v.split(':').filter(Boolean);
-            const title = tokens.length > 1 ? tokens[1] : v;
-            const labelName = tokens.length > 1 ? tokens[0] : undefined;
-            const labels = labelName ? settings.labels.filter((l) => l.title === labelName) : [];
+            if (tokens.length > 1) {
+              const potentialLabelName = tokens[0].trim();
+              const potentialTitle = tokens.slice(1).join(':').trim();
+              const matchingLabels = settings.labels.filter((l) => l.title === potentialLabelName);
 
+              // Only treat as label:title format if the label actually exists
+              if (matchingLabels.length > 0) {
+                return {
+                  ...newCard(uuid(), list.id),
+                  title: potentialTitle,
+                  labels: matchingLabels,
+                };
+              }
+            }
+
+            // If no valid label found or no colon, use the entire text as title
             return {
               ...newCard(uuid(), list.id),
-              title,
-              labels,
+              title: v.trim(),
+              labels: [],
             };
           })
           .filter((c) => c.title !== '')
