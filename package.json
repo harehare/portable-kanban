@@ -77,7 +77,7 @@
     "build": "NODE_ENV=production webpack --mode production",
     "watch": "NODE_ENV=development webpack --watch --mode development",
     "package": "webpack --mode production --devtool hidden-source-map",
-    "lint": "xo --fix --prettier src/ts/*.ts",
+    "lint": "xo --fix --prettier src/**/*.ts",
     "test": "xo && jest --silent=false --verbose false"
   },
   "devDependencies": {
@@ -132,12 +132,8 @@
     "uuid": "^11.1.0"
   },
   "xo": {
-    "semi": false,
-    "semicolon": true,
     "prettier": true,
-    "space": 2,
-    "useTabs": false,
-    "bracketSpacing": true,
+    "space": true,
     "ignores": [
       "webpack.config.js",
       "babel.config.js",
