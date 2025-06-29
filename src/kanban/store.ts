@@ -1,7 +1,6 @@
 import * as React from 'react';
-import { atom, PrimitiveAtom, useAtom, useAtomValue, useSetAtom } from 'jotai';
+import { atom, useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { atomFamily } from 'jotai/utils';
-import { focusAtom } from 'jotai-optics';
 import { vscode } from '../vscode';
 import {
   type Comment,
@@ -59,7 +58,6 @@ const listsAtom = atom(
   (get, set, newValue: List[]) => {
     const kanban: Kanban = get(kanbanAtom);
     set(lists, newValue);
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     vscode.postMessage({
       type: 'edit',
       kanban: { ...kanban, lists: newValue },
@@ -71,7 +69,6 @@ const archiveListsAtom = atom(
   (get, set, newValue: ArchiveList[]) => {
     const kanban: Kanban = get(kanbanAtom);
     set(archiveLists, newValue);
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     vscode.postMessage({
       type: 'edit',
       kanban: { ...kanban, archive: { ...kanban.archive, lists: newValue } },
@@ -83,7 +80,6 @@ const archiveCardsAtom = atom(
   (get, set, newValue: Card[]) => {
     const kanban: Kanban = get(kanbanAtom);
     set(archiveCards, newValue);
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     vscode.postMessage({
       type: 'edit',
       kanban: {
@@ -98,7 +94,6 @@ const settingsAtom = atom(
   (get, set, newValue: Settings) => {
     const kanban: Kanban = get(kanbanAtom);
     set(settings, newValue);
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     vscode.postMessage({
       type: 'edit',
       kanban: {
@@ -120,7 +115,6 @@ const kanbanAtom = atom(
     set(archiveLists, newValue.archive.lists);
     set(archiveCards, newValue.archive.cards);
     set(settings, newValue.settings);
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     vscode.postMessage({
       type: 'edit',
       kanban: newValue,

@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "module": "commonjs",
+    "module": "Node16",
     "target": "es2023",
     "lib": ["es2023", "dom"],
     "rootDir": "src",
