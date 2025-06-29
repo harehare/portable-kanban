@@ -388,7 +388,7 @@ const EditCard = () => {
               />
             </Head>
           </Line>
-          {globalThis.settings.showDescription && (
+          {(globalThis as any).settings.showDescription && (
             <Line>
               <Head>
                 <Icon>
@@ -419,7 +419,7 @@ const EditCard = () => {
             </Head>
             <DatePicker value={card?.dueDate} onChange={handleEditDate} />
           </Line>
-          {globalThis.settings.showTaskList && (
+          {(globalThis as any).settings.showTaskList && (
             <Line>
               <Head>
                 <Icon>
