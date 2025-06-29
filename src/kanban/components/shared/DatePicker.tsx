@@ -22,6 +22,7 @@ export const DatePicker = ({ value, onChange }: Props) => {
       style={{ width: 'calc(100% - 16px)', marginLeft: '8px' }}
       value={date}
       onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+        e.stopPropagation();
         if (e.target.value === '') {
           onChange(undefined);
         } else {
@@ -31,6 +32,9 @@ export const DatePicker = ({ value, onChange }: Props) => {
             onChange(undefined);
           }
         }
+      }}
+      onClick={(e: React.MouseEvent<HTMLInputElement>) => {
+        e.stopPropagation();
       }}
     />
   );

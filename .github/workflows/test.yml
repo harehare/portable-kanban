@@ -38,6 +38,6 @@ jobs:
             ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
             ${{ runner.os }}-node-
       - name: Install Dependencies
-        run: npm ci --include=dev
+        run: npm ci --include=dev --legacy-peer-deps
       - name: Run Tests
         run: npm run test

@@ -33,7 +33,11 @@ type Properties = {
 
 export const AddButton = ({ text, type, canClose, disabled = false, onAddClick, onCancel }: Properties) => {
   return (
-    <Buttons>
+    <Buttons
+      onClick={(e: React.MouseEvent<HTMLDivElement>) => {
+        e.stopPropagation();
+      }}
+    >
       <Button text={text} type={type} onClick={onAddClick} disabled={disabled} />
       {canClose ? (
         <Icon

@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { atom, useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { atomFamily } from 'jotai/utils';
-import { focusAtom } from 'jotai-optics';
 import { vscode } from '../vscode';
 import {
   type Comment,
@@ -59,7 +58,6 @@ const listsAtom = atom(
   (get, set, newValue: List[]) => {
     const kanban: Kanban = get(kanbanAtom);
     set(lists, newValue);
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     vscode.postMessage({
       type: 'edit',
       kanban: { ...kanban, lists: newValue },
@@ -71,7 +69,6 @@ const archiveListsAtom = atom(
   (get, set, newValue: ArchiveList[]) => {
     const kanban: Kanban = get(kanbanAtom);
     set(archiveLists, newValue);
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     vscode.postMessage({
       type: 'edit',
       kanban: { ...kanban, archive: { ...kanban.archive, lists: newValue } },
@@ -83,7 +80,6 @@ const archiveCardsAtom = atom(
   (get, set, newValue: Card[]) => {
     const kanban: Kanban = get(kanbanAtom);
     set(archiveCards, newValue);
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     vscode.postMessage({
       type: 'edit',
       kanban: {
@@ -98,7 +94,6 @@ const settingsAtom = atom(
   (get, set, newValue: Settings) => {
     const kanban: Kanban = get(kanbanAtom);
     set(settings, newValue);
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     vscode.postMessage({
       type: 'edit',
       kanban: {
@@ -120,7 +115,6 @@ const kanbanAtom = atom(
     set(archiveLists, newValue.archive.lists);
     set(archiveCards, newValue.archive.cards);
     set(settings, newValue.settings);
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     vscode.postMessage({
       type: 'edit',
       kanban: newValue,
@@ -135,10 +129,37 @@ const cardSelector = atomFamily(({ listId, cardId }: { listId: string; cardId: s
       ?.cards.find((v) => v.id === cardId)
   )
 );
-const filteredTextSelector = focusAtom(filterAtom, (optic) => optic.prop('text'));
-const filteredLabelSelector = focusAtom(filterAtom, (optic) => optic.prop('labels'));
+const filteredTextSelector = atom(
+  (get) => get(filterAtom).text,
+  (get, set, newText: string) => {
+    const current = get(filterAtom);
+    set(filterAtom, { ...current, text: newText });
+  }
+);
+const filteredLabelSelector = atom(
+  (get) => get(filterAtom).labels,
+  (get, set, newLabels: Set<string>) => {
+    const current = get(filterAtom);
+    set(filterAtom, { ...current, labels: newLabels });
+  }
+);
 
-export const selectors = {
+type Selectors = {
+  useTitle: () => string;
+  useFilterText: () => string;
+  useFilterLabels: () => Set<string>;
+  useShowModal: () => boolean;
+  useAddingCard: () => Card | undefined;
+  useKanban: () => Kanban;
+  useLists: () => List[];
+  useArchiveLists: () => ArchiveList[];
+  useArchiveCards: () => Card[];
+  useSettings: () => Settings;
+  useCard: (listId: string, cardId: string) => Card | undefined;
+  useMenu: () => string | undefined;
+};
+
+export const selectors: Selectors = {
   useTitle: () => useAtomValue(titleAtom),
   useFilterText: () => useAtomValue(filteredTextSelector),
   useFilterLabels: () => useAtomValue(filteredLabelSelector),
@@ -205,7 +226,7 @@ export const kanbanActions = {
       (list: List) => {
         setLists(addList(lists, list));
       },
-      [lists]
+      [lists, setLists]
     );
   },
   useUpdateList() {
@@ -214,7 +235,7 @@ export const kanbanActions = {
       (list: List) => {
         setLists(updateList(lists, list));
       },
-      [lists]
+      [lists, setLists]
     );
   },
   useMoveList() {
@@ -223,7 +244,7 @@ export const kanbanActions = {
       (fromListId: number, toListId: number) => {
         setLists(moveList(lists, fromListId, toListId));
       },
-      [lists]
+      [lists, setLists]
     );
   },
   useRemoveList() {
@@ -232,7 +253,7 @@ export const kanbanActions = {
       (listId: string) => {
         setLists(removeArchivedList(lists, listId));
       },
-      [lists]
+      [lists, setLists]
     );
   },
   useArchiveList() {
@@ -241,7 +262,7 @@ export const kanbanActions = {
       (list: List) => {
         setState(archiveList(kanban, list));
       },
-      [kanban]
+      [kanban, setState]
     );
   },
   useArchiveAllCardInList() {
@@ -250,7 +271,7 @@ export const kanbanActions = {
       (list: List) => {
         setState(archiveAllCardInList(kanban, list));
       },
-      [kanban]
+      [kanban, setState]
     );
   },
   useRestoreList() {
@@ -259,7 +280,7 @@ export const kanbanActions = {
       (list: List) => {
         setState(restoreList(kanban, list));
       },
-      [kanban]
+      [kanban, setState]
     );
   },
   useMoveAllCardsToList() {
@@ -268,7 +289,7 @@ export const kanbanActions = {
       (fromList: List, toList: List) => {
         setLists(moveAllCardsToList(lists, fromList, toList));
       },
-      [lists]
+      [lists, setLists]
     );
   },
   useAddCards() {
@@ -277,7 +298,7 @@ export const kanbanActions = {
       (list: List, cards: Card[]) => {
         setLists(addCards(lists, list, cards));
       },
-      [lists]
+      [lists, setLists]
     );
   },
   useUpdateCard() {
@@ -286,7 +307,7 @@ export const kanbanActions = {
       (list: List, card: Card) => {
         setLists(updateCard(lists, list, card));
       },
-      [lists]
+      [lists, setLists]
     );
   },
   useDeleteCard() {
@@ -295,7 +316,7 @@ export const kanbanActions = {
       (card: Card) => {
         setArchiveCards(deleteCard(archiveCards, card));
       },
-      [archiveCards]
+      [archiveCards, setArchiveCards]
     );
   },
   useCopyCard() {
@@ -304,7 +325,7 @@ export const kanbanActions = {
       (card: Card) => {
         setLists(copyCard(lists, card));
       },
-      [lists]
+      [lists, setLists]
     );
   },
   useMoveCard() {
@@ -313,7 +334,7 @@ export const kanbanActions = {
       (listId: string, fromCardIndex: number, toCardIndex: number) => {
         setLists(moveCard(lists, listId, fromCardIndex, toCardIndex));
       },
-      [lists]
+      [lists, setLists]
     );
   },
   useMoveCardAcrossList() {
@@ -322,7 +343,7 @@ export const kanbanActions = {
       (fromListId: string, fromCardIndex: number, toListId: string, toCardIndex: number) => {
         setLists(moveCardAcrossList(lists, fromListId, fromCardIndex, toListId, toCardIndex));
       },
-      [lists]
+      [lists, setLists]
     );
   },
   useArchiveCard() {
@@ -331,7 +352,7 @@ export const kanbanActions = {
       (list: List, card: Card) => {
         setKanban(archiveCard(kanban, list, card));
       },
-      [kanban]
+      [kanban, setKanban]
     );
   },
   useRestoreCard() {
@@ -340,7 +361,7 @@ export const kanbanActions = {
       (card: Card) => {
         setKanban(restoreCard(kanban, card));
       },
-      [kanban]
+      [kanban, setKanban]
     );
   },
   useUpdateCardDueDate() {
@@ -349,7 +370,7 @@ export const kanbanActions = {
       (list: List, card: Card, dueDate?: Date) => {
         setLists(updateCard(lists, list, { ...card, dueDate }));
       },
-      [lists]
+      [lists, setLists]
     );
   },
   useAddCheckBox() {
@@ -358,7 +379,7 @@ export const kanbanActions = {
       (list: List, card: Card, checkbox: CheckBox) => {
         setLists(addCheckBox(lists, list, card, checkbox));
       },
-      [lists]
+      [lists, setLists]
     );
   },
   useUpdateCheckBox() {
@@ -367,7 +388,7 @@ export const kanbanActions = {
       (list: List, card: Card, checkbox: CheckBox) => {
         setLists(updateCheckBox(lists, list, card, checkbox));
       },
-      [lists]
+      [lists, setLists]
     );
   },
   useDeleteCheckBox() {
@@ -376,7 +397,7 @@ export const kanbanActions = {
       (list: List, card: Card, id: string) => {
         setLists(deleteCheckBox(lists, list, card, id));
       },
-      [lists]
+      [lists, setLists]
     );
   },
   useMoveCheckBox() {
@@ -385,7 +406,7 @@ export const kanbanActions = {
       (listId: string, cardId: string, fromCheckBoxIndex: number, toCheckBoxIndex: number) => {
         setLists(moveCheckBox(lists, listId, cardId, fromCheckBoxIndex, toCheckBoxIndex));
       },
-      [lists]
+      [lists, setLists]
     );
   },
   useAddLabel() {
@@ -394,7 +415,7 @@ export const kanbanActions = {
       (list: List, card: Card, label: Label) => {
         setLists(addLabel(lists, list, card, label));
       },
-      [lists]
+      [lists, setLists]
     );
   },
   useUpdateLabel() {
@@ -403,7 +424,7 @@ export const kanbanActions = {
       (list: List, card: Card, label: Label) => {
         setLists(updateLabel(lists, list, card, label));
       },
-      [lists]
+      [lists, setLists]
     );
   },
   useDeleteLabel() {
@@ -412,7 +433,7 @@ export const kanbanActions = {
       (list: List, card: Card, id: string) => {
         setLists(deleteLabel(lists, list, card, id));
       },
-      [lists]
+      [lists, setLists]
     );
   },
   useAddComments() {
@@ -421,7 +442,7 @@ export const kanbanActions = {
       (list: List, card: Card, comment: Comment) => {
         setLists(addComments(lists, list, card, comment));
       },
-      [lists]
+      [lists, setLists]
     );
   },
   useUpdateComments() {
@@ -430,7 +451,7 @@ export const kanbanActions = {
       (list: List, card: Card, comment: Comment) => {
         setLists(updateComments(lists, list, card, comment));
       },
-      [lists]
+      [lists, setLists]
     );
   },
   useDeleteComments() {
@@ -439,16 +460,16 @@ export const kanbanActions = {
       (list: List, card: Card, id: string) => {
         setLists(deleteComments(lists, list, card, id));
       },
-      [lists]
+      [lists, setLists]
     );
   },
   useUpdateSettings() {
     const [settings, setSettings] = useAtom(settingsAtom);
     return React.useCallback(
-      (settings: Settings) => {
-        setSettings(settings);
+      (newSettings: Settings) => {
+        setSettings(newSettings);
       },
-      [settings]
+      [setSettings]
     );
   },
 };

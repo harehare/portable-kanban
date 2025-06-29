@@ -314,7 +314,6 @@ const EditCard = () => {
     deleteCard(archivedCard);
     navigate('/');
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     vscode.postMessage({
       type: 'info-message',
       message: `Delete ${archivedCard.title}`,
@@ -324,17 +323,20 @@ const EditCard = () => {
   return (
     <DragDropContext onDragEnd={onDragEnd}>
       <Overlay
-        onClick={() => {
+        onClick={(e: React.MouseEvent<HTMLDivElement>) => {
           if (showModal) {
             setShowModal(false);
             return;
           }
 
-          if (list && card) {
-            updateCard(list, card);
-          }
+          // Ensure click is on the overlay itself, not a child element
+          if (e.target === e.currentTarget) {
+            if (list && card) {
+              updateCard(list, card);
+            }
 
-          navigate('/');
+            navigate('/');
+          }
         }}
       >
         <Container
@@ -386,7 +388,7 @@ const EditCard = () => {
               />
             </Head>
           </Line>
-          {window.settings.showDescription && (
+          {(globalThis as any).settings.showDescription && (
             <Line>
               <Head>
                 <Icon>
@@ -404,7 +406,11 @@ const EditCard = () => {
           ) : (
             <></>
           )}
-          <Line>
+          <Line
+            onClick={(e: React.MouseEvent<HTMLDivElement>) => {
+              e.stopPropagation();
+            }}
+          >
             <Head>
               <Icon>
                 <MdOutlineDescription />
@@ -413,7 +419,7 @@ const EditCard = () => {
             </Head>
             <DatePicker value={card?.dueDate} onChange={handleEditDate} />
           </Line>
-          {window.settings.showTaskList && (
+          {(globalThis as any).settings.showTaskList && (
             <Line>
               <Head>
                 <Icon>

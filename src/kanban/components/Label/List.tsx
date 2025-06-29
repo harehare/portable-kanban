@@ -43,10 +43,14 @@ type Properties = {
 export const LabelList = ({ list, card }: Properties) => {
   const showModal = selectors.useShowModal();
   const setShowModal = actions.useSetShowModal();
+  const sortedLabels = React.useMemo(
+    () => [...card.labels].sort((a, b) => a.title.localeCompare(b.title)),
+    [card.labels]
+  );
 
   return (
     <Labels>
-      {card.labels.map((l) => (
+      {sortedLabels.map((l) => (
         <LabelItem
           key={l.id}
           style={{ backgroundColor: l.color, cursor: 'pointer' }}
