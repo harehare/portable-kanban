@@ -33,7 +33,6 @@ const App = () => {
 
     window.addEventListener('message', onMessage);
     navigate('/');
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     vscode.postMessage({
       type: 'load',
     });

@@ -16,7 +16,6 @@ export const Linkify = ({ child }: Props) => {
           key={key}
           rel="noopener noreferrer"
           onClick={() => {
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
             vscode.postMessage({
               type: 'open',
               url: decoratedHref,
