@@ -1,8 +1,9 @@
-//@ts-check
+/* eslint-disable unicorn/prefer-module, n/prefer-global/process */
+// @ts-check
 
 'use strict';
 
-const path = require('path');
+const path = require('node:path');
 
 const extensionConfig = {
   mode: process.env.NODE_ENV,
