@@ -500,7 +500,14 @@ const colorDecoder: Decoder<Color> = union(
     constant('#0079bf'),
     constant('#00c2e0'),
     constant('#51e898')
-  )
+  ),
+  string().map((color) => {
+    if (!/^#[\da-fA-F]{6}$/.test(color)) {
+      throw new Error(`Invalid color format: ${color}. Expected hex color like #rrggbb.`);
+    }
+
+    return color as Color;
+  })
 );
 
 const labelDecoder: Decoder<Label> = object({
