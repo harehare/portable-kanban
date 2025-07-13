@@ -2,7 +2,7 @@
   "name": "portable-kanban",
   "displayName": "Portable Kanban",
   "description": "This is an extension to create a portable kanban.",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "author": "harehare",
   "publisher": "harehare",
   "icon": "assets/icon.png",
