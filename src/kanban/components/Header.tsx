@@ -1,9 +1,10 @@
 import * as React from 'react';
-import { MdArchive, MdFilterAlt, MdMenu, MdSearch } from 'react-icons/md';
+import { MdArchive, MdFilterAlt, MdMenu, MdSearch, MdRefresh } from 'react-icons/md';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { styled } from 'styled-components';
 import LogoImage from '../assets/icon.svg';
 import { actions, selectors } from '../store';
+import { vscode } from '../../vscode';
 import { IconButton } from './shared/IconButton';
 import { Input } from './shared/Input';
 import { Menu } from './shared/Menu';
@@ -108,8 +109,16 @@ export const Header = ({ title }: Props) => {
           alignItems: 'center',
           justifyContent: 'center',
           padding: '8px',
+          gap: '8px',
         }}
       >
+        <IconButton
+          icon={<MdRefresh />}
+          onClick={() => {
+            vscode.postMessage({ type: 'reload' });
+          }}
+          title="Reload kanban file"
+        />
         <IconButton
           icon={<MdFilterAlt />}
           onClick={() => {
