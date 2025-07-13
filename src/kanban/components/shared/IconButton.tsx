@@ -9,15 +9,17 @@ const Button = styled.div`
 type Props = {
   icon: React.ReactNode;
   onClick: () => void;
+  title?: string;
 };
 
-export const IconButton = ({ icon, onClick }: Props) => {
+export const IconButton = ({ icon, onClick, title }: Props) => {
   return (
     <Button
       onClick={(e: React.MouseEvent<HTMLDivElement>) => {
         e.stopPropagation();
         onClick();
       }}
+      title={title}
     >
       {icon}
     </Button>

@@ -37,7 +37,7 @@ export class KanbanEditorProvider implements vscode.CustomTextEditorProvider {
 
     webviewPanel.webview.onDidReceiveMessage(
       async (e: {
-        type: 'load' | 'edit' | 'info-message' | 'open';
+        type: 'load' | 'edit' | 'info-message' | 'open' | 'reload';
         message?: string;
         url?: string;
         kanban?: Kanban;
@@ -72,6 +72,12 @@ export class KanbanEditorProvider implements vscode.CustomTextEditorProvider {
 
           case 'open': {
             await vscode.env.openExternal(vscode.Uri.parse(e.url!));
+            break;
+          }
+
+          case 'reload': {
+            await updateWebview();
+            break;
           }
         }
       }
