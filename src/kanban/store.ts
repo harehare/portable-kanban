@@ -37,6 +37,7 @@ import {
   moveAllCardsToList,
   type ArchiveList,
   addCards,
+  sortListCards,
 } from './models/kanban';
 
 const titleAtom = atom('');
@@ -47,6 +48,7 @@ const filterAtom = atom<{ text: string; labels: Set<string> }>({
 });
 const showModalAtom = atom<boolean>(false);
 const menuAtom = atom<string | undefined>(undefined);
+const sortOrderAtom = atom<Record<string, 'none' | 'titleAsc' | 'titleDesc'>>({});
 
 const lists = atom<List[]>([]);
 const archiveLists = atom<ArchiveList[]>([]);
@@ -157,6 +159,7 @@ type Selectors = {
   useSettings: () => Settings;
   useCard: (listId: string, cardId: string) => Card | undefined;
   useMenu: () => string | undefined;
+  useSortOrder: () => Record<string, 'none' | 'titleAsc' | 'titleDesc'>;
 };
 
 export const selectors: Selectors = {
@@ -172,6 +175,7 @@ export const selectors: Selectors = {
   useSettings: () => useAtomValue(settingsAtom),
   useCard: (listId: string, cardId: string) => useAtomValue(cardSelector({ listId, cardId })),
   useMenu: () => useAtomValue(menuAtom),
+  useSortOrder: () => useAtomValue(sortOrderAtom),
 };
 
 export const actions = {
@@ -215,6 +219,12 @@ export const actions = {
     const setState = useSetAtom(menuAtom);
     return React.useCallback(() => {
       setState('');
+    }, []);
+  },
+  useSetSortOrder() {
+    const setState = useSetAtom(sortOrderAtom);
+    return React.useCallback((listId: string, sortOrder: 'none' | 'titleAsc' | 'titleDesc') => {
+      setState((current) => ({ ...current, [listId]: sortOrder }));
     }, []);
   },
 };
@@ -464,12 +474,21 @@ export const kanbanActions = {
     );
   },
   useUpdateSettings() {
-    const [settings, setSettings] = useAtom(settingsAtom);
+    const setSettings = useSetAtom(settingsAtom);
     return React.useCallback(
       (newSettings: Settings) => {
         setSettings(newSettings);
       },
       [setSettings]
+    );
+  },
+  useSortListCards() {
+    const [lists, setLists] = useAtom(listsAtom);
+    return React.useCallback(
+      (listId: string, sortOrder: 'titleAsc' | 'titleDesc') => {
+        setLists(sortListCards(lists, listId, sortOrder));
+      },
+      [lists, setLists]
     );
   },
 };
