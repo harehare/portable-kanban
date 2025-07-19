@@ -480,6 +480,19 @@ export const deleteComments = (lists: List[], list: List, card: Card, id: string
   );
 };
 
+export const sortListCards = (lists: List[], listId: string, sortOrder: 'titleAsc' | 'titleDesc'): List[] => {
+  return lists.map((l) =>
+    l.id === listId
+      ? {
+          ...l,
+          cards: [...l.cards].sort((a, b) =>
+            sortOrder === 'titleAsc' ? a.title.localeCompare(b.title) : b.title.localeCompare(a.title)
+          ),
+        }
+      : l
+  );
+};
+
 export const toJson = (kanban: Kanban) => {
   return JSON.stringify(kanban, null, 2);
 };

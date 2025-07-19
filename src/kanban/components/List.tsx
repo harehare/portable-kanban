@@ -2,7 +2,7 @@ import Fuse from 'fuse.js';
 import * as React from 'react';
 import { Droppable, Draggable } from 'react-beautiful-dnd';
 import { FiPlus } from 'react-icons/fi';
-import { MdAdd, MdArchive, MdDriveFileMoveOutline, MdMenu, MdOutlineArchive } from 'react-icons/md';
+import { MdAdd, MdArchive, MdDriveFileMoveOutline, MdMenu, MdOutlineArchive, MdSortByAlpha } from 'react-icons/md';
 import { styled } from 'styled-components';
 import { type Kanban as KanbanModel, type List as ListModel, type Card as CardModel, newCard } from '../models/kanban';
 import { selectors, actions, kanbanActions } from '../store';
@@ -88,15 +88,30 @@ export const List = ({ kanban, list }: Properties) => {
   const filteredText = selectors.useFilterText();
   const filteredLabels = selectors.useFilterLabels();
   const setMenu = actions.useSetMenu();
+  const sortOrder = selectors.useSortOrder();
+  const setSortOrder = actions.useSetSortOrder();
+  const sortListCards = kanbanActions.useSortListCards();
   const searcher = React.useMemo(() => new Fuse(list.cards, searchOptions), [list.cards]);
   const filteredCards = React.useMemo(() => {
-    if (!filteredText) {
-      return list.cards.filter((c) => isLabelMatch(c, filteredLabels));
+    let cards: CardModel[];
+
+    if (filteredText) {
+      const result = searcher.search(filteredText);
+      cards = result.filter((c) => isLabelMatch(c.item, filteredLabels)).map((r) => r.item);
+    } else {
+      cards = list.cards.filter((c) => isLabelMatch(c, filteredLabels));
     }
 
-    const result = searcher.search(filteredText || '');
-    return result.filter((c) => isLabelMatch(c.item, filteredLabels)).map((r) => r.item);
-  }, [searcher, kanban, list, filteredText, filteredLabels]);
+    // Apply sorting
+    const currentSortOrder = sortOrder[list.id] ?? 'none';
+    if (currentSortOrder === 'titleAsc') {
+      cards = [...cards].sort((a, b) => a.title.localeCompare(b.title));
+    } else if (currentSortOrder === 'titleDesc') {
+      cards = [...cards].sort((a, b) => b.title.localeCompare(a.title));
+    }
+
+    return cards;
+  }, [searcher, kanban, list, filteredText, filteredLabels, sortOrder]);
   const cardList = React.useMemo(
     () =>
       filteredCards.map((c, index) => (
@@ -193,6 +208,23 @@ export const List = ({ kanban, list }: Properties) => {
                         text: 'Add Card',
                         onClick() {
                           setAddCard(newCard(uuid(), list.id));
+                        },
+                      },
+                      'separator',
+                      {
+                        icon: <MdSortByAlpha />,
+                        text: 'Sort by Title A-Z',
+                        onClick() {
+                          setSortOrder(list.id, 'titleAsc');
+                          sortListCards(list.id, 'titleAsc');
+                        },
+                      },
+                      {
+                        icon: <MdSortByAlpha style={{ transform: 'scaleY(-1)' }} />,
+                        text: 'Sort by Title Z-A',
+                        onClick() {
+                          setSortOrder(list.id, 'titleDesc');
+                          sortListCards(list.id, 'titleDesc');
                         },
                       },
                       'separator',
