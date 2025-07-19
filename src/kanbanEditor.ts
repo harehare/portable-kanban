@@ -130,11 +130,11 @@ export class KanbanEditorProvider implements vscode.CustomTextEditorProvider {
 			</html>`;
   }
 
-  private async updateTextDocument(document: vscode.TextDocument, kanban: Kanban) {
+  private async updateTextDocument(document: vscode.TextDocument, kanban: Kanban): Promise<boolean> {
     const text = toJson(kanban);
 
     if (document.getText() === text) {
-      return;
+      return true;
     }
 
     const edit = new vscode.WorkspaceEdit();
