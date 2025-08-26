@@ -100,7 +100,7 @@
     "prettier": "^3.5.3",
     "style-loader": "^4.0.0",
     "styled-components": "^6.1.19",
-    "ts-loader": "^9.5.2",
+    "ts-loader": "^9.5.4",
     "typescript": "^5.9.2",
     "vitest": "^3.2.4",
     "webpack": "^5.101.3",
