@@ -106,7 +106,7 @@
     "webpack": "^5.101.3",
     "webpack-cli": "^6.0.1",
     "webpack-node-externals": "^3.0.0",
-    "xo": "^1.2.2"
+    "xo": "^1.2.3"
   },
   "dependencies": {
     "@mojotech/json-type-validation": "^3.1.0",
