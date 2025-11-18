@@ -111,7 +111,7 @@ export const List = ({ kanban, list }: Properties) => {
     }
 
     return cards;
-  }, [searcher, kanban, list, filteredText, filteredLabels, sortOrder]);
+  }, [searcher, list, filteredText, filteredLabels, sortOrder]);
   const cardList = React.useMemo(
     () =>
       filteredCards.map((c, index) => (
@@ -159,7 +159,7 @@ export const List = ({ kanban, list }: Properties) => {
           .filter((c) => c.title !== '')
       );
     },
-    [kanban, list]
+    [lists, list, settings.labels, addCards]
   );
 
   return (

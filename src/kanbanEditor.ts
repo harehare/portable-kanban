@@ -20,8 +20,6 @@ export class KanbanEditorProvider implements vscode.CustomTextEditorProvider {
     webviewPanel: vscode.WebviewPanel,
     _token: vscode.CancellationToken
   ): Promise<void> {
-    let initialized = false;
-
     webviewPanel.webview.options = {
       enableScripts: true,
     };
@@ -49,11 +47,6 @@ export class KanbanEditorProvider implements vscode.CustomTextEditorProvider {
           }
 
           case 'edit': {
-            if (!initialized) {
-              initialized = true;
-              return;
-            }
-
             const success = await this.updateTextDocument(document, e.kanban!);
 
             if (!success) {

@@ -55,15 +55,20 @@ const archiveLists = atom<ArchiveList[]>([]);
 const archiveCards = atom<Card[]>([]);
 const settings = atom<Settings>({ labels: [] });
 
+// Flag to prevent edit messages during initialization
+let isInitializing = false;
+
 const listsAtom = atom(
   (get) => get(lists),
   (get, set, newValue: List[]) => {
     const kanban: Kanban = get(kanbanAtom);
     set(lists, newValue);
-    vscode.postMessage({
-      type: 'edit',
-      kanban: { ...kanban, lists: newValue },
-    });
+    if (!isInitializing) {
+      vscode.postMessage({
+        type: 'edit',
+        kanban: { ...kanban, lists: newValue },
+      });
+    }
   }
 );
 const archiveListsAtom = atom(
@@ -71,10 +76,12 @@ const archiveListsAtom = atom(
   (get, set, newValue: ArchiveList[]) => {
     const kanban: Kanban = get(kanbanAtom);
     set(archiveLists, newValue);
-    vscode.postMessage({
-      type: 'edit',
-      kanban: { ...kanban, archive: { ...kanban.archive, lists: newValue } },
-    });
+    if (!isInitializing) {
+      vscode.postMessage({
+        type: 'edit',
+        kanban: { ...kanban, archive: { ...kanban.archive, lists: newValue } },
+      });
+    }
   }
 );
 const archiveCardsAtom = atom(
@@ -82,13 +89,15 @@ const archiveCardsAtom = atom(
   (get, set, newValue: Card[]) => {
     const kanban: Kanban = get(kanbanAtom);
     set(archiveCards, newValue);
-    vscode.postMessage({
-      type: 'edit',
-      kanban: {
-        ...kanban,
-        archive: { ...kanban.archive, cards: newValue },
-      },
-    });
+    if (!isInitializing) {
+      vscode.postMessage({
+        type: 'edit',
+        kanban: {
+          ...kanban,
+          archive: { ...kanban.archive, cards: newValue },
+        },
+      });
+    }
   }
 );
 const settingsAtom = atom(
@@ -96,13 +105,15 @@ const settingsAtom = atom(
   (get, set, newValue: Settings) => {
     const kanban: Kanban = get(kanbanAtom);
     set(settings, newValue);
-    vscode.postMessage({
-      type: 'edit',
-      kanban: {
-        ...kanban,
-        settings: newValue,
-      },
-    });
+    if (!isInitializing) {
+      vscode.postMessage({
+        type: 'edit',
+        kanban: {
+          ...kanban,
+          settings: newValue,
+        },
+      });
+    }
   }
 );
 
@@ -113,14 +124,12 @@ const kanbanAtom = atom(
     settings: get(settings),
   }),
   (_get, set, newValue: Kanban) => {
+    isInitializing = true;
     set(lists, newValue.lists);
     set(archiveLists, newValue.archive.lists);
     set(archiveCards, newValue.archive.cards);
     set(settings, newValue.settings);
-    vscode.postMessage({
-      type: 'edit',
-      kanban: newValue,
-    });
+    isInitializing = false;
   }
 );
 

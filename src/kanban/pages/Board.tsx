@@ -49,7 +49,7 @@ const Board = () => {
           )}
         </Draggable>
       )),
-    [kanban]
+    [lists, kanban]
   );
   const onDragEnd = React.useCallback(
     (result: DropResult) => {
