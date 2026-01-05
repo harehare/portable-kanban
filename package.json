@@ -93,7 +93,7 @@
     "@types/react-router-dom": "^5.3.3",
     "@types/styled-components": "^5.1.36",
     "@types/uuid": "^10.0.0",
-    "@types/vscode": "^1.106.1",
+    "@types/vscode": "^1.107.0",
     "@vscode/test-electron": "^2.5.2",
     "css-loader": "^7.1.2",
     "glob": "^13.0.0",
