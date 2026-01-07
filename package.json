@@ -85,7 +85,7 @@
     "@trivago/prettier-plugin-sort-imports": "^6.0.2",
     "@types/glob": "^8.1.0",
     "@types/mocha": "^10.0.10",
-    "@types/node": "24.x",
+    "@types/node": "25.x",
     "@types/react": "^18.3.12",
     "@types/react-beautiful-dnd": "^13.1.8",
     "@types/react-dom": "^18.3.5",
