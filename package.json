@@ -99,7 +99,7 @@
     "glob": "^13.0.0",
     "prettier": "^3.7.4",
     "style-loader": "^4.0.0",
-    "styled-components": "^6.3.5",
+    "styled-components": "^6.3.8",
     "ts-loader": "^9.5.2",
     "typescript": "^5.4.5",
     "vitest": "^4.0.17",
