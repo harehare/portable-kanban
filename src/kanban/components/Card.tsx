@@ -89,9 +89,10 @@ type Properties = {
   isEdit?: boolean;
   editable?: boolean;
   onEnter?: (card: CardModel) => void;
+  onBlur?: (card: CardModel) => void;
 };
 
-export const Card = ({ card, onEnter, editable = true, isEdit = false }: Properties) => {
+export const Card = ({ card, onEnter, onBlur, editable = true, isEdit = false }: Properties) => {
   const location = useLocation();
   const setAddCard = actions.useSetAddingCard();
   const [isComposing, setIsComposing] = React.useState(false);
@@ -183,6 +184,11 @@ export const Card = ({ card, onEnter, editable = true, isEdit = false }: Propert
               setIsComposing(false);
             }}
             onKeyDown={handleKeyDown}
+            onBlur={() => {
+              if (state.card.title.trim() && onBlur) {
+                onBlur(state.card);
+              }
+            }}
             placeholder={'Enter title of card'}
             ref={inputReference}
           />
