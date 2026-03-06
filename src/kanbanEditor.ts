@@ -1,4 +1,4 @@
-import { v4 as uuidv4 } from 'uuid';
+
 import * as vscode from 'vscode';
 import { type Kanban, toJson } from './kanban/models/kanban';
 
@@ -94,7 +94,7 @@ export class KanbanEditorProvider implements vscode.CustomTextEditorProvider {
         theme === 'dark' ? 'dark.css' : theme === 'light' ? 'light.css' : 'system.css'
       )
     );
-    const nonce = uuidv4();
+    const nonce = crypto.randomUUID();
 
     return `<!DOCTYPE html>
 			<html lang="en">
