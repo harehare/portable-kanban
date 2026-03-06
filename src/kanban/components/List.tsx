@@ -293,6 +293,10 @@ export const List = ({ kanban, list }: Properties) => {
                     setAddCard(undefined);
                     handleAddCard(c);
                   }}
+                  onBlur={(c) => {
+                    setAddCard(undefined);
+                    handleAddCard(c);
+                  }}
                 />
               ) : (
                 <></>
