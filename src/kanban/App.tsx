@@ -7,7 +7,7 @@ import { ArchiveLists } from './pages/ArchiveLists';
 import { Board } from './pages/Board';
 import { EditCard } from './pages/EditCard';
 import { Filter } from './pages/Filter';
-import { selectors, actions } from './store';
+import { selectors, actions, setIsLoadingFromFile } from './store';
 
 const App = () => {
   const location = useLocation();
@@ -26,7 +26,9 @@ const App = () => {
         case 'update': {
           const k = await fromJson(message.text);
           setTitle(message.title);
+          setIsLoadingFromFile(true);
           setKanban(k);
+          setIsLoadingFromFile(false);
         }
       }
     };
