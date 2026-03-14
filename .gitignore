@@ -7,3 +7,4 @@ node_modules
 .vscode
 .envrc
 settings.local.json
+.DS_Store
