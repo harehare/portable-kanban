@@ -104,7 +104,7 @@
     "typescript": "^5.4.5",
     "vitest": "^4.1.2",
     "webpack": "^5.105.2",
-    "webpack-cli": "^7.0.1",
+    "webpack-cli": "^7.0.2",
     "webpack-node-externals": "^3.0.0",
     "xo": "^2.0.2"
   },
