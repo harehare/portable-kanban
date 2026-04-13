@@ -101,7 +101,7 @@
     "style-loader": "^4.0.0",
     "styled-components": "^6.4.0",
     "ts-loader": "^9.5.7",
-    "typescript": "^5.4.5",
+    "typescript": "^6.0.2",
     "vitest": "^4.1.4",
     "webpack": "^5.105.2",
     "webpack-cli": "^7.0.2",
