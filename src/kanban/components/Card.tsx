@@ -50,7 +50,6 @@ const Title = styled.div`
   color: var(--text-color);
   font-size: 1rem;
   line-height: 1.5rem;
-  word-break: break-all;
 `;
 
 const Labels = styled.div`
