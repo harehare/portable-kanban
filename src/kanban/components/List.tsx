@@ -264,16 +264,16 @@ export const List = ({ kanban, list, dragHandleListeners, dragHandleAttributes }
                     icon: <MdSortByAlpha />,
                     text: 'Sort by Title A-Z',
                     onClick() {
-                      setSortOrder(list.id, 'titleAsc');
                       sortListCards(list.id, 'titleAsc');
+                      setSortOrder(list.id, 'none');
                     },
                   },
                   {
                     icon: <MdSortByAlpha style={{ transform: 'scaleY(-1)' }} />,
                     text: 'Sort by Title Z-A',
                     onClick() {
-                      setSortOrder(list.id, 'titleDesc');
                       sortListCards(list.id, 'titleDesc');
+                      setSortOrder(list.id, 'none');
                     },
                   },
                   'separator',
