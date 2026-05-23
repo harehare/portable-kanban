@@ -71,10 +71,7 @@ const SortableListItem = ({ list, kanban }: SortableListItemProps) => {
   );
 };
 
-type ActiveDrag =
-  | { type: 'card'; cardId: string }
-  | { type: 'list'; listId: string }
-  | null;
+type ActiveDrag = { type: 'card'; cardId: string } | { type: 'list'; listId: string } | null;
 
 const Board = () => {
   const kanban = selectors.useKanban();
@@ -120,19 +117,16 @@ const Board = () => {
   // Prefer card-level droppables over list-level droppables to avoid
   // the DragOverlay center landing on a list container when the pointer
   // is still within a card (e.g. hovering near the bottom edge of a card).
-  const collisionDetection = React.useCallback(
-    (args: Parameters<typeof closestCenter>[0]) => {
-      const pointerCollisions = pointerWithin(args);
-      const cardCollisions = pointerCollisions.filter(({ id }) => {
-        const container = args.droppableContainers.find((c) => c.id === id);
-        return container?.data?.current?.type === 'card';
-      });
-      if (cardCollisions.length > 0) return cardCollisions;
-      if (pointerCollisions.length > 0) return pointerCollisions;
-      return closestCenter(args);
-    },
-    [],
-  );
+  const collisionDetection = React.useCallback((args: Parameters<typeof closestCenter>[0]) => {
+    const pointerCollisions = pointerWithin(args);
+    const cardCollisions = pointerCollisions.filter(({ id }) => {
+      const container = args.droppableContainers.find((c) => c.id === id);
+      return container?.data?.current?.type === 'card';
+    });
+    if (cardCollisions.length > 0) return cardCollisions;
+    if (pointerCollisions.length > 0) return pointerCollisions;
+    return closestCenter(args);
+  }, []);
 
   const onDragOver = React.useCallback(
     (event: DragOverEvent) => {
@@ -267,19 +261,21 @@ const Board = () => {
           </ScrollContainer>
         </Contents>
         <DragOverlay>
-          {activeDrag?.type === 'card' && (() => {
-            // Search all lists since card may have moved cross-list during drag
-            let card;
-            for (const l of lists) {
-              card = l.cards.find((c) => c.id === activeDrag.cardId);
-              if (card) break;
-            }
-            return card ? <Card card={card} editable={false} /> : null;
-          })()}
-          {activeDrag?.type === 'list' && (() => {
-            const list = lists.find((l) => l.id === activeDrag.listId);
-            return list ? <List kanban={kanban} list={list} /> : null;
-          })()}
+          {activeDrag?.type === 'card' &&
+            (() => {
+              // Search all lists since card may have moved cross-list during drag
+              let card;
+              for (const l of lists) {
+                card = l.cards.find((c) => c.id === activeDrag.cardId);
+                if (card) break;
+              }
+              return card ? <Card card={card} editable={false} /> : null;
+            })()}
+          {activeDrag?.type === 'list' &&
+            (() => {
+              const list = lists.find((l) => l.id === activeDrag.listId);
+              return list ? <List kanban={kanban} list={list} /> : null;
+            })()}
         </DragOverlay>
       </DndContext>
     </Container>

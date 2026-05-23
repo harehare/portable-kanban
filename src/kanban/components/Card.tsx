@@ -20,7 +20,9 @@ const Container = styled.div`
   cursor: pointer;
   box-sizing: content-box;
   box-shadow: var(--shadow-sm);
-  transition: box-shadow 0.15s ease, background-color 0.15s ease;
+  transition:
+    box-shadow 0.15s ease,
+    background-color 0.15s ease;
   &:hover {
     background-color: var(--hover-color);
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);

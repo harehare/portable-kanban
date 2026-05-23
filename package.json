@@ -81,12 +81,11 @@
     "watch:extension": "esbuild src/extension.ts --bundle --external:vscode --platform=node --outdir=dist --format=cjs --sourcemap --watch",
     "watch:kanban": "vite build --watch",
     "package": "npm run build:extension && vite build --minify",
-    "lint": "oxlint src && biome check --write src",
-    "format": "biome format --write src",
+    "lint": "oxlint src && oxfmt src",
+    "format": "oxfmt src",
     "test": "vitest run"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.4.15",
     "@types/mocha": "^10.0.10",
     "@types/node": "25.x",
     "@types/react": "^19.2.15",
@@ -100,6 +99,7 @@
     "babel-plugin-react-compiler": "^1.0.0",
     "esbuild": "^0.28.0",
     "glob": "^13.0.6",
+    "oxfmt": "^0.51.0",
     "oxlint": "^1.66.0",
     "styled-components": "^6.4.1",
     "typescript": "^6.0.3",
