@@ -86,6 +86,9 @@
     "test": "vitest run"
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
+    "@testing-library/user-event": "^14.6.1",
     "@types/mocha": "^10.0.10",
     "@types/node": "25.x",
     "@types/react": "^19.2.15",
@@ -99,6 +102,7 @@
     "babel-plugin-react-compiler": "^1.0.0",
     "esbuild": "^0.28.0",
     "glob": "^13.0.6",
+    "jsdom": "^29.1.1",
     "oxfmt": "^0.51.0",
     "oxlint": "^1.66.0",
     "styled-components": "^6.4.1",
