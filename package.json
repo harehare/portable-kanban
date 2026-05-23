@@ -2,11 +2,14 @@
   "name": "portable-kanban",
   "displayName": "Portable Kanban",
   "description": "This is an extension to create a portable kanban.",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "author": "harehare",
   "publisher": "harehare",
   "icon": "assets/icon.png",
   "private": true,
+  "pnpm": {
+    "onlyBuiltDependencies": ["@vscode/vsce-sign", "keytar"]
+  },
   "engines": {
     "vscode": "^1.101.0"
   },
@@ -73,14 +76,15 @@
     }
   },
   "scripts": {
-    "vscode:prepublish": "npm run package",
-    "build": "npm run build:extension && npm run build:kanban",
+    "vscode:prepublish": "pnpm run package",
+    "build": "pnpm run build:extension && pnpm run build:kanban",
     "build:extension": "esbuild src/extension.ts --bundle --external:vscode --platform=node --outdir=dist --format=cjs --sourcemap",
     "build:kanban": "vite build",
-    "watch": "npm run watch:extension & npm run watch:kanban",
+    "watch": "pnpm run watch:extension & pnpm run watch:kanban",
     "watch:extension": "esbuild src/extension.ts --bundle --external:vscode --platform=node --outdir=dist --format=cjs --sourcemap --watch",
     "watch:kanban": "vite build --watch",
-    "package": "npm run build:extension && vite build --minify",
+    "package": "pnpm run build:extension && vite build --minify",
+    "vsce:package": "vsce package --no-dependencies",
     "lint": "oxlint src && oxfmt src",
     "format": "oxfmt src",
     "test": "vitest run"
@@ -96,9 +100,10 @@
     "@types/react-linkify": "^1.0.4",
     "@types/react-router-dom": "^5.3.3",
     "@types/styled-components": "^5.1.36",
-    "@types/vscode": "^1.118.0",
+    "@types/vscode": "^1.101.0",
     "@vitejs/plugin-react": "^6.0.2",
     "@vscode/test-electron": "^2.5.2",
+    "@vscode/vsce": "^3.9.1",
     "babel-plugin-react-compiler": "^1.0.0",
     "esbuild": "^0.28.0",
     "glob": "^13.0.6",
