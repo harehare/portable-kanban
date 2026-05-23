@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { styled } from 'styled-components';
-import { selectors, actions } from '../../store';
+import { actions, selectors } from '../../store';
 import { MenuItem, type Props as MenuItemProperties } from './MenuItem';
 
 const MenuIcon = styled.div`
@@ -49,7 +49,6 @@ type Properties = {
 export const Menu = ({ id, icon, position, items }: Properties) => {
   const menuId = selectors.useMenu();
   const setMenu = actions.useSetMenu();
-  const closeMenu = actions.useMenuClose();
 
   return (
     <>
@@ -77,7 +76,7 @@ export const Menu = ({ id, icon, position, items }: Properties) => {
                 >
                   <MenuItem text={index_.text} icon={index_.icon} onClick={index_.onClick} />
                 </div>
-              )
+              ),
             )}
           </MenuItems>
         )}

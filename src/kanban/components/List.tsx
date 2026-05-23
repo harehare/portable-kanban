@@ -1,17 +1,18 @@
+import { SortableContext, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 import Fuse from 'fuse.js';
 import * as React from 'react';
-import { Droppable, Draggable } from 'react-beautiful-dnd';
 import { FiPlus } from 'react-icons/fi';
 import { MdAdd, MdArchive, MdDriveFileMoveOutline, MdMenu, MdOutlineArchive, MdSortByAlpha } from 'react-icons/md';
 import { styled } from 'styled-components';
-import { type Kanban as KanbanModel, type List as ListModel, type Card as CardModel, newCard } from '../models/kanban';
-import { selectors, actions, kanbanActions } from '../store';
+import { type Card as CardModel, type Kanban as KanbanModel, type List as ListModel, newCard } from '../models/kanban';
+import { actions, kanbanActions, selectors } from '../store';
 import { uuid } from '../utils';
 import { Card } from './Card';
 import { SelectList } from './SelectList';
 import { AddButton } from './shared/AddButton';
 import { Menu } from './shared/Menu';
-import { TextSm, TextXs } from './shared/Text';
+import { TextSm } from './shared/Text';
 import { Title } from './shared/Title';
 
 const Container = styled.div`
@@ -32,6 +33,10 @@ const Cards = styled.div`
 
 const Header = styled.div`
   width: 100%;
+  cursor: grab;
+  &:active {
+    cursor: grabbing;
+  }
 `;
 
 const AddLabel = styled.div`
@@ -59,12 +64,70 @@ const Icon = styled.div`
   margin-top: 6px;
 `;
 
+const CardCountBadge = styled.span`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  border-radius: 10px;
+  border: 1px solid var(--form-border-color);
+  color: var(--text-color);
+  font-size: 0.68rem;
+  font-weight: 700;
+  margin-left: 4px;
+  flex-shrink: 0;
+  line-height: 1;
+  opacity: 0.65;
+`;
+
+const EmptyState = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px 8px;
+  color: var(--text-color);
+  font-size: 0.75rem;
+  opacity: 0.35;
+  font-style: italic;
+  user-select: none;
+`;
+
 const isLabelMatch = (card: CardModel, labels: Set<string>): boolean =>
   labels.size === 0 || card.labels.map((l) => l.title).some((x) => labels.has(x));
+
+type SortableCardItemProps = {
+  card: CardModel;
+  listId: string;
+};
+
+const SortableCardItem = ({ card, listId }: SortableCardItemProps) => {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+    id: card.id,
+    data: { type: 'card', listId },
+  });
+
+  const style: React.CSSProperties = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0 : 1,
+  };
+
+  return (
+    <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
+      <Card key={card.id} card={card} />
+    </div>
+  );
+};
 
 type Properties = {
   kanban: KanbanModel;
   list: ListModel;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  dragHandleListeners?: Record<string, any>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  dragHandleAttributes?: Record<string, any>;
 };
 
 const searchOptions = {
@@ -72,7 +135,7 @@ const searchOptions = {
   keys: ['title', 'description', 'comments.comment'],
 };
 
-export const List = ({ kanban, list }: Properties) => {
+export const List = ({ kanban, list, dragHandleListeners, dragHandleAttributes }: Properties) => {
   const lists = selectors.useLists();
   const settings = selectors.useSettings();
   const setKanban = actions.useSetKanban();
@@ -102,7 +165,6 @@ export const List = ({ kanban, list }: Properties) => {
       cards = list.cards.filter((c) => isLabelMatch(c, filteredLabels));
     }
 
-    // Apply sorting
     const currentSortOrder = sortOrder[list.id] ?? 'none';
     if (currentSortOrder === 'titleAsc') {
       cards = [...cards].sort((a, b) => a.title.localeCompare(b.title));
@@ -112,19 +174,9 @@ export const List = ({ kanban, list }: Properties) => {
 
     return cards;
   }, [searcher, list, filteredText, filteredLabels, sortOrder]);
-  const cardList = React.useMemo(
-    () =>
-      filteredCards.map((c, index) => (
-        <Draggable key={c.id} draggableId={c.id} index={index}>
-          {(provided) => (
-            <div ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps}>
-              <Card key={c.id} card={c} />
-            </div>
-          )}
-        </Draggable>
-      )),
-    [filteredCards]
-  );
+
+  const cardIds = React.useMemo(() => filteredCards.map((c) => c.id), [filteredCards]);
+
   const handleAddCard = React.useCallback(
     (card: CardModel) => {
       const newList = lists.find((l) => l.id === list.id);
@@ -139,7 +191,6 @@ export const List = ({ kanban, list }: Properties) => {
               const potentialTitle = tokens.slice(1).join(':').trim();
               const matchingLabels = settings.labels.filter((l) => l.title === potentialLabelName);
 
-              // Only treat as label:title format if the label actually exists
               if (matchingLabels.length > 0) {
                 return {
                   ...newCard(uuid(), list.id),
@@ -149,189 +200,179 @@ export const List = ({ kanban, list }: Properties) => {
               }
             }
 
-            // If no valid label found or no colon, use the entire text as title
             return {
               ...newCard(uuid(), list.id),
               title: v.trim(),
               labels: [],
             };
           })
-          .filter((c) => c.title !== '')
+          .filter((c) => c.title !== ''),
       );
     },
-    [lists, list, settings.labels, addCards]
+    [lists, list, settings.labels, addCards],
   );
 
   return (
     <Container>
       <Contents>
-        <Droppable droppableId={list.id} type="cards">
-          {(provided) => (
+        <div
+          onClick={(e: React.MouseEvent<HTMLDivElement>) => {
+            if (list.id === addingCard?.listId) {
+              e.stopPropagation();
+            }
+          }}
+        >
+          <Header {...dragHandleAttributes} {...dragHandleListeners}>
             <div
-              ref={provided.innerRef}
-              onClick={(e: React.MouseEvent<HTMLDivElement>) => {
-                // Prevent click from bubbling up to Board container when adding a card
-                if (list.id === addingCard?.listId) {
-                  e.stopPropagation();
-                }
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                paddingLeft: '8px',
+                paddingBottom: '8px',
+                position: 'relative',
               }}
             >
-              <Header>
-                <div
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    paddingLeft: '8px',
-                    paddingBottom: '8px',
-                    position: 'relative',
+              <div style={{ display: 'flex', alignItems: 'center', overflow: 'hidden' }}>
+                <Title
+                  title={list.title}
+                  fontSize={'medium'}
+                  width={155}
+                  onEnter={(text) => {
+                    updateList({
+                      ...list,
+                      title: text,
+                    });
                   }}
-                >
-                  <Title
-                    title={list.title}
-                    fontSize={'medium'}
-                    width={180}
-                    onEnter={(text) => {
-                      updateList({
-                        ...list,
-                        title: text,
-                      });
-                    }}
-                  />
-                  <Menu
-                    id={`list-${list.id}`}
-                    position="right"
-                    icon={<MdMenu />}
-                    items={[
-                      {
-                        icon: <MdAdd />,
-                        text: 'Add Card',
-                        onClick() {
-                          setAddCard(newCard(uuid(), list.id));
-                        },
-                      },
-                      'separator',
-                      {
-                        icon: <MdSortByAlpha />,
-                        text: 'Sort by Title A-Z',
-                        onClick() {
-                          setSortOrder(list.id, 'titleAsc');
-                          sortListCards(list.id, 'titleAsc');
-                        },
-                      },
-                      {
-                        icon: <MdSortByAlpha style={{ transform: 'scaleY(-1)' }} />,
-                        text: 'Sort by Title Z-A',
-                        onClick() {
-                          setSortOrder(list.id, 'titleDesc');
-                          sortListCards(list.id, 'titleDesc');
-                        },
-                      },
-                      'separator',
-                      {
-                        icon: <MdDriveFileMoveOutline />,
-                        text: 'Move all cards in this list',
-                        onClick() {
-                          setMenu(`select-list-${list.id}`);
-                        },
-                      },
-                      'separator',
-                      {
-                        icon: <MdArchive />,
-                        text: 'Archive this list',
-                        onClick() {
-                          archiveList(list);
-                        },
-                      },
-                      {
-                        icon: <MdOutlineArchive />,
-                        text: 'Archive all cards in the list',
-                        onClick() {
-                          archiveAllCardInList(list);
-                        },
-                      },
-                    ]}
-                  />
-                  <SelectList
-                    menuId={`select-list-${list.id}`}
-                    listId={list.id}
-                    lists={lists}
-                    onClick={(toList) => {
-                      moveAllCardsToList(list, toList);
-                    }}
-                  />
-                </div>
-              </Header>
-              <TextXs
-                style={{
-                  color: 'var(--dark-text-color)',
-                  marginTop: '-2px',
-                }}
-              >
-                {filteredCards.length === 1
-                  ? '1 card'
-                  : filteredCards.length > 1
-                    ? `${filteredCards.length} cards`
-                    : ''}
-              </TextXs>
-              <div
-                style={{
-                  maxHeight: 'calc(100vh - var(--header-height) - 112px)',
-                  overflowY: 'auto',
-                }}
-              >
-                <Cards>
-                  {cardList}
-                  {provided.placeholder}
-                </Cards>
+                />
+                {filteredCards.length > 0 && <CardCountBadge>{filteredCards.length}</CardCountBadge>}
               </div>
-              {list.id === addingCard?.listId ? (
-                <Card
-                  card={addingCard}
-                  isEdit={true}
-                  onEnter={(c) => {
-                    setAddCard(undefined);
-                    handleAddCard(c);
-                  }}
-                  onBlur={(c) => {
-                    setAddCard(undefined);
-                    handleAddCard(c);
-                  }}
-                />
-              ) : (
-                <></>
-              )}
-              {list.id === addingCard?.listId ? (
-                <AddButton
-                  text="Add a card"
-                  type="primary"
-                  disabled={addingCard?.title === undefined || addingCard?.title?.replace('\n', '') === ''}
-                  canClose={true}
-                  onAddClick={() => {
-                    setAddCard(undefined);
-                    handleAddCard(addingCard);
-                  }}
-                  onCancel={() => {
-                    setAddCard(undefined);
-                    setKanban(kanban);
-                  }}
-                />
-              ) : (
-                <AddLabel
-                  onClick={(e: React.MouseEvent<HTMLDivElement>) => {
-                    e.stopPropagation();
-                    setAddCard(newCard(uuid(), list.id));
-                  }}
-                >
-                  <Icon>
-                    <FiPlus />
-                  </Icon>
-                  <TextSm>{'Add Card'}</TextSm>
-                </AddLabel>
-              )}
+              <Menu
+                id={`list-${list.id}`}
+                position="right"
+                icon={<MdMenu />}
+                items={[
+                  {
+                    icon: <MdAdd />,
+                    text: 'Add Card',
+                    onClick() {
+                      setAddCard(newCard(uuid(), list.id));
+                    },
+                  },
+                  'separator',
+                  {
+                    icon: <MdSortByAlpha />,
+                    text: 'Sort by Title A-Z',
+                    onClick() {
+                      setSortOrder(list.id, 'titleAsc');
+                      sortListCards(list.id, 'titleAsc');
+                    },
+                  },
+                  {
+                    icon: <MdSortByAlpha style={{ transform: 'scaleY(-1)' }} />,
+                    text: 'Sort by Title Z-A',
+                    onClick() {
+                      setSortOrder(list.id, 'titleDesc');
+                      sortListCards(list.id, 'titleDesc');
+                    },
+                  },
+                  'separator',
+                  {
+                    icon: <MdDriveFileMoveOutline />,
+                    text: 'Move all cards in this list',
+                    onClick() {
+                      setMenu(`select-list-${list.id}`);
+                    },
+                  },
+                  'separator',
+                  {
+                    icon: <MdArchive />,
+                    text: 'Archive this list',
+                    onClick() {
+                      archiveList(list);
+                    },
+                  },
+                  {
+                    icon: <MdOutlineArchive />,
+                    text: 'Archive all cards in the list',
+                    onClick() {
+                      archiveAllCardInList(list);
+                    },
+                  },
+                ]}
+              />
+              <SelectList
+                menuId={`select-list-${list.id}`}
+                listId={list.id}
+                lists={lists}
+                onClick={(toList) => {
+                  moveAllCardsToList(list, toList);
+                }}
+              />
             </div>
+          </Header>
+          <div
+            style={{
+              maxHeight: 'calc(100vh - var(--header-height) - 112px)',
+              overflowY: 'auto',
+            }}
+          >
+            <SortableContext items={cardIds} strategy={verticalListSortingStrategy}>
+              <Cards>
+                {filteredCards.map((c) => (
+                  <SortableCardItem key={c.id} card={c} listId={list.id} />
+                ))}
+                {filteredCards.length === 0 && list.id !== addingCard?.listId && (
+                  <EmptyState>{filteredText || filteredLabels.size > 0 ? 'No matching cards' : 'No cards'}</EmptyState>
+                )}
+              </Cards>
+            </SortableContext>
+          </div>
+          {list.id === addingCard?.listId ? (
+            <Card
+              card={addingCard}
+              isEdit={true}
+              onEnter={(c) => {
+                setAddCard(undefined);
+                handleAddCard(c);
+              }}
+              onBlur={(c) => {
+                setAddCard(undefined);
+                handleAddCard(c);
+              }}
+            />
+          ) : (
+            <></>
           )}
-        </Droppable>
+          {list.id === addingCard?.listId ? (
+            <AddButton
+              text="Add a card"
+              type="primary"
+              disabled={addingCard?.title === undefined || addingCard?.title?.replace('\n', '') === ''}
+              canClose={true}
+              onAddClick={() => {
+                setAddCard(undefined);
+                handleAddCard(addingCard);
+              }}
+              onCancel={() => {
+                setAddCard(undefined);
+                setKanban(kanban);
+              }}
+            />
+          ) : (
+            <AddLabel
+              onClick={(e: React.MouseEvent<HTMLDivElement>) => {
+                e.stopPropagation();
+                setAddCard(newCard(uuid(), list.id));
+              }}
+            >
+              <Icon>
+                <FiPlus />
+              </Icon>
+              <TextSm>{'Add Card'}</TextSm>
+            </AddLabel>
+          )}
+        </div>
       </Contents>
     </Container>
   );

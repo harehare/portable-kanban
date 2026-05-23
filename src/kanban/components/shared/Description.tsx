@@ -8,13 +8,6 @@ const Container = styled.div`
   padding: 8px;
 `;
 
-const Text = styled.div`
-  width: 100%;
-  font-size: 1rem;
-  line-height: 1.5rem;
-  padding: 8px;
-`;
-
 type Props = {
   description: string;
   fontSize: 'medium' | 'large';

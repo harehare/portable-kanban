@@ -20,8 +20,30 @@ const Container = styled.div`
   cursor: pointer;
   box-sizing: content-box;
   box-shadow: var(--shadow-sm);
+  transition:
+    box-shadow 0.15s ease,
+    background-color 0.15s ease;
   &:hover {
     background-color: var(--hover-color);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  }
+`;
+
+const ProgressStrip = styled.div<{ $progress: number }>`
+  height: 3px;
+  width: 100%;
+  border-radius: 1.5px;
+  background-color: var(--form-border-color);
+  margin-top: 6px;
+  overflow: hidden;
+
+  &::after {
+    content: '';
+    display: block;
+    height: 100%;
+    width: ${({ $progress }) => $progress}%;
+    background-color: ${({ $progress }) => ($progress >= 100 ? 'var(--success-color)' : 'var(--primary-color)')};
+    transition: width 0.3s ease;
   }
 `;
 
@@ -101,7 +123,7 @@ export const Card = ({ card, onEnter, onBlur, editable = true, isEdit = false }:
   }>({ card, isEdit });
   const checkedCount = React.useMemo(
     () => state.card.checkboxes.filter((c) => c.checked).length,
-    [state.card, isComposing]
+    [state.card, isComposing],
   );
 
   React.useEffect(() => {
@@ -123,7 +145,7 @@ export const Card = ({ card, onEnter, onBlur, editable = true, isEdit = false }:
 
       setState({ ...state, isEdit: false });
     },
-    [state.card, isComposing]
+    [state.card, isComposing],
   );
   const inputReference = useAutoFocus();
 
@@ -135,24 +157,35 @@ export const Card = ({ card, onEnter, onBlur, editable = true, isEdit = false }:
             sub(state.card.dueDate, {
               days: 1,
             }),
-            'yyyy-MM-dd'
+            'yyyy-MM-dd',
           )
         : false,
-    [state.card.dueDate]
+    [state.card.dueDate],
   );
 
   const isDueDate = React.useMemo(
     () => (state.card.dueDate ? format(state.card.dueDate, 'yyyy-MM-dd') === format(Date.now(), 'yyyy-MM-dd') : false),
-    [state.card.dueDate]
+    [state.card.dueDate],
+  );
+
+  const isOverdue = React.useMemo(
+    () => (state.card.dueDate ? format(state.card.dueDate, 'yyyy-MM-dd') < format(Date.now(), 'yyyy-MM-dd') : false),
+    [state.card.dueDate],
   );
 
   const dueDateColor = React.useMemo(
-    () => (isDueDate ? '#FF4500' : isOneDayLeft ? '#FF7F50' : 'var(--primary-color)'),
-    [isDueDate, isOneDayLeft]
+    () =>
+      isOverdue ? 'var(--danger-color)' : isDueDate ? '#FF4500' : isOneDayLeft ? '#FF7F50' : 'var(--primary-color)',
+    [isOverdue, isDueDate, isOneDayLeft],
+  );
+
+  const checkboxProgress = React.useMemo(
+    () => (state.card.checkboxes.length > 0 ? (checkedCount / state.card.checkboxes.length) * 100 : 0),
+    [checkedCount, state.card.checkboxes.length],
   );
   const sortedLabels = React.useMemo(
     () => state.card.labels.sort((a, b) => a.title.localeCompare(b.title)),
-    [state.card.labels]
+    [state.card.labels],
   );
 
   return (
@@ -256,6 +289,7 @@ export const Card = ({ card, onEnter, onBlur, editable = true, isEdit = false }:
                 </CardInfo>
               )}
             </div>
+            {state.card.checkboxes.length > 0 && <ProgressStrip $progress={checkboxProgress} />}
           </Link>
         )
       ) : (

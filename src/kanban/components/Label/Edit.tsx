@@ -118,7 +118,7 @@ export const LabelEdit = ({ label, onEdit, onDelete }: Props) => {
                       id: uuid(),
                       title: labelText,
                       color: selectedColor,
-                    }
+                    },
               );
             }}
           />

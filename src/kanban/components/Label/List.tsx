@@ -2,7 +2,7 @@ import * as React from 'react';
 import { MdAdd } from 'react-icons/md';
 import { styled } from 'styled-components';
 import { type Card, type List } from '../../models/kanban';
-import { selectors, actions } from '../../store';
+import { actions, selectors } from '../../store';
 import { LabelSelect } from './Select';
 
 const Labels = styled.div`
@@ -45,7 +45,7 @@ export const LabelList = ({ list, card }: Properties) => {
   const setShowModal = actions.useSetShowModal();
   const sortedLabels = React.useMemo(
     () => [...card.labels].sort((a, b) => a.title.localeCompare(b.title)),
-    [card.labels]
+    [card.labels],
   );
 
   return (

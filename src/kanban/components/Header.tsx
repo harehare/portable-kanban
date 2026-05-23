@@ -1,10 +1,10 @@
 import * as React from 'react';
-import { MdArchive, MdFilterAlt, MdMenu, MdSearch, MdRefresh } from 'react-icons/md';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { MdArchive, MdFilterAlt, MdMenu, MdRefresh, MdSearch } from 'react-icons/md';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { styled } from 'styled-components';
-import LogoImage from '../assets/icon.svg';
-import { actions, selectors } from '../store';
 import { vscode } from '../../vscode';
+import LogoImage from '../assets/icon.svg?url';
+import { actions, selectors } from '../store';
 import { IconButton } from './shared/IconButton';
 import { Input } from './shared/Input';
 import { Menu } from './shared/Menu';
@@ -79,7 +79,7 @@ export const Header = ({ title }: Props) => {
     <Container>
       <LogoContainer>
         <Logo>
-          <LogoImage />
+          <img src={LogoImage} alt="logo" style={{ width: '100%', height: '100%' }} />
         </Logo>
         <Title>{title}</Title>
       </LogoContainer>

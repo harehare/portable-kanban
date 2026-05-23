@@ -1,22 +1,23 @@
+import { closestCenter, DndContext, type DragEndEvent, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
+import { SortableContext, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 import * as React from 'react';
-import { DragDropContext, Draggable, Droppable, type DropResult } from 'react-beautiful-dnd';
 import {
+  MdCheck,
   MdClose,
   MdComment,
-  MdSubtitles,
-  MdOutlineDescription,
-  MdCheck,
-  MdOutlineDeleteOutline,
-  MdRestore,
   MdContentCopy,
   MdOutlineArchive,
+  MdOutlineDeleteOutline,
+  MdOutlineDescription,
+  MdRestore,
+  MdSubtitles,
 } from 'react-icons/md';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { styled } from 'styled-components';
 import { vscode } from '../../vscode';
 import { Comment } from '../components/Comment';
 import { LabelList } from '../components/Label/List';
-import { Task } from '../components/Task';
 import { AddComment } from '../components/shared/AddComment';
 import { AddItem } from '../components/shared/AddItem';
 import { Button } from '../components/shared/Button';
@@ -25,8 +26,9 @@ import { Description } from '../components/shared/Description';
 import { ProgressBar } from '../components/shared/ProgressBar';
 import { TextBaseBold } from '../components/shared/Text';
 import { Title } from '../components/shared/Title';
-import { type Comment as CommentModel } from '../models/kanban';
-import { selectors, actions, kanbanActions } from '../store';
+import { Task } from '../components/Task';
+import { type CheckBox as CheckBoxModel, type Comment as CommentModel } from '../models/kanban';
+import { actions, kanbanActions, selectors } from '../store';
 import { uuid } from '../utils';
 
 declare global {
@@ -101,6 +103,29 @@ const BUttons = styled.div`
   margin: 16px;
 `;
 
+type SortableTaskItemProps = {
+  id: string;
+  checkbox: CheckBoxModel;
+  onChecked: (checked: boolean) => void;
+  onEnter: (title: string) => void;
+  onDelete: (checkbox: CheckBoxModel) => void;
+};
+
+const SortableTaskItem = ({ id, checkbox, onChecked, onEnter, onDelete }: SortableTaskItemProps) => {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id });
+  const style: React.CSSProperties = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
+
+  return (
+    <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
+      <Task checkbox={checkbox} onChecked={onChecked} onEnter={onEnter} onDelete={onDelete} />
+    </div>
+  );
+};
+
 const EditCard = () => {
   const showModal = selectors.useShowModal();
   const archiveCards = selectors.useArchiveCards();
@@ -129,76 +154,55 @@ const EditCard = () => {
   const comments = React.useMemo(() => [...(card?.comments ?? [])].reverse(), [card]);
   const archivedCard = React.useMemo(
     () => (card ? null : archiveCards.find((c) => c.id === cardId)),
-    [cardId, list?.cards]
+    [cardId, list?.cards],
   );
   const [isArchived, setArchived] = React.useState(Boolean(archivedCard));
+
+  const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 8 } }));
+
+  const checkboxIds = React.useMemo(() => card?.checkboxes.map((c) => c.id) ?? [], [card?.checkboxes]);
+
   const taskList = React.useMemo(
     () =>
-      card?.checkboxes.map((c, index) => (
-        <Draggable key={c.id} draggableId={c.id} index={index}>
-          {(provided) => (
-            <div ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps}>
-              <Task
-                key={c.id}
-                checkbox={c}
-                onEnter={(title) => {
-                  if (!list || !card) {
-                    return;
-                  }
+      card?.checkboxes.map((c) => (
+        <SortableTaskItem
+          key={c.id}
+          id={c.id}
+          checkbox={c}
+          onEnter={(title) => {
+            if (!list || !card) return;
+            if (title.trim() === '') {
+              deleteCheckBox(list, card, c.id);
+              return;
+            }
 
-                  if (title.trim() === '') {
-                    deleteCheckBox(list, card, c.id);
-                    return;
-                  }
-
-                  updateCheckBox(list, card, {
-                    ...c,
-                    title,
-                  });
-                }}
-                onChecked={(checked) => {
-                  if (!list || !card) {
-                    return;
-                  }
-
-                  updateCheckBox(list, card, {
-                    ...c,
-                    checked,
-                  });
-                }}
-                onDelete={(checkbox) => {
-                  if (!list || !card) {
-                    return;
-                  }
-
-                  deleteCheckBox(list, card, checkbox.id);
-                }}
-              />
-            </div>
-          )}
-        </Draggable>
+            updateCheckBox(list, card, { ...c, title });
+          }}
+          onChecked={(checked) => {
+            if (!list || !card) return;
+            updateCheckBox(list, card, { ...c, checked });
+          }}
+          onDelete={(checkbox) => {
+            if (!list || !card) return;
+            deleteCheckBox(list, card, checkbox.id);
+          }}
+        />
       )),
-    [card?.checkboxes]
+    [card?.checkboxes, list, card, deleteCheckBox, updateCheckBox],
   );
 
   const onDragEnd = React.useCallback(
-    (result: DropResult) => {
-      if (!result.destination || !list || !card) {
-        return;
-      }
+    (event: DragEndEvent) => {
+      const { active, over } = event;
+      if (!over || !list || !card || active.id === over.id) return;
 
-      switch (result.type) {
-        case 'tasks': {
-          moveCheckBox(list.id, card.id, result.source.index, result.destination.index);
-          break;
-        }
-
-        default: {
-          throw new Error('invalid type');
-        }
+      const fromIndex = card.checkboxes.findIndex((c) => c.id === active.id);
+      const toIndex = card.checkboxes.findIndex((c) => c.id === over.id);
+      if (fromIndex >= 0 && toIndex >= 0) {
+        moveCheckBox(list.id, card.id, fromIndex, toIndex);
       }
     },
-    [list, card]
+    [list, card, moveCheckBox],
   );
 
   const handleEditDescription = React.useCallback(
@@ -212,7 +216,7 @@ const EditCard = () => {
         description,
       });
     },
-    [list, card]
+    [list, card],
   );
 
   const handleEditDate = React.useCallback(
@@ -223,7 +227,7 @@ const EditCard = () => {
 
       updateCardDueDate(list, card, date);
     },
-    [list, card]
+    [list, card],
   );
 
   const handleAddTask = React.useCallback(
@@ -238,7 +242,7 @@ const EditCard = () => {
         checked: false,
       });
     },
-    [list, card]
+    [list, card],
   );
 
   const handleAddComment = React.useCallback(
@@ -252,7 +256,7 @@ const EditCard = () => {
         comment,
       });
     },
-    [list, card]
+    [list, card],
   );
 
   const handleEditComment = React.useCallback(
@@ -266,7 +270,7 @@ const EditCard = () => {
         comment: text,
       });
     },
-    [list, card]
+    [list, card],
   );
 
   const handleDeleteComment = React.useCallback(
@@ -277,7 +281,7 @@ const EditCard = () => {
 
       deleteComments(list, card, comment.id);
     },
-    [list, card]
+    [list, card],
   );
 
   const handleCopyCard = React.useCallback(() => {
@@ -321,7 +325,7 @@ const EditCard = () => {
   }, [list, card]);
 
   return (
-    <DragDropContext onDragEnd={onDragEnd}>
+    <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={onDragEnd}>
       <Overlay
         onClick={(e: React.MouseEvent<HTMLDivElement>) => {
           if (showModal) {
@@ -436,15 +440,9 @@ const EditCard = () => {
                   />
                 )}
               </div>
-              <Droppable droppableId={card?.id ?? ''} type="tasks">
-                {(provided) => (
-                  <div ref={provided.innerRef} style={{ width: 'calc(100% - 16px)' }}>
-                    <div>
-                      {taskList} {provided.placeholder}
-                    </div>
-                  </div>
-                )}
-              </Droppable>
+              <SortableContext items={checkboxIds} strategy={verticalListSortingStrategy}>
+                <div style={{ width: 'calc(100% - 16px)' }}>{taskList}</div>
+              </SortableContext>
               <div style={{ margin: '0 12px' }}>
                 <AddItem
                   enableContinuousInput
@@ -486,7 +484,7 @@ const EditCard = () => {
           </BUttons>
         </Container>
       </Overlay>
-    </DragDropContext>
+    </DndContext>
   );
 };
 

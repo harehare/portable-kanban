@@ -1,5 +1,5 @@
 import { randomUUID } from 'node:crypto';
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import {
   addCards,
   addCheckBox,
@@ -16,7 +16,7 @@ describe('fromJson', () => {
       lists: [],
       settings: { labels: [] },
       archive: { lists: [], cards: [] },
-    })
+    }),
   );
 
   const newList = () => ({
@@ -68,7 +68,7 @@ describe('fromJson', () => {
           labels: [],
         },
         archive: { lists: [], cards: [] },
-      })
+      }),
     );
     expect(data?.lists.length).toBe(1);
     expect(data?.lists[0].cards.length).toBe(1);
