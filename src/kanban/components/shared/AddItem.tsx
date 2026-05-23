@@ -76,7 +76,7 @@ export const AddItem = ({
       setName('');
       setIsAddItem(enableContinuousInput);
     },
-    [name, isComposing]
+    [name, isComposing],
   );
 
   React.useEffect(() => {

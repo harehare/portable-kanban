@@ -2,7 +2,7 @@ import * as React from 'react';
 import { MdCheck, MdEdit } from 'react-icons/md';
 import { styled } from 'styled-components';
 import { type Card, type Label, type List } from '../../models/kanban';
-import { selectors, kanbanActions } from '../../store';
+import { kanbanActions, selectors } from '../../store';
 import { IconButton } from '../shared/IconButton';
 import { LabelEdit } from './Edit';
 
@@ -86,7 +86,7 @@ export const LabelSelect = ({ list, card }: Properties) => {
       });
       setShowEditLabel({ show: false });
     },
-    [kanban.settings.labels, addLabel, list, card, updateSettings]
+    [kanban.settings.labels, addLabel, list, card, updateSettings],
   );
 
   const handleEdit = React.useCallback(
@@ -97,7 +97,7 @@ export const LabelSelect = ({ list, card }: Properties) => {
       });
       setShowEditLabel({ show: false });
     },
-    [kanban.settings.labels, updateLabel, list, card, updateSettings]
+    [kanban.settings.labels, updateLabel, list, card, updateSettings],
   );
 
   const handleDelete = React.useCallback(
@@ -108,13 +108,13 @@ export const LabelSelect = ({ list, card }: Properties) => {
       });
       setShowEditLabel({ show: false });
     },
-    [kanban.settings.labels, deleteLabel, list, card, updateSettings]
+    [kanban.settings.labels, deleteLabel, list, card, updateSettings],
   );
 
   const sortedLabels = React.useMemo(
     () =>
       [...kanban.settings.labels].sort((a, b) => a.title.localeCompare(b.title, undefined, { sensitivity: 'base' })),
-    [kanban.settings.labels]
+    [kanban.settings.labels],
   );
 
   return (

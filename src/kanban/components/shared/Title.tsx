@@ -39,7 +39,7 @@ export const Title = ({ title: defaultTitle, fontSize, width, onEnter }: Propert
       onEnter(title === '' ? referenceDefaultTitle.current : title);
       setEdit(false);
     },
-    [title, isComposing]
+    [title, isComposing],
   );
   const handleBlur = React.useCallback(() => {
     if (title === '') {

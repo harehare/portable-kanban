@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { styled, css } from 'styled-components';
+import { css, styled } from 'styled-components';
 
 const ButtonBase = styled.button<{
   background: 'primary' | 'secondary' | 'danger';

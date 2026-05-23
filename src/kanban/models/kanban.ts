@@ -1,12 +1,12 @@
 import {
-  type Decoder,
-  object,
-  string,
-  optional,
   array,
   boolean,
-  union,
   constant,
+  type Decoder,
+  object,
+  optional,
+  string,
+  union,
 } from '@mojotech/json-type-validation';
 import { uuid } from '../utils';
 
@@ -157,7 +157,7 @@ export const moveAllCardsToList = (lists: List[], fromList: List, toList: List):
         }
       : l.id === fromList.id
         ? { ...fromList, cards: [] }
-        : l
+        : l,
   );
 };
 
@@ -182,7 +182,7 @@ export const updateCard = (lists: List[], list: List, card: Card): List[] => {
           ...list,
           cards: list.cards.map((c) => (c.id === card.id ? card : c)),
         }
-      : l
+      : l,
   );
 };
 
@@ -197,7 +197,7 @@ export const copyCard = (lists: List[], card: Card): List[] => {
           ...l,
           cards: [...l.cards, { ...card, id: uuid() }],
         }
-      : l
+      : l,
   );
 };
 
@@ -206,7 +206,7 @@ export const moveCardAcrossList = (
   fromListId: string,
   fromCardIndex: number,
   toListId: string,
-  toCardIndex: number
+  toCardIndex: number,
 ): List[] => {
   const fromList = lists.find((l) => l.id === fromListId);
   const fromCard = fromList?.cards[fromCardIndex];
@@ -223,7 +223,7 @@ export const moveCardAcrossList = (
   });
 
   return lists.map((l) =>
-    l.id === fromList.id ? { ...fromList, cards: fromCards } : l.id === toList.id ? { ...toList, cards: toCards } : l
+    l.id === fromList.id ? { ...fromList, cards: fromCards } : l.id === toList.id ? { ...toList, cards: toCards } : l,
   );
 };
 
@@ -245,7 +245,7 @@ export const archiveCard = (kanban: Kanban, list: List, card: Card): Kanban => {
     ...kanban,
     archive: { ...kanban.archive, cards: [...kanban.archive.cards, card] },
     lists: kanban.lists.map((l) =>
-      l.id === list.id ? { ...list, cards: l.cards.filter((c) => c.id !== card.id) } : l
+      l.id === list.id ? { ...list, cards: l.cards.filter((c) => c.id !== card.id) } : l,
     ),
   };
 };
@@ -276,10 +276,10 @@ export const addCheckBox = (lists: List[], list: List, card: Card, checkbox: Che
                   ...card,
                   checkboxes: [...card.checkboxes, checkbox],
                 }
-              : c
+              : c,
           ),
         }
-      : l
+      : l,
   );
 };
 
@@ -298,10 +298,10 @@ export const updateCheckBox = (lists: List[], list: List, card: Card, checkbox: 
                   ...card,
                   checkboxes: card.checkboxes.map((check) => (check.id === checkbox.id ? checkbox : check)),
                 }
-              : c
+              : c,
           ),
         }
-      : l
+      : l,
   );
 };
 
@@ -316,10 +316,10 @@ export const deleteCheckBox = (lists: List[], list: List, card: Card, id: string
                   ...card,
                   checkboxes: card.checkboxes.filter((check) => check.id !== id),
                 }
-              : c
+              : c,
           ),
         }
-      : l
+      : l,
   );
 };
 
@@ -328,7 +328,7 @@ export const moveCheckBox = (
   listId: string,
   cardId: string,
   fromCheckboxIndex: number,
-  toCheckboxIndex: number
+  toCheckboxIndex: number,
 ): List[] => {
   const list = lists.find((l) => l.id === listId);
   const card = list?.cards.find((c) => c.id === cardId);
@@ -349,10 +349,10 @@ export const moveCheckBox = (
                   ...card,
                   checkboxes: insert(movedCheckBox, toCheckboxIndex, checkbox),
                 }
-              : c
+              : c,
           ),
         }
-      : l
+      : l,
   );
 };
 
@@ -371,10 +371,10 @@ export const addLabel = (lists: List[], list: List, card: Card, label: Label): L
                   ...card,
                   labels: [...card.labels, label],
                 }
-              : c
+              : c,
           ),
         }
-      : l
+      : l,
   );
 };
 
@@ -393,10 +393,10 @@ export const updateLabel = (lists: List[], list: List, card: Card, label: Label)
                   ...card,
                   labels: card.labels.map((l) => (l.id === label.id ? label : l)),
                 }
-              : c
+              : c,
           ),
         }
-      : l
+      : l,
   );
 };
 
@@ -411,10 +411,10 @@ export const deleteLabel = (lists: List[], list: List, card: Card, id: string): 
                   ...card,
                   labels: card.labels.filter((l) => l.id !== id),
                 }
-              : c
+              : c,
           ),
         }
-      : l
+      : l,
   );
 };
 
@@ -433,10 +433,10 @@ export const addComments = (lists: List[], list: List, card: Card, comment: Comm
                   ...card,
                   comments: [...card.comments, comment],
                 }
-              : c
+              : c,
           ),
         }
-      : l
+      : l,
   );
 };
 
@@ -455,10 +455,10 @@ export const updateComments = (lists: List[], list: List, card: Card, comment: C
                   ...card,
                   comments: c.comments.map((cc) => (cc.id === comment.id ? comment : cc)),
                 }
-              : c
+              : c,
           ),
         }
-      : l
+      : l,
   );
 };
 
@@ -473,10 +473,10 @@ export const deleteComments = (lists: List[], list: List, card: Card, id: string
                   ...card,
                   comments: c.comments.filter((cc) => cc.id !== id),
                 }
-              : c
+              : c,
           ),
         }
-      : l
+      : l,
   );
 };
 
@@ -486,10 +486,10 @@ export const sortListCards = (lists: List[], listId: string, sortOrder: 'titleAs
       ? {
           ...l,
           cards: [...l.cards].sort((a, b) =>
-            sortOrder === 'titleAsc' ? a.title.localeCompare(b.title) : b.title.localeCompare(a.title)
+            sortOrder === 'titleAsc' ? a.title.localeCompare(b.title) : b.title.localeCompare(a.title),
           ),
         }
-      : l
+      : l,
   );
 };
 
@@ -512,7 +512,7 @@ const colorDecoder: Decoder<Color> = union(
     constant('#c377e0'),
     constant('#0079bf'),
     constant('#00c2e0'),
-    constant('#51e898')
+    constant('#51e898'),
   ),
   string().map((color) => {
     if (!/^#[\da-fA-F]{6}$/.test(color)) {
@@ -520,7 +520,7 @@ const colorDecoder: Decoder<Color> = union(
     }
 
     return color as Color;
-  })
+  }),
 );
 
 const labelDecoder: Decoder<Label> = object({

@@ -10,22 +10,6 @@ const AddItemForm = styled.div`
   margin: 0 8px 8px 8px;
 `;
 
-const TextArea = styled.textarea`
-  font-family: var(--font-family);
-  color: var(--secondary-color);
-  border-radius: var(--border-radius);
-  outline: none;
-  border: none;
-  resize: none;
-  padding: 8px;
-  font-size: 1rem;
-  line-height: 1.5rem;
-  background-color: transparent;
-  &:focus {
-    outline: none;
-  }
-`;
-
 type Properties = {
   addText: string;
   placeholder: string;

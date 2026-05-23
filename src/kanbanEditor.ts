@@ -1,4 +1,3 @@
-
 import * as vscode from 'vscode';
 import { type Kanban, toJson } from './kanban/models/kanban';
 
@@ -18,12 +17,15 @@ export class KanbanEditorProvider implements vscode.CustomTextEditorProvider {
   public async resolveCustomTextEditor(
     document: vscode.TextDocument,
     webviewPanel: vscode.WebviewPanel,
-    _token: vscode.CancellationToken
+    _token: vscode.CancellationToken,
   ): Promise<void> {
     webviewPanel.webview.options = {
       enableScripts: true,
     };
     webviewPanel.webview.html = this.getHtmlForWebview(webviewPanel.webview);
+
+    // Prevent feedback loop when we apply our own edits
+    let isApplyingEdit = false;
 
     const updateWebview = async () => {
       await webviewPanel.webview.postMessage({
@@ -32,6 +34,17 @@ export class KanbanEditorProvider implements vscode.CustomTextEditorProvider {
         text: document.getText(),
       });
     };
+
+    // Sync webview when document changes externally (undo, external edit, etc.)
+    const changeDocumentSubscription = vscode.workspace.onDidChangeTextDocument((e) => {
+      if (e.document.uri.toString() === document.uri.toString() && !isApplyingEdit) {
+        updateWebview();
+      }
+    });
+
+    webviewPanel.onDidDispose(() => {
+      changeDocumentSubscription.dispose();
+    });
 
     webviewPanel.webview.onDidReceiveMessage(
       async (e: {
@@ -47,10 +60,16 @@ export class KanbanEditorProvider implements vscode.CustomTextEditorProvider {
           }
 
           case 'edit': {
-            const success = await this.updateTextDocument(document, e.kanban!);
-
-            if (!success) {
-              await vscode.window.showErrorMessage('Failed to update Kanban');
+            const text = toJson(e.kanban!);
+            if (document.getText() !== text) {
+              const edit = new vscode.WorkspaceEdit();
+              edit.replace(document.uri, new vscode.Range(0, 0, document.lineCount, 0), text);
+              isApplyingEdit = true;
+              const success = await vscode.workspace.applyEdit(edit);
+              isApplyingEdit = false;
+              if (!success) {
+                await vscode.window.showErrorMessage('Failed to update Kanban');
+              }
             }
 
             break;
@@ -73,7 +92,7 @@ export class KanbanEditorProvider implements vscode.CustomTextEditorProvider {
             break;
           }
         }
-      }
+      },
     );
   }
 
@@ -91,8 +110,8 @@ export class KanbanEditorProvider implements vscode.CustomTextEditorProvider {
         this.context.extensionUri,
         'assets',
         'css',
-        theme === 'dark' ? 'dark.css' : theme === 'light' ? 'light.css' : 'system.css'
-      )
+        theme === 'dark' ? 'dark.css' : theme === 'light' ? 'light.css' : 'system.css',
+      ),
     );
     const nonce = crypto.randomUUID();
 
@@ -121,18 +140,5 @@ export class KanbanEditorProvider implements vscode.CustomTextEditorProvider {
 				<script nonce="${nonce}" src="${scriptUri.toString()}"></script>
 			</body>
 			</html>`;
-  }
-
-  private async updateTextDocument(document: vscode.TextDocument, kanban: Kanban): Promise<boolean> {
-    const text = toJson(kanban);
-
-    if (document.getText() === text) {
-      return true;
-    }
-
-    const edit = new vscode.WorkspaceEdit();
-    edit.replace(document.uri, new vscode.Range(0, 0, document.lineCount, 0), text);
-
-    return vscode.workspace.applyEdit(edit);
   }
 }

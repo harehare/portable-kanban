@@ -1,50 +1,52 @@
-import * as React from 'react';
 import { atom, useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { atomFamily } from 'jotai/utils';
+import * as React from 'react';
 import { vscode } from '../vscode';
 import {
-  type Comment,
+  type ArchiveList,
+  addCards,
   addCheckBox,
   addComments,
   addLabel,
   addList,
+  archiveAllCardInList,
   archiveCard,
+  archiveList,
   type Card,
   type CheckBox,
+  type Comment,
+  copyCard,
   deleteCard,
   deleteCheckBox,
+  deleteComments,
   deleteLabel,
   type Kanban,
   type Label,
   type List,
+  moveAllCardsToList,
   moveCard,
   moveCardAcrossList,
+  moveCheckBox,
   moveList,
   removeArchivedList,
   restoreCard,
+  restoreList,
+  type Settings,
+  sortListCards,
   updateCard,
   updateCheckBox,
+  updateComments,
   updateLabel,
   updateList,
-  updateComments,
-  deleteComments,
-  type Settings,
-  archiveList,
-  restoreList,
-  archiveAllCardInList,
-  copyCard,
-  moveCheckBox,
-  moveAllCardsToList,
-  type ArchiveList,
-  addCards,
-  sortListCards,
 } from './models/kanban';
 
 const titleAtom = atom('');
 const addingCardAtom = atom<Card | undefined>(undefined);
-const filterAtom = atom<{ text: string; labels: Set<string> }>({
+type FilterState = { text: string; labels: Set<string> };
+
+const filterAtom = atom<FilterState>({
   text: '',
-  labels: new Set([]),
+  labels: new Set<string>(),
 });
 const showModalAtom = atom<boolean>(false);
 const menuAtom = atom<string | undefined>(undefined);
@@ -71,7 +73,7 @@ const listsAtom = atom(
       type: 'edit',
       kanban: { ...kanban, lists: newValue },
     });
-  }
+  },
 );
 const archiveListsAtom = atom(
   (get) => get(archiveLists),
@@ -82,7 +84,7 @@ const archiveListsAtom = atom(
       type: 'edit',
       kanban: { ...kanban, archive: { ...kanban.archive, lists: newValue } },
     });
-  }
+  },
 );
 const archiveCardsAtom = atom(
   (get) => get(archiveCards),
@@ -96,7 +98,7 @@ const archiveCardsAtom = atom(
         archive: { ...kanban.archive, cards: newValue },
       },
     });
-  }
+  },
 );
 const settingsAtom = atom(
   (get) => get(settings),
@@ -110,7 +112,7 @@ const settingsAtom = atom(
         settings: newValue,
       },
     });
-  }
+  },
 );
 
 const kanbanAtom = atom(
@@ -127,29 +129,29 @@ const kanbanAtom = atom(
     if (!isLoadingFromFile) {
       vscode.postMessage({ type: 'edit', kanban: newValue });
     }
-  }
+  },
 );
 
 const cardSelector = atomFamily(({ listId, cardId }: { listId: string; cardId: string }) =>
   atom((get) =>
     get(kanbanAtom)
       .lists.find((v) => v.id === listId)
-      ?.cards.find((v) => v.id === cardId)
-  )
+      ?.cards.find((v) => v.id === cardId),
+  ),
 );
 const filteredTextSelector = atom(
   (get) => get(filterAtom).text,
   (get, set, newText: string) => {
     const current = get(filterAtom);
     set(filterAtom, { ...current, text: newText });
-  }
+  },
 );
 const filteredLabelSelector = atom(
   (get) => get(filterAtom).labels,
   (get, set, newLabels: Set<string>) => {
     const current = get(filterAtom);
     set(filterAtom, { ...current, labels: newLabels });
-  }
+  },
 );
 
 type Selectors = {
@@ -242,7 +244,7 @@ export const kanbanActions = {
       (list: List) => {
         setLists(addList(lists, list));
       },
-      [lists, setLists]
+      [lists, setLists],
     );
   },
   useUpdateList() {
@@ -251,7 +253,7 @@ export const kanbanActions = {
       (list: List) => {
         setLists(updateList(lists, list));
       },
-      [lists, setLists]
+      [lists, setLists],
     );
   },
   useMoveList() {
@@ -260,7 +262,7 @@ export const kanbanActions = {
       (fromListId: number, toListId: number) => {
         setLists(moveList(lists, fromListId, toListId));
       },
-      [lists, setLists]
+      [lists, setLists],
     );
   },
   useRemoveList() {
@@ -269,7 +271,7 @@ export const kanbanActions = {
       (listId: string) => {
         setLists(removeArchivedList(lists, listId));
       },
-      [lists, setLists]
+      [lists, setLists],
     );
   },
   useArchiveList() {
@@ -278,7 +280,7 @@ export const kanbanActions = {
       (list: List) => {
         setState(archiveList(kanban, list));
       },
-      [kanban, setState]
+      [kanban, setState],
     );
   },
   useArchiveAllCardInList() {
@@ -287,7 +289,7 @@ export const kanbanActions = {
       (list: List) => {
         setState(archiveAllCardInList(kanban, list));
       },
-      [kanban, setState]
+      [kanban, setState],
     );
   },
   useRestoreList() {
@@ -296,7 +298,7 @@ export const kanbanActions = {
       (list: List) => {
         setState(restoreList(kanban, list));
       },
-      [kanban, setState]
+      [kanban, setState],
     );
   },
   useMoveAllCardsToList() {
@@ -305,7 +307,7 @@ export const kanbanActions = {
       (fromList: List, toList: List) => {
         setLists(moveAllCardsToList(lists, fromList, toList));
       },
-      [lists, setLists]
+      [lists, setLists],
     );
   },
   useAddCards() {
@@ -314,7 +316,7 @@ export const kanbanActions = {
       (list: List, cards: Card[]) => {
         setLists(addCards(lists, list, cards));
       },
-      [lists, setLists]
+      [lists, setLists],
     );
   },
   useUpdateCard() {
@@ -323,7 +325,7 @@ export const kanbanActions = {
       (list: List, card: Card) => {
         setLists(updateCard(lists, list, card));
       },
-      [lists, setLists]
+      [lists, setLists],
     );
   },
   useDeleteCard() {
@@ -332,7 +334,7 @@ export const kanbanActions = {
       (card: Card) => {
         setArchiveCards(deleteCard(archiveCards, card));
       },
-      [archiveCards, setArchiveCards]
+      [archiveCards, setArchiveCards],
     );
   },
   useCopyCard() {
@@ -341,7 +343,7 @@ export const kanbanActions = {
       (card: Card) => {
         setLists(copyCard(lists, card));
       },
-      [lists, setLists]
+      [lists, setLists],
     );
   },
   useMoveCard() {
@@ -350,7 +352,7 @@ export const kanbanActions = {
       (listId: string, fromCardIndex: number, toCardIndex: number) => {
         setLists(moveCard(lists, listId, fromCardIndex, toCardIndex));
       },
-      [lists, setLists]
+      [lists, setLists],
     );
   },
   useMoveCardAcrossList() {
@@ -359,7 +361,7 @@ export const kanbanActions = {
       (fromListId: string, fromCardIndex: number, toListId: string, toCardIndex: number) => {
         setLists(moveCardAcrossList(lists, fromListId, fromCardIndex, toListId, toCardIndex));
       },
-      [lists, setLists]
+      [lists, setLists],
     );
   },
   useArchiveCard() {
@@ -368,7 +370,7 @@ export const kanbanActions = {
       (list: List, card: Card) => {
         setKanban(archiveCard(kanban, list, card));
       },
-      [kanban, setKanban]
+      [kanban, setKanban],
     );
   },
   useRestoreCard() {
@@ -377,7 +379,7 @@ export const kanbanActions = {
       (card: Card) => {
         setKanban(restoreCard(kanban, card));
       },
-      [kanban, setKanban]
+      [kanban, setKanban],
     );
   },
   useUpdateCardDueDate() {
@@ -386,7 +388,7 @@ export const kanbanActions = {
       (list: List, card: Card, dueDate?: Date) => {
         setLists(updateCard(lists, list, { ...card, dueDate }));
       },
-      [lists, setLists]
+      [lists, setLists],
     );
   },
   useAddCheckBox() {
@@ -395,7 +397,7 @@ export const kanbanActions = {
       (list: List, card: Card, checkbox: CheckBox) => {
         setLists(addCheckBox(lists, list, card, checkbox));
       },
-      [lists, setLists]
+      [lists, setLists],
     );
   },
   useUpdateCheckBox() {
@@ -404,7 +406,7 @@ export const kanbanActions = {
       (list: List, card: Card, checkbox: CheckBox) => {
         setLists(updateCheckBox(lists, list, card, checkbox));
       },
-      [lists, setLists]
+      [lists, setLists],
     );
   },
   useDeleteCheckBox() {
@@ -413,7 +415,7 @@ export const kanbanActions = {
       (list: List, card: Card, id: string) => {
         setLists(deleteCheckBox(lists, list, card, id));
       },
-      [lists, setLists]
+      [lists, setLists],
     );
   },
   useMoveCheckBox() {
@@ -422,7 +424,7 @@ export const kanbanActions = {
       (listId: string, cardId: string, fromCheckBoxIndex: number, toCheckBoxIndex: number) => {
         setLists(moveCheckBox(lists, listId, cardId, fromCheckBoxIndex, toCheckBoxIndex));
       },
-      [lists, setLists]
+      [lists, setLists],
     );
   },
   useAddLabel() {
@@ -431,7 +433,7 @@ export const kanbanActions = {
       (list: List, card: Card, label: Label) => {
         setLists(addLabel(lists, list, card, label));
       },
-      [lists, setLists]
+      [lists, setLists],
     );
   },
   useUpdateLabel() {
@@ -440,7 +442,7 @@ export const kanbanActions = {
       (list: List, card: Card, label: Label) => {
         setLists(updateLabel(lists, list, card, label));
       },
-      [lists, setLists]
+      [lists, setLists],
     );
   },
   useDeleteLabel() {
@@ -449,7 +451,7 @@ export const kanbanActions = {
       (list: List, card: Card, id: string) => {
         setLists(deleteLabel(lists, list, card, id));
       },
-      [lists, setLists]
+      [lists, setLists],
     );
   },
   useAddComments() {
@@ -458,7 +460,7 @@ export const kanbanActions = {
       (list: List, card: Card, comment: Comment) => {
         setLists(addComments(lists, list, card, comment));
       },
-      [lists, setLists]
+      [lists, setLists],
     );
   },
   useUpdateComments() {
@@ -467,7 +469,7 @@ export const kanbanActions = {
       (list: List, card: Card, comment: Comment) => {
         setLists(updateComments(lists, list, card, comment));
       },
-      [lists, setLists]
+      [lists, setLists],
     );
   },
   useDeleteComments() {
@@ -476,7 +478,7 @@ export const kanbanActions = {
       (list: List, card: Card, id: string) => {
         setLists(deleteComments(lists, list, card, id));
       },
-      [lists, setLists]
+      [lists, setLists],
     );
   },
   useUpdateSettings() {
@@ -485,7 +487,7 @@ export const kanbanActions = {
       (newSettings: Settings) => {
         setSettings(newSettings);
       },
-      [setSettings]
+      [setSettings],
     );
   },
   useSortListCards() {
@@ -494,7 +496,16 @@ export const kanbanActions = {
       (listId: string, sortOrder: 'titleAsc' | 'titleDesc') => {
         setLists(sortListCards(lists, listId, sortOrder));
       },
-      [lists, setLists]
+      [lists, setLists],
+    );
+  },
+  useSetLists() {
+    const [, setLists] = useAtom(listsAtom);
+    return React.useCallback(
+      (newLists: List[]) => {
+        setLists(newLists);
+      },
+      [setLists],
     );
   },
 };

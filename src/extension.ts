@@ -1,8 +1,8 @@
 import { Buffer } from 'node:buffer';
 import * as vscode from 'vscode';
-import { KanbanEditorProvider } from './kanbanEditor';
 import { type Kanban } from './kanban/models/kanban';
 import { uuid } from './kanban/utils';
+import { KanbanEditorProvider } from './kanbanEditor';
 
 export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(
@@ -54,6 +54,6 @@ export function activate(context: vscode.ExtensionContext) {
         await vscode.window.showErrorMessage(`Cannot create file "${fileInfos.toString()}`);
         console.error('Cannot create file', error);
       }
-    })
+    }),
   );
 }

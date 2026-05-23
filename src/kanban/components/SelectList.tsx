@@ -2,7 +2,7 @@ import * as React from 'react';
 import { MdList } from 'react-icons/md';
 import { styled } from 'styled-components';
 import { type List } from '../models/kanban';
-import { selectors, actions } from '../store';
+import { selectors } from '../store';
 import { MenuItem } from './shared/MenuItem';
 
 const Items = styled.div`

@@ -1,13 +1,13 @@
 import * as React from 'react';
-import { Route, useLocation, Routes, useNavigate } from 'react-router-dom';
+import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import { vscode } from '../vscode';
-import { fromJson, archiveCard } from './models/kanban';
+import { fromJson } from './models/kanban';
 import { ArchiveCards } from './pages/ArchiveCards';
 import { ArchiveLists } from './pages/ArchiveLists';
 import { Board } from './pages/Board';
 import { EditCard } from './pages/EditCard';
 import { Filter } from './pages/Filter';
-import { selectors, actions, setIsLoadingFromFile } from './store';
+import { actions, selectors, setIsLoadingFromFile } from './store';
 
 const App = () => {
   const location = useLocation();

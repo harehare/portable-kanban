@@ -74,137 +74,56 @@
   },
   "scripts": {
     "vscode:prepublish": "npm run package",
-    "build": "NODE_ENV=production webpack --mode production",
-    "watch": "NODE_ENV=development webpack --watch --mode development",
-    "package": "webpack --mode production --devtool hidden-source-map",
-    "lint": "xo --fix src/**/*.ts",
-    "test": "xo && vitest run"
+    "build": "npm run build:extension && npm run build:kanban",
+    "build:extension": "esbuild src/extension.ts --bundle --external:vscode --platform=node --outdir=dist --format=cjs --sourcemap",
+    "build:kanban": "vite build",
+    "watch": "npm run watch:extension & npm run watch:kanban",
+    "watch:extension": "esbuild src/extension.ts --bundle --external:vscode --platform=node --outdir=dist --format=cjs --sourcemap --watch",
+    "watch:kanban": "vite build --watch",
+    "package": "npm run build:extension && vite build --minify",
+    "lint": "oxlint src && biome check --write src",
+    "format": "biome format --write src",
+    "test": "vitest run"
   },
   "devDependencies": {
-    "@svgr/webpack": "^8.1.0",
-    "@trivago/prettier-plugin-sort-imports": "^6.0.2",
-    "@types/glob": "^9.0.0",
+    "@biomejs/biome": "^2.4.15",
     "@types/mocha": "^10.0.10",
     "@types/node": "25.x",
-    "@types/react": "^18.3.12",
-    "@types/react-beautiful-dnd": "^13.1.8",
-    "@types/react-dom": "^18.3.5",
+    "@types/react": "^19.2.15",
+    "@types/react-dom": "^19.2.3",
     "@types/react-linkify": "^1.0.4",
     "@types/react-router-dom": "^5.3.3",
     "@types/styled-components": "^5.1.36",
-    "@types/uuid": "^11.0.0",
     "@types/vscode": "^1.118.0",
+    "@vitejs/plugin-react": "^6.0.2",
     "@vscode/test-electron": "^2.5.2",
-    "css-loader": "^7.1.4",
+    "babel-plugin-react-compiler": "^1.0.0",
+    "esbuild": "^0.28.0",
     "glob": "^13.0.6",
-    "prettier": "^3.8.3",
-    "style-loader": "^4.0.0",
+    "oxlint": "^1.66.0",
     "styled-components": "^6.4.1",
-    "ts-loader": "^9.5.7",
     "typescript": "^6.0.3",
-    "vitest": "^4.1.6",
-    "webpack": "^5.106.2",
-    "webpack-cli": "^7.0.2",
-    "webpack-node-externals": "^3.0.0",
-    "xo": "^2.0.2"
+    "vite": "^8.0.14",
+    "vitest": "^4.1.6"
   },
   "dependencies": {
+    "@dnd-kit/core": "^6.3.1",
+    "@dnd-kit/sortable": "^10.0.0",
+    "@dnd-kit/utilities": "^3.2.2",
     "@mojotech/json-type-validation": "^3.1.0",
     "date-fns": "^4.2.1",
     "fuse.js": "^7.3.0",
     "jotai": "^2.20.0",
     "jotai-optics": "^0.4.0",
     "optics-ts": "^2.4.1",
-    "uuid": "^14.0.0",
-    "react": "^18.3.1",
-    "react-beautiful-dnd": "^13.1.1",
-    "react-dom": "^18.3.1",
-    "react-icons": "^5.6.0",
-    "react-indiana-drag-scroll": "^3.0.3-alpha",
+    "react": "^19.2.6",
+    "react-dom": "^19.2.6",
+    "react-icons": "^5.5.0",
+    "react-indiana-drag-scroll": "^3.0.4-alpha",
     "react-linkify": "^1.0.0-alpha",
     "react-markdown": "^10.1.0",
     "react-router-dom": "^7.15.1",
-    "react-textarea-autosize": "^8.5.9"
-  },
-  "xo": {
-    "prettier": true,
-    "space": 2,
-    "ignores": [
-      "webpack.config.js",
-      "babel.config.js",
-      "src/vscode.ts",
-      "src/extension.ts"
-    ],
-    "rules": {
-      "max-params": "off",
-      "import-x/extensions": "off",
-      "@typescript-eslint/no-unsafe-return": "off",
-      "@typescript-eslint/no-unsafe-call": "off",
-      "@typescript-eslint/no-unsafe-assignment": "off",
-      "@typescript-eslint/no-unsafe-argument": "off",
-      "no-bitwise": "off",
-      "@typescript-eslint/consistent-type-definitions": "off",
-      "unicorn/prefer-string-replace-all": "off",
-      "n/file-extension-in-import": "off",
-      "@typescript-eslint/naming-convention": [
-        "error",
-        {
-          "selector": "objectLiteralProperty",
-          "format": []
-        },
-        {
-          "selector": "default",
-          "format": [
-            "camelCase"
-          ],
-          "leadingUnderscore": "allow",
-          "trailingUnderscore": "allow"
-        },
-        {
-          "selector": "import",
-          "format": [
-            "camelCase",
-            "PascalCase"
-          ]
-        },
-        {
-          "selector": "variable",
-          "format": [
-            "camelCase",
-            "UPPER_CASE",
-            "PascalCase"
-          ],
-          "leadingUnderscore": "allow",
-          "trailingUnderscore": "allow"
-        },
-        {
-          "selector": "typeLike",
-          "format": [
-            "PascalCase"
-          ]
-        }
-      ],
-      "unicorn/prevent-abbreviations": [
-        "error",
-        {
-          "extendDefaultReplacements": false,
-          "replacements": {
-            "e": {
-              "event": false
-            },
-            "Props": false
-          }
-        }
-      ],
-      "unicorn/filename-case": [
-        "error",
-        {
-          "cases": {
-            "camelCase": true,
-            "pascalCase": true
-          }
-        }
-      ]
-    }
+    "react-textarea-autosize": "^8.5.9",
+    "uuid": "^14.0.0"
   }
 }
