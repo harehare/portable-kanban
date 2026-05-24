@@ -22,7 +22,7 @@ import {
   ReadResourceRequestSchema,
 } from '@modelcontextprotocol/sdk/types.js';
 import { readFileSync, writeFileSync, readdirSync, statSync, existsSync } from 'node:fs';
-import { resolve, join, basename } from 'node:path';
+import { resolve, join, basename, normalize } from 'node:path';
 import { fromJson, toJson } from '@portable-kanban/core';
 import type { Kanban, Card, List } from '@portable-kanban/core';
 
@@ -54,11 +54,26 @@ function saveBoard(path: string, kanban: Kanban): void {
 }
 
 function resolveBoardPath(name: string): string {
-  // Accept either a full path or just a board name (with/without .kanban)
-  if (existsSync(name)) return resolve(name);
   const withExt = name.endsWith('.kanban') ? name : `${name}.kanban`;
-  const inRoot = join(rootPath, basename(withExt));
-  if (existsSync(inRoot)) return inRoot;
+
+  // When rootPath is itself a .kanban file, only that board is accessible.
+  const rootStat = existsSync(rootPath) ? statSync(rootPath) : null;
+  if (rootStat?.isFile()) {
+    if (basename(withExt) === basename(rootPath)) return rootPath;
+    throw new Error(`Board not found: ${name}`);
+  }
+
+  // rootPath is a directory — strip all directory components to prevent traversal,
+  // then resolve strictly inside rootPath.
+  const safeName = basename(withExt);
+  const resolved = normalize(join(rootPath, safeName));
+  if (!resolved.startsWith(rootPath + '/') && resolved !== rootPath) {
+    throw new Error(`Board not found: ${name}`);
+  }
+  if (!resolved.endsWith('.kanban')) {
+    throw new Error(`Board not found: ${name}`);
+  }
+  if (existsSync(resolved)) return resolved;
   throw new Error(`Board not found: ${name}`);
 }
 
