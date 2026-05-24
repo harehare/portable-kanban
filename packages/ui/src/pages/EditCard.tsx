@@ -154,9 +154,17 @@ const EditCard = () => {
   const comments = React.useMemo(() => [...(card?.comments ?? [])].reverse(), [card]);
   const archivedCard = React.useMemo(
     () => (card ? null : archiveCards.find((c) => c.id === cardId)),
-    [cardId, list?.cards],
+    [card, cardId, archiveCards],
   );
   const [isArchived, setArchived] = React.useState(Boolean(archivedCard));
+
+  // Navigate back to board when the card cannot be found (e.g. after deletion or stale URL).
+  // Guard on lists.length so we don't redirect before initial data is loaded.
+  React.useEffect(() => {
+    if (lists.length > 0 && !card && !archivedCard) {
+      navigate('/');
+    }
+  }, [card, archivedCard, lists.length, navigate]);
 
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 8 } }));
 

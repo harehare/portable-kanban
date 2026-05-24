@@ -46,7 +46,7 @@ const linkifyNode = (node: React.ReactNode, onOpenUrl: (url: string) => void): R
     const children = React.Children.map(el.props.children, (child) =>
       linkifyNode(child, onOpenUrl),
     );
-    return React.cloneElement(el, {}, ...(children ?? []));
+    return React.cloneElement(el, { ...el.props }, ...(children ?? []));
   }
   return node;
 };
