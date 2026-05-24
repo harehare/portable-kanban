@@ -1,0 +1,330 @@
+/* ============================================================
+   Portable Kanban — Web App Theme & Layout
+   ============================================================ */
+
+/* ── Design tokens ─────────────────────────────────────────── */
+:root {
+  --list-width: 272px;
+  --header-height: 56px;
+  --border-radius: 6px;
+  --border-radius-lg: 12px;
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.1);
+  --font-family: 'Nunito', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --transition: 150ms ease;
+}
+
+/* ── Light theme (default) ──────────────────────────────────── */
+:root {
+  --main-background-color: #f4f5f7;
+  --primary-background-color: #ebecf0;
+  --secondary-background-color: #ffffff;
+
+  --text-color: #172b4d;
+  --light-text-color: #ffffff;
+  --secondary-text-color: #6b778c;
+  --selected-color: rgba(0, 0, 0, 0.04);
+  --hover-color: rgba(255, 255, 255, 0.85);
+
+  --primary-color: #0052cc;
+  --primary-hover: #0065ff;
+  --danger-color: #de350b;
+  --warning-color: #ff8b00;
+  --success-color: #36b37e;
+  --header-color: #0052cc;
+
+  --button-color: #f4f5f7;
+  --button-hover: #e4e6ea;
+  --form-border-color: #dfe1e6;
+  --divider-color: #dfe1e6;
+
+  --surface-color: #ffffff;
+  --surface-raised: #ffffff;
+}
+
+/* ── Dark theme — auto via media query ─────────────────────── */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --main-background-color: #161b22;
+    --primary-background-color: #1c2128;
+    --secondary-background-color: #22272e;
+
+    --text-color: #e6edf3;
+    --light-text-color: #ffffff;
+    --secondary-text-color: #7d8590;
+    --selected-color: rgba(255, 255, 255, 0.06);
+    --hover-color: rgba(0, 0, 0, 0.2);
+
+    --primary-color: #388bfd;
+    --primary-hover: #58a6ff;
+    --danger-color: #f85149;
+    --warning-color: #d29922;
+    --success-color: #3fb950;
+    --header-color: #21262d;
+
+    --button-color: #21262d;
+    --button-hover: #30363d;
+    --form-border-color: #30363d;
+    --divider-color: #30363d;
+
+    --surface-color: #22272e;
+    --surface-raised: #2d333b;
+  }
+}
+
+/* ── Dark theme — explicit via data-theme ───────────────────── */
+:root[data-theme='dark'] {
+  --main-background-color: #161b22;
+  --primary-background-color: #1c2128;
+  --secondary-background-color: #22272e;
+
+  --text-color: #e6edf3;
+  --light-text-color: #ffffff;
+  --secondary-text-color: #7d8590;
+  --selected-color: rgba(255, 255, 255, 0.06);
+  --hover-color: rgba(0, 0, 0, 0.2);
+
+  --primary-color: #388bfd;
+  --primary-hover: #58a6ff;
+  --danger-color: #f85149;
+  --warning-color: #d29922;
+  --success-color: #3fb950;
+  --header-color: #21262d;
+
+  --button-color: #21262d;
+  --button-hover: #30363d;
+  --form-border-color: #30363d;
+  --divider-color: #30363d;
+
+  --surface-color: #22272e;
+  --surface-raised: #2d333b;
+}
+
+/* ── Base reset ─────────────────────────────────────────────── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-family);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  margin: 0;
+  padding: 0;
+  background-color: var(--main-background-color);
+  color: var(--text-color);
+  overflow: hidden;
+  user-select: none;
+}
+
+a {
+  text-decoration: none;
+}
+
+input,
+textarea {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+pre {
+  white-space: break-spaces !important;
+}
+
+/* ============================================================
+   Landing Page
+   ============================================================ */
+
+.landing-root {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background-color: var(--main-background-color);
+}
+
+/* Theme switcher in top-right corner */
+.landing-theme-bar {
+  position: absolute;
+  top: 20px;
+  right: 24px;
+  display: flex;
+  gap: 4px;
+  background: var(--surface-color);
+  border: 1px solid var(--form-border-color);
+  border-radius: 8px;
+  padding: 4px;
+  box-shadow: var(--shadow-sm);
+}
+
+.landing-theme-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--secondary-text-color);
+  cursor: pointer;
+  transition: background var(--transition), color var(--transition);
+}
+
+.landing-theme-btn:hover {
+  background: var(--button-hover);
+  color: var(--text-color);
+}
+
+.landing-theme-btn.active {
+  background: var(--primary-color);
+  color: #fff;
+}
+
+/* Hero section */
+.landing-hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  max-width: 480px;
+  padding: 0 24px;
+  animation: fadeUp 0.4s ease both;
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.landing-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 80px;
+  height: 80px;
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+  margin-bottom: 24px;
+  background: #fff;
+}
+
+.landing-logo-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.landing-title {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--text-color);
+  margin: 0 0 12px;
+  letter-spacing: -0.5px;
+}
+
+.landing-subtitle {
+  font-size: 0.9rem;
+  color: var(--secondary-text-color);
+  line-height: 1.6;
+  margin: 0 0 32px;
+}
+
+.landing-subtitle code {
+  font-family: 'SFMono-Regular', Consolas, monospace;
+  font-size: 0.85em;
+  background: var(--button-color);
+  border: 1px solid var(--form-border-color);
+  border-radius: 4px;
+  padding: 1px 5px;
+  color: var(--primary-color);
+}
+
+/* Action buttons */
+.landing-actions {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 32px;
+}
+
+.landing-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: var(--border-radius);
+  font-family: var(--font-family);
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all var(--transition);
+  position: relative;
+}
+
+.landing-btn-primary {
+  background: var(--primary-color);
+  color: #ffffff;
+  box-shadow: var(--shadow-sm);
+}
+
+.landing-btn-primary:hover {
+  background: var(--primary-hover);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.landing-btn-primary:active {
+  transform: translateY(0);
+}
+
+.landing-btn-arrow {
+  opacity: 0.7;
+  transition: transform var(--transition);
+}
+
+.landing-btn-primary:hover .landing-btn-arrow {
+  transform: translateX(3px);
+}
+
+.landing-btn-secondary {
+  background: var(--surface-color);
+  color: var(--text-color);
+  border: 1px solid var(--form-border-color);
+  box-shadow: var(--shadow-sm);
+}
+
+.landing-btn-secondary:hover {
+  background: var(--button-hover);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+/* Feature pills */
+.landing-features {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+}
+
+.landing-feature-pill {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--secondary-text-color);
+  background: var(--surface-color);
+  border: 1px solid var(--form-border-color);
+  border-radius: 100px;
+  padding: 4px 12px;
+}
+
