@@ -1,0 +1,27 @@
+{
+  "name": "@portable-kanban/nvim",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "bin": {
+    "portable-kanban-tui": "./dist/tui.mjs"
+  },
+  "scripts": {
+    "build": "node build.mjs",
+    "dev": "pnpm build",
+    "lint": "oxlint src"
+  },
+  "dependencies": {
+    "@portable-kanban/core": "workspace:*",
+    "ink": "^5.2.1",
+    "react": "^18.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "25.x",
+    "@types/react": "^18.3.23",
+    "esbuild": "^0.25.0",
+    "oxlint": "^0.16.6",
+    "tsx": "^4.0.0",
+    "typescript": "^6.0.3"
+  }
+}
