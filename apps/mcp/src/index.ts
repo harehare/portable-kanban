@@ -151,7 +151,12 @@ server.setRequestHandler(ListResourcesRequestSchema, async () => {
 });
 
 server.setRequestHandler(ReadResourceRequestSchema, async (req) => {
-  const path = req.params.uri.replace('kanban:///', '');
+  const uri = req.params.uri;
+  if (!uri.startsWith('kanban:///')) {
+    throw new Error(`Invalid resource URI: ${uri}`);
+  }
+  const rawPath = uri.slice('kanban:///'.length);
+  const path = resolveBoardPath(rawPath);
   const kanban = await readBoard(path);
   return {
     contents: [

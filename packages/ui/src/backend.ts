@@ -1,10 +1,10 @@
 import type { Kanban } from '@portable-kanban/core';
 
 export type KanbanBackend = {
-  saveKanban: (kanban: Kanban, type: 'edit' | 'reorder') => void;
+  saveKanban: (kanban: Kanban, type: 'edit' | 'reorder') => void | Promise<void>;
   load: () => void;
   openUrl: (url: string) => void;
-  reload: () => void;
+  reload: () => void | Promise<void>;
   showInfoMessage: (message: string) => void;
 };
 
