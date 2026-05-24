@@ -161,26 +161,6 @@ function M.setup(opts)
 end
 
 return M
-
-
-local function find_tui()
-  local script_dir = vim.fn.fnamemodify(debug.getinfo(1, 'S').source:sub(2), ':p:h:h:h')
-  local candidates = {
-    script_dir .. '/node_modules/.bin/portable-kanban-tui',
-    script_dir .. '/dist/tui.mjs',
-    script_dir .. '/dist/tui.js',
-  }
-  for _, path in ipairs(candidates) do
-    if vim.fn.filereadable(path) == 1 then
-      return path
-    end
-  end
-  return nil
-end
-
---- Open a .kanban file in the TUI.
---- @param filepath string path to the .kanban file
-function M.open(filepath)
   filepath = filepath or vim.fn.expand('%:p')
 
   if not filepath:match('%.kanban$') then
