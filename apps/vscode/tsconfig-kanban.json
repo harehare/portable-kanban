@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "module": "esnext",
+    "target": "ES2020",
+    "lib": ["ES2021", "dom"],
+    "strict": true,
+    "jsx": "react-jsx",
+    "moduleResolution": "bundler"
+  },
+  "include": ["./src/kanban.tsx", "./src/vscodeBackend.ts"],
+  "exclude": ["node_modules", "**/*.test.ts"]
+}

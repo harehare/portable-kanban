@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "module": "Node16",
+    "target": "es2023",
+    "lib": ["es2023", "dom"],
+    "rootDir": "src",
+    "strict": true,
+    "jsx": "react-jsx"
+  },
+  "include": ["./src/**/*.ts"],
+  "exclude": ["node_modules", "**/*.test.ts", "./src/kanban.tsx"]
+}
