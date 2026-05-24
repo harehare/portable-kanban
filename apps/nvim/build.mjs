@@ -1,4 +1,3 @@
-import { build } from 'esbuild';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { chmodSync, writeFileSync } from 'node:fs';
