@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { MdCheck } from 'react-icons/md';
 import { styled } from 'styled-components';
-import { type Color, colors, type Label } from '@portable-kanban/core';
-import { uuid } from '@portable-kanban/core';
+import { type Color, colors, type Label } from 'portable-kanban-core';
+import { uuid } from 'portable-kanban-core';
 import { Button } from '../shared/Button';
 import { Input } from '../shared/Input';
 import { TextSm } from '../shared/Text';

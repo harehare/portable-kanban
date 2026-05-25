@@ -91,8 +91,8 @@
     "vite": "^8.0.14"
   },
   "dependencies": {
-    "@portable-kanban/core": "workspace:*",
-    "@portable-kanban/ui": "workspace:*",
+    "portable-kanban-core": "workspace:*",
+    "portable-kanban-ui": "workspace:*",
     "jotai": "^2.20.0",
     "react": "^19.2.6",
     "react-dom": "^19.2.6",

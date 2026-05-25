@@ -23,8 +23,8 @@ import {
 } from '@modelcontextprotocol/sdk/types.js';
 import { readFileSync, writeFileSync, readdirSync, statSync, existsSync } from 'node:fs';
 import { resolve, join, basename, normalize } from 'node:path';
-import { fromJson, toJson } from '@portable-kanban/core';
-import type { Kanban, Card, List } from '@portable-kanban/core';
+import { fromJson, toJson } from 'portable-kanban-core';
+import type { Kanban, Card, List } from 'portable-kanban-core';
 
 // ---------------------------------------------------------------------------
 // Board file helpers

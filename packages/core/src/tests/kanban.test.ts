@@ -8,7 +8,7 @@ import {
   fromJson,
   restoreCard,
   updateCard,
-} from '@portable-kanban/core';
+} from 'portable-kanban-core';
 
 describe('fromJson', () => {
   const emptyKanban = fromJson(

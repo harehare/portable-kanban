@@ -25,9 +25,9 @@ import {
   moveList as moveListFn,
   type Kanban as KanbanModel,
   type List as ListModel,
-} from '@portable-kanban/core';
+} from 'portable-kanban-core';
 import { actions, kanbanActions, selectors } from '../store';
-import { uuid } from '@portable-kanban/core';
+import { uuid } from 'portable-kanban-core';
 
 const Container = styled.div`
   width: 100%;

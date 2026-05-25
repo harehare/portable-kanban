@@ -7,7 +7,7 @@ import { RiTaskLine } from 'react-icons/ri';
 import { Link, useLocation } from 'react-router-dom';
 import { styled } from 'styled-components';
 import { useAutoFocus } from '../hooks/useAutoFocus';
-import { type Card as CardModel } from '@portable-kanban/core';
+import { type Card as CardModel } from 'portable-kanban-core';
 import { actions } from '../store';
 import { TextXs } from './shared/Text';
 

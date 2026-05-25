@@ -12,7 +12,7 @@ export default defineConfig({
   ],
   resolve: {
     alias: {
-      '@portable-kanban/core': resolve(__dirname, '../../packages/core/src/index.ts'),
+      'portable-kanban-core': resolve(__dirname, '../../packages/core/src/index.ts'),
     },
   },
   build: {

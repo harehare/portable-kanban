@@ -12,8 +12,8 @@ export default defineConfig({
   ],
   resolve: {
     alias: {
-      '@portable-kanban/core': resolve(__dirname, '../../packages/core/src/index.ts'),
-      '@portable-kanban/ui': resolve(__dirname, '../../packages/ui/src/index.ts'),
+      'portable-kanban-core': resolve(__dirname, '../../packages/core/src/index.ts'),
+      'portable-kanban-ui': resolve(__dirname, '../../packages/ui/src/index.ts'),
     },
   },
   build: {

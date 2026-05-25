@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { MdList } from 'react-icons/md';
 import { styled } from 'styled-components';
-import { type List } from '@portable-kanban/core';
+import { type List } from 'portable-kanban-core';
 import { selectors } from '../store';
 import { MenuItem } from './shared/MenuItem';
 

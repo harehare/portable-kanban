@@ -68,7 +68,7 @@ importers:
       '@modelcontextprotocol/sdk':
         specifier: ^1.12.1
         version: 1.29.0(zod@4.4.3)
-      '@portable-kanban/core':
+      portable-kanban-core:
         specifier: workspace:*
         version: link:../../packages/core
     devDependencies:
@@ -82,11 +82,8 @@ importers:
         specifier: ^5.7.3
         version: 5.9.3
 
-  apps/nvim:
+  apps/tui:
     dependencies:
-      '@portable-kanban/core':
-        specifier: workspace:*
-        version: link:../../packages/core
       ink:
         specifier: ^5.2.1
         version: 5.2.1(@types/react@18.3.29)(react@18.3.1)
@@ -106,24 +103,24 @@ importers:
       oxlint:
         specifier: ^0.16.6
         version: 0.16.12
-      tsx:
-        specifier: ^4.0.0
-        version: 4.22.3
+      portable-kanban-core:
+        specifier: workspace:*
+        version: link:../../packages/core
       typescript:
         specifier: ^6.0.3
         version: 6.0.3
 
   apps/vscode:
     dependencies:
-      '@portable-kanban/core':
-        specifier: workspace:*
-        version: link:../../packages/core
-      '@portable-kanban/ui':
-        specifier: workspace:*
-        version: link:../../packages/ui
       jotai:
         specifier: ^2.20.0
         version: 2.20.0(@types/react@19.2.15)(react@19.2.6)
+      portable-kanban-core:
+        specifier: workspace:*
+        version: link:../../packages/core
+      portable-kanban-ui:
+        specifier: workspace:*
+        version: link:../../packages/ui
       react:
         specifier: ^19.2.6
         version: 19.2.6
@@ -170,15 +167,15 @@ importers:
 
   apps/web:
     dependencies:
-      '@portable-kanban/core':
-        specifier: workspace:*
-        version: link:../../packages/core
-      '@portable-kanban/ui':
-        specifier: workspace:*
-        version: link:../../packages/ui
       jotai:
         specifier: ^2.20.0
         version: 2.20.0(@types/react@19.2.15)(react@19.2.6)
+      portable-kanban-core:
+        specifier: workspace:*
+        version: link:../../packages/core
+      portable-kanban-ui:
+        specifier: workspace:*
+        version: link:../../packages/ui
       react:
         specifier: ^19.2.6
         version: 19.2.6
@@ -244,9 +241,6 @@ importers:
       '@dnd-kit/utilities':
         specifier: ^3.2.2
         version: 3.2.2(react@19.2.6)
-      '@portable-kanban/core':
-        specifier: workspace:*
-        version: link:../core
       date-fns:
         specifier: ^4.2.1
         version: 4.2.1
@@ -262,6 +256,9 @@ importers:
       optics-ts:
         specifier: ^2.4.1
         version: 2.4.1
+      portable-kanban-core:
+        specifier: workspace:*
+        version: link:../core
       react:
         specifier: ^19.2.6
         version: 19.2.6

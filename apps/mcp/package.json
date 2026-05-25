@@ -1,5 +1,5 @@
 {
-  "name": "@portable-kanban/mcp",
+  "name": "portable-kanban-mcp",
   "version": "1.0.0",
   "description": "MCP server for portable-kanban — lets AI assistants read and manipulate .kanban files",
   "type": "module",
@@ -14,7 +14,7 @@
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.12.1",
-    "@portable-kanban/core": "workspace:*"
+    "portable-kanban-core": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",

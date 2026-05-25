@@ -27,9 +27,9 @@ import { ProgressBar } from '../components/shared/ProgressBar';
 import { TextBaseBold } from '../components/shared/Text';
 import { Title } from '../components/shared/Title';
 import { Task } from '../components/Task';
-import { type CheckBox as CheckBoxModel, type Comment as CommentModel } from '@portable-kanban/core';
+import { type CheckBox as CheckBoxModel, type Comment as CommentModel } from 'portable-kanban-core';
 import { actions, kanbanActions, selectors } from '../store';
-import { uuid } from '@portable-kanban/core';
+import { uuid } from 'portable-kanban-core';
 
 declare global {
   interface Window {

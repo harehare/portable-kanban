@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Box, Text } from 'ink';
-import type { Card } from '@portable-kanban/core';
+import type { Card } from 'portable-kanban-core';
 
 type Props = {
   card: Card;

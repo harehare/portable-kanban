@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { IoMdTrash } from 'react-icons/io';
 import { styled } from 'styled-components';
-import { type CheckBox as CheckBoxModel } from '@portable-kanban/core';
+import { type CheckBox as CheckBoxModel } from 'portable-kanban-core';
 import { CheckBox } from './shared/CheckBox';
 import { IconButton } from './shared/IconButton';
 import { Title } from './shared/Title';

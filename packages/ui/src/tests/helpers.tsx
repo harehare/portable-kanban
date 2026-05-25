@@ -1,7 +1,7 @@
 import { Provider } from 'jotai';
 import * as React from 'react';
 import { MemoryRouter } from 'react-router-dom';
-import type { Card, Kanban, List } from '@portable-kanban/core';
+import type { Card, Kanban, List } from 'portable-kanban-core';
 
 export const createCard = (overrides: Partial<Card> = {}): Card => ({
   id: 'card-1',

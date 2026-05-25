@@ -21,11 +21,12 @@ export const TextInput = ({ prompt = '', initialValue = '', onSubmit, onCancel }
       return;
     }
     if (key.backspace || key.delete) {
-      setValue((v) => v.slice(0, -1));
+      // Use spread to split by Unicode code point (handles surrogate pairs / rare kanji)
+      setValue((v) => [...v].slice(0, -1).join(''));
       return;
     }
-    // Printable characters only
-    if (!key.ctrl && !key.meta && input.length === 1) {
+    // Accept printable input including multi-char IME commits (e.g. Japanese)
+    if (!key.ctrl && !key.meta && input.length >= 1) {
       setValue((v) => v + input);
     }
   });

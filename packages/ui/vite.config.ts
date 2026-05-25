@@ -22,7 +22,7 @@ export default defineConfig({
         'react',
         'react-dom',
         'react/jsx-runtime',
-        '@portable-kanban/core',
+        'portable-kanban-core',
       ],
     },
     outDir: 'dist',

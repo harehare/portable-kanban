@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { styled } from 'styled-components';
 import { Card } from '../components/Card';
 import { TextBaseBold } from '../components/shared/Text';
-import { type List } from '@portable-kanban/core';
+import { type List } from 'portable-kanban-core';
 import { kanbanActions } from '../store';
 
 const Overlay = styled.div`

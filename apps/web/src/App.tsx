@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { Provider } from 'jotai';
-import { KanbanApp } from '@portable-kanban/ui';
+import { KanbanApp } from 'portable-kanban-ui';
 import { BrowserRouter as Router } from 'react-router-dom';
-import { fromJson, toJson } from '@portable-kanban/core';
-import type { Kanban } from '@portable-kanban/core';
-import { initBackend } from '@portable-kanban/ui';
+import { fromJson, toJson } from 'portable-kanban-core';
+import type { Kanban } from 'portable-kanban-core';
+import { initBackend } from 'portable-kanban-ui';
 import { LandingPage } from './LandingPage';
 import type { Theme } from './LandingPage';
 

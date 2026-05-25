@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
-import { fromJson } from '@portable-kanban/core';
+import { fromJson } from 'portable-kanban-core';
 import { getBackend } from './backend';
 import { ArchiveCards } from './pages/ArchiveCards';
 import { ArchiveLists } from './pages/ArchiveLists';

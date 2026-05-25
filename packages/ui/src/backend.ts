@@ -1,4 +1,4 @@
-import type { Kanban } from '@portable-kanban/core';
+import type { Kanban } from 'portable-kanban-core';
 
 export type KanbanBackend = {
   saveKanban: (kanban: Kanban, type: 'edit' | 'reorder') => void | Promise<void>;

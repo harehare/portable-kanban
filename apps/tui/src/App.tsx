@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Box, Text, useInput, useStdout } from 'ink';
-import type { Kanban, Card } from '@portable-kanban/core';
+import type { Kanban, Card } from 'portable-kanban-core';
 import { KanbanList } from './components/KanbanList';
 import { CardDetail } from './components/CardDetail';
 import { TextInput } from './components/TextInput';
@@ -13,6 +13,7 @@ export type Keymaps = {
   quit: string;
   list_prev: string;
   list_next: string;
+  list_add: string;
   card_up: string;
   card_down: string;
   card_add: string;
@@ -20,6 +21,7 @@ export type Keymaps = {
   card_delete: string;
   card_move_left: string;
   card_move_right: string;
+  task_add: string;
   help: string;
 };
 
@@ -27,6 +29,7 @@ const DEFAULT_KEYMAPS: Keymaps = {
   quit: 'q',
   list_prev: 'h',
   list_next: 'l',
+  list_add: 'A',
   card_up: 'k',
   card_down: 'j',
   card_add: 'a',
@@ -34,6 +37,7 @@ const DEFAULT_KEYMAPS: Keymaps = {
   card_delete: 'd',
   card_move_left: 'H',
   card_move_right: 'L',
+  task_add: 'T',
   help: '?',
 };
 
@@ -55,6 +59,7 @@ type Mode =
   | { type: 'board' }
   | { type: 'help' }
   | { type: 'detail'; listIndex: number; cardIndex: number }
+  | { type: 'add_list' }
   | { type: 'add'; listIndex: number }
   | { type: 'edit_title'; listIndex: number; cardIndex: number; returnToDetail: boolean }
   | { type: 'edit_desc'; listIndex: number; cardIndex: number }
@@ -101,6 +106,7 @@ export const App = ({ kanban: initialKanban, title, onSave, onQuit }: Props) => 
   useInput((input, key) => {
     // TextInput components handle their own input
     if (
+      mode.type === 'add_list' ||
       mode.type === 'add' ||
       mode.type === 'edit_title' ||
       mode.type === 'edit_desc' ||
@@ -231,8 +237,18 @@ export const App = ({ kanban: initialKanban, title, onSave, onQuit }: Props) => 
       return;
     }
 
+    if (input === km.list_add) {
+      setMode({ type: 'add_list' });
+      return;
+    }
+
     if (input === km.card_add) {
       setMode({ type: 'add', listIndex: selectedList });
+      return;
+    }
+
+    if (input === km.task_add && currentCard) {
+      setMode({ type: 'add_task', listIndex: selectedList, cardIndex: selectedCard });
       return;
     }
 
@@ -288,6 +304,24 @@ export const App = ({ kanban: initialKanban, title, onSave, onQuit }: Props) => 
       onQuit();
     }
   });
+
+  const handleAddList = (newTitle: string) => {
+    if (mode.type !== 'add_list') return;
+    if (!newTitle.trim()) {
+      setMode({ type: 'board' });
+      return;
+    }
+    const newList = {
+      id: crypto.randomUUID(),
+      title: newTitle.trim(),
+      cards: [],
+    };
+    const updated = { ...kanban, lists: [...kanban.lists, newList] };
+    setSelectedList(updated.lists.length - 1);
+    setSelectedCard(0);
+    setMode({ type: 'board' });
+    save(updated);
+  };
 
   const handleAddCard = (newTitle: string) => {
     if (mode.type !== 'add') return;
@@ -359,7 +393,7 @@ export const App = ({ kanban: initialKanban, title, onSave, onQuit }: Props) => 
     const { listIndex, cardIndex } = mode;
     const trimmed = raw.trim();
     // Accept YYYY-MM-DD or clear with empty string
-    const dueDate = trimmed === '' ? undefined : trimmed;
+    const dueDate = trimmed === '' ? undefined : new Date(trimmed);
     const updated = {
       ...kanban,
       lists: kanban.lists.map((l, li) =>
@@ -436,6 +470,22 @@ export const App = ({ kanban: initialKanban, title, onSave, onQuit }: Props) => 
     save(updated);
   };
 
+  // Add list screen
+  if (mode.type === 'add_list') {
+    return (
+      <Box flexDirection="column" padding={1}>
+        <Header title={title} subtitle="Add list" />
+        <Box marginTop={1}>
+          <TextInput
+            prompt="List name: "
+            onSubmit={handleAddList}
+            onCancel={() => setMode({ type: 'board' })}
+          />
+        </Box>
+      </Box>
+    );
+  }
+
   // Add card screen
   if (mode.type === 'add') {
     return (
@@ -503,7 +553,7 @@ export const App = ({ kanban: initialKanban, title, onSave, onQuit }: Props) => 
         <Box marginTop={1} flexDirection="column">
           <TextInput
             prompt="Due date (YYYY-MM-DD, empty to clear): "
-            initialValue={card?.dueDate ?? ''}
+            initialValue={card?.dueDate instanceof Date ? card.dueDate.toISOString().split('T')[0] : ''}
             onSubmit={handleEditDue}
             onCancel={() => setMode({ type: 'detail', listIndex: mode.listIndex, cardIndex: mode.cardIndex })}
           />
@@ -555,6 +605,7 @@ export const App = ({ kanban: initialKanban, title, onSave, onQuit }: Props) => 
             <Text color="gray">──────────────────────</Text>
             <Text><Text color="cyan">{km.list_prev}</Text><Text color="gray">/←  </Text>Previous list</Text>
             <Text><Text color="cyan">{km.list_next}</Text><Text color="gray">/→  </Text>Next list</Text>
+            <Text><Text color="cyan">{km.list_add}      </Text>Add list</Text>
             <Text><Text color="cyan">{km.card_up}</Text><Text color="gray">/↑  </Text>Card up</Text>
             <Text><Text color="cyan">{km.card_down}</Text><Text color="gray">/↓  </Text>Card down</Text>
             <Text><Text color="cyan">Enter  </Text>Open card detail</Text>
@@ -563,6 +614,7 @@ export const App = ({ kanban: initialKanban, title, onSave, onQuit }: Props) => 
             <Text><Text color="cyan">{km.card_delete}      </Text>Delete card</Text>
             <Text><Text color="cyan">{km.card_move_left}      </Text>Move card left</Text>
             <Text><Text color="cyan">{km.card_move_right}      </Text>Move card right</Text>
+            <Text><Text color="cyan">{km.task_add}      </Text>Add task to card</Text>
             <Text><Text color="cyan">{km.quit}      </Text>Quit</Text>
           </Box>
           <Box flexDirection="column" borderStyle="single" borderColor="cyan" paddingX={1}>
@@ -649,7 +701,7 @@ export const App = ({ kanban: initialKanban, title, onSave, onQuit }: Props) => 
       {/* Status bar */}
       <Box marginTop={1} borderStyle="single" borderColor="gray" paddingX={1}>
         <Text color="gray" dimColor>
-          {`←/→:list  ↑/↓:card  Enter:open  ${km.card_add}:add  ${km.card_edit}:edit  ${km.card_delete}:del  ${km.card_move_left}/${km.card_move_right}:move  ${km.help}:help  ${km.quit}:quit`}
+          {`←/→:list  ↑/↓:card  Enter:open  ${km.list_add}:new-list  ${km.card_add}:add  ${km.card_edit}:edit  ${km.card_delete}:del  ${km.task_add}:task  ${km.card_move_left}/${km.card_move_right}:move  ${km.help}:help  ${km.quit}:quit`}
           {'   '}
           <Text color={totalCards === 0 ? 'gray' : 'white'}>{totalCards} cards</Text>
           {kanban.archive.cards.length > 0 && <Text color="gray">  {kanban.archive.cards.length} archived</Text>}

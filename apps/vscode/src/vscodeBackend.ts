@@ -1,4 +1,4 @@
-import { initBackend } from '@portable-kanban/ui';
+import { initBackend } from 'portable-kanban-ui';
 import { vscode } from './vscode';
 
 initBackend({

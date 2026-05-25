@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { IoMdTrash } from 'react-icons/io';
 import { styled } from 'styled-components';
-import { type Comment as CommentModel } from '@portable-kanban/core';
+import { type Comment as CommentModel } from 'portable-kanban-core';
 import { Description } from './shared/Description';
 import { IconButton } from './shared/IconButton';
 

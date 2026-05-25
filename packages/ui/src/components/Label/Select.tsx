@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { MdCheck, MdEdit } from 'react-icons/md';
 import { styled } from 'styled-components';
-import { type Card, type Label, type List } from '@portable-kanban/core';
+import { type Card, type Label, type List } from 'portable-kanban-core';
 import { kanbanActions, selectors } from '../../store';
 import { IconButton } from '../shared/IconButton';
 import { LabelEdit } from './Edit';

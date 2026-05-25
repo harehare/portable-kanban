@@ -1,7 +1,7 @@
 <h1 align="center">Portable Kanban</h1>
 
 A lightweight, portable kanban board that lives in your filesystem as a plain `.kanban` (JSON) file.  
-Works across **VS Code**, **Neovim**, and the **Web browser** — all reading and writing the same file.
+Works across **VS Code**, the **Web browser**, and any **terminal** — all reading and writing the same file.
 
 ![kanban](./img/kanban.jpg)
 ![Dark-kanban](./img/dark.jpg)
@@ -15,6 +15,7 @@ Works across **VS Code**, **Neovim**, and the **Web browser** — all reading an
 - ✅ Search and filter functionality
 - ✅ Dark / Light / System theme support
 - ✅ Plain JSON `.kanban` file format — Git-friendly and human-readable
+- ✅ **TUI CLI** — keyboard-driven terminal interface, works in any terminal
 - ✅ **MCP server** — AI assistants can read and edit boards via Model Context Protocol
 
 ---
@@ -28,7 +29,7 @@ portable-kanban/
 ├── apps/
 │   ├── vscode/      # VS Code extension
 │   ├── web/         # Browser-based kanban app (File System Access API)
-│   ├── nvim/        # Neovim plugin + terminal TUI (Ink / React)
+│   ├── tui/         # Standalone terminal TUI CLI (Ink / React)
 │   └── mcp/         # MCP server (AI tool integration)
 └── packages/
     ├── core/        # Shared data models, decoders, and utilities
@@ -39,10 +40,72 @@ portable-kanban/
 |---------|------|-------------|
 | `apps/vscode` | `portable-kanban` | VS Code custom editor for `.kanban` files |
 | `apps/web` | `@portable-kanban/web` | Web app with File System Access API |
-| `apps/nvim` | `@portable-kanban/nvim` | Neovim Lua plugin + Ink TUI |
+| `apps/tui` | `portable-kanban-tui` | Terminal TUI CLI |
 | `apps/mcp` | `@portable-kanban/mcp` | MCP server for AI tool integration |
 | `packages/core` | `@portable-kanban/core` | Data models, JSON decoder/encoder |
 | `packages/ui` | `@portable-kanban/ui` | React kanban board UI (shared) |
+
+---
+
+## TUI CLI
+
+A keyboard-driven terminal interface for `.kanban` files, built with [Ink](https://github.com/vadimdemedes/ink).
+
+### Installation
+
+```bash
+npm install -g portable-kanban-tui
+```
+
+### Usage
+
+```bash
+# Open an existing kanban file
+pkb my-board.kanban
+
+# Create a new kanban file and open it
+pkb new my-board.kanban
+```
+
+### Keybindings
+
+**Board view:**
+
+| Key | Action |
+|-----|--------|
+| `←` / `h` | Move to left list |
+| `→` / `l` | Move to right list |
+| `↑` / `k` | Select card above |
+| `↓` / `j` | Select card below |
+| `Enter` | Open card detail |
+| `a` | Add new card to current list |
+| `e` | Edit selected card title |
+| `d` | Delete selected card |
+| `H` | Move selected card to left list |
+| `L` | Move selected card to right list |
+| `?` | Show help |
+| `q` / `Ctrl+C` | Quit |
+
+**Card detail view:**
+
+| Key | Action |
+|-----|--------|
+| `e` | Edit title |
+| `d` | Edit description |
+| `D` | Edit due date |
+| `t` | Add task |
+| `c` | Add comment |
+| `1`–`9` | Toggle checkbox task |
+| `Esc` / `q` | Back to board |
+| `Q` | Quit |
+
+**Customising keybindings** — set `PORTABLE_KANBAN_KEYMAPS` to a JSON object:
+
+```bash
+PORTABLE_KANBAN_KEYMAPS='{"quit":"q","list_prev":"h","list_next":"l"}' pkb my-board.kanban
+```
+
+Available keys: `quit`, `list_prev`, `list_next`, `card_up`, `card_down`, `card_add`, `card_edit`, `card_delete`, `card_move_left`, `card_move_right`, `help`.
 
 ---
 
@@ -210,110 +273,6 @@ pnpm build:web    # Production build
 
 ---
 
-## Neovim Plugin
-
-### Installation
-
-**Prerequisites:** Node.js 18+, pnpm
-
-```bash
-# Build the TUI
-cd apps/nvim
-pnpm install
-pnpm build
-```
-
-**vim-plug** (`init.vim` / `init.lua`):
-
-```vim
-" init.vim
-Plug '/path/to/portable-kanban/apps/nvim'
-```
-
-After adding the line, run `:PlugInstall`, then configure:
-
-```vim
-" init.vim
-lua require("portable-kanban").setup({ auto_open = true })
-```
-
-```lua
--- init.lua
-require("portable-kanban").setup({ auto_open = true })
-```
-
----
-
-**lazy.nvim**:
-
-```lua
-{
-  dir = "/path/to/portable-kanban/apps/nvim",
-  config = function()
-    require("portable-kanban").setup({
-      auto_open = true,  -- Auto-open TUI when a .kanban file is opened (optional)
-    })
-  end,
-}
-```
-
----
-
-**packer.nvim**:
-
-```lua
-use {
-  "/path/to/portable-kanban/apps/nvim",
-  config = function()
-    require("portable-kanban").setup({ auto_open = true })
-  end,
-}
-```
-
----
-
-**Manual** (`init.lua` / `init.vim`):
-
-```lua
--- init.lua
-vim.opt.rtp:prepend("/path/to/portable-kanban/apps/nvim")
-require("portable-kanban").setup()
-```
-
-### Commands
-
-| Command | Description |
-|---------|-------------|
-| `:KanbanOpen` | Open the current `.kanban` file in the TUI |
-| `:KanbanNew` | Create a new `.kanban` file and open it |
-
-### TUI Keybindings
-
-**Board view:**
-
-| Key | Action |
-|-----|--------|
-| `←` / `h` | Move to left list |
-| `→` / `l` | Move to right list |
-| `↑` / `k` | Select card above |
-| `↓` / `j` | Select card below |
-| `Enter` | Open card detail |
-| `a` | Add new card to current list |
-| `e` | Edit selected card title |
-| `d` | Delete selected card |
-| `H` | Move selected card to left list |
-| `L` | Move selected card to right list |
-| `q` / `Ctrl+C` | Quit |
-
-**Card detail view:**
-
-| Key | Action |
-|-----|--------|
-| `1`–`9` | Toggle checkbox task |
-| `Esc` / `q` | Back to board |
-
----
-
 ## File Format
 
 `.kanban` files are plain JSON:
@@ -367,7 +326,8 @@ pnpm build:core    # Build shared core package
 pnpm build:ui      # Build shared UI package
 pnpm build:vscode  # Build VS Code extension
 pnpm build:web     # Build web app
-pnpm build:nvim    # Build Neovim TUI
+pnpm build:tui     # Build TUI CLI
+pnpm build:mcp     # Build MCP server
 ```
 
 ### Development Servers
@@ -375,7 +335,7 @@ pnpm build:nvim    # Build Neovim TUI
 ```bash
 pnpm dev:vscode    # Watch mode for VS Code extension
 pnpm dev:web       # Vite dev server for web app (http://localhost:5173)
-pnpm dev:nvim      # Watch mode for Neovim TUI
+pnpm dev:tui       # Rebuild TUI CLI
 ```
 
 ### Testing & Linting

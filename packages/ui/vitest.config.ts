@@ -6,7 +6,7 @@ export default defineConfig({
   plugins: [react()],
   resolve: {
     alias: {
-      '@portable-kanban/core': resolve(__dirname, '../core/src/index'),
+      'portable-kanban-core': resolve(__dirname, '../core/src/index'),
     },
   },
   test: {

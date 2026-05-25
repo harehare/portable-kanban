@@ -1,0 +1,52 @@
+{
+  "name": "portable-kanban-tui",
+  "version": "0.1.0",
+  "description": "Terminal TUI CLI for portable kanban boards — keyboard-driven, works with any .kanban file",
+  "keywords": [
+    "kanban",
+    "tui",
+    "cli",
+    "terminal",
+    "ink",
+    "task-management",
+    "productivity"
+  ],
+  "license": "MIT",
+  "author": "harehare",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/harehare/portable-kanban.git",
+    "directory": "apps/tui"
+  },
+  "homepage": "https://github.com/harehare/portable-kanban/tree/main/apps/tui#readme",
+  "bugs": {
+    "url": "https://github.com/harehare/portable-kanban/issues"
+  },
+  "type": "module",
+  "bin": {
+    "pkb": "./dist/tui.mjs"
+  },
+  "files": [
+    "dist/tui.mjs"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+"scripts": {
+    "build": "node build.mjs",
+    "prepublishOnly": "pnpm build",
+    "lint": "oxlint src"
+  },
+  "dependencies": {
+    "ink": "^5.2.1",
+    "react": "^18.3.1"
+  },
+  "devDependencies": {
+    "portable-kanban-core": "workspace:*",
+    "@types/node": "25.x",
+    "@types/react": "^18.3.23",
+    "esbuild": "^0.25.0",
+    "oxlint": "^0.16.6",
+    "typescript": "^6.0.3"
+  }
+}

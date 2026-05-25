@@ -38,7 +38,7 @@ import {
   updateComments,
   updateLabel,
   updateList,
-} from '@portable-kanban/core';
+} from 'portable-kanban-core';
 
 const titleAtom = atom('');
 const addingCardAtom = atom<Card | undefined>(undefined);

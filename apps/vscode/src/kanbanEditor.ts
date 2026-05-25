@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { type Kanban, toJson } from '@portable-kanban/core';
+import { type Kanban, toJson } from 'portable-kanban-core';
 
 const viewType = 'portable-kanban.edit';
 
