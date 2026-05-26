@@ -32,9 +32,6 @@ importers:
       babel-plugin-react-compiler:
         specifier: ^1.0.0
         version: 1.0.0
-      jotai:
-        specifier: ^2.20.0
-        version: 2.20.0(@types/react@19.2.15)(react@19.2.6)
       jsdom:
         specifier: ^29.1.1
         version: 29.1.1
@@ -44,18 +41,6 @@ importers:
       oxlint:
         specifier: ^1.66.0
         version: 1.66.0
-      react:
-        specifier: ^19.2.6
-        version: 19.2.6
-      react-dom:
-        specifier: ^19.2.6
-        version: 19.2.6(react@19.2.6)
-      react-router-dom:
-        specifier: ^7.15.1
-        version: 7.15.1(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
-      styled-components:
-        specifier: ^6.4.1
-        version: 6.4.2(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
       vite:
         specifier: ^8.0.14
         version: 8.0.14(@types/node@25.9.1)(esbuild@0.28.0)(tsx@4.22.3)
