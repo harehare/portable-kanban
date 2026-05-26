@@ -1,0 +1,24 @@
+{
+  "name": "portable-kanban-mcp",
+  "version": "1.0.0",
+  "description": "MCP server for portable-kanban — lets AI assistants read and manipulate .kanban files",
+  "type": "module",
+  "main": "dist/index.js",
+  "bin": {
+    "portable-kanban-mcp": "dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "dev": "tsx src/index.ts",
+    "start": "node dist/index.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.12.1",
+    "portable-kanban-core": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "tsx": "^4.19.4",
+    "typescript": "^5.7.3"
+  }
+}

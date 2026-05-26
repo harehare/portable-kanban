@@ -1,92 +1,32 @@
 {
-  "name": "portable-kanban",
-  "displayName": "Portable Kanban",
-  "description": "This is an extension to create a portable kanban.",
-  "version": "0.2.5",
-  "author": "harehare",
-  "publisher": "harehare",
-  "icon": "assets/icon.png",
+  "name": "portable-kanban-workspace",
+  "version": "0.1.0",
   "private": true,
-  "pnpm": {
-    "onlyBuiltDependencies": ["@vscode/vsce-sign", "keytar"]
-  },
-  "engines": {
-    "vscode": "^1.101.0"
-  },
-  "categories": [
-    "Other"
-  ],
-  "keywords": [
-    "kanban"
-  ],
+  "description": "Portable Kanban monorepo — VSCode extension, web app, and TUI CLI",
+  "author": "harehare",
   "repository": {
     "type": "git",
     "url": "https://github.com/harehare/portable-kanban.git"
   },
-  "activationEvents": [
-    "onStartupFinished"
-  ],
-  "main": "./dist/extension.js",
-  "contributes": {
-    "customEditors": [
-      {
-        "viewType": "portable-kanban.edit",
-        "displayName": "Kanban",
-        "selector": [
-          {
-            "filenamePattern": "*.kanban"
-          }
-        ]
-      }
-    ],
-    "commands": [
-      {
-        "command": "portable-kanban.new",
-        "title": "Portable Kanban: Create new Kanban"
-      }
-    ],
-    "configuration": {
-      "type": "object",
-      "title": "PortableKanban",
-      "properties": {
-        "portable-kanban.theme": {
-          "title": "Portable Kanban Theme",
-          "type": "string",
-          "default": "system",
-          "enum": [
-            "dark",
-            "light",
-            "system"
-          ],
-          "description": "Switch the theme to dark or light."
-        },
-        "portable-kanban.show-description": {
-          "title": "Portable Kanban Show Description",
-          "type": "boolean",
-          "default": "true",
-          "description": "Card description is shown."
-        },
-        "portable-kanban.show-task-list": {
-          "title": "Portable Kanban Show Task List",
-          "type": "boolean",
-          "default": "true",
-          "description": "Card task list is shown."
-        }
-      }
-    }
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "@vscode/vsce-sign",
+      "keytar"
+    ]
   },
   "scripts": {
-    "vscode:prepublish": "pnpm run package",
-    "build": "pnpm run build:extension && pnpm run build:kanban",
-    "build:extension": "esbuild src/extension.ts --bundle --external:vscode --platform=node --outdir=dist --format=cjs --sourcemap",
-    "build:kanban": "vite build",
-    "watch": "pnpm run watch:extension & pnpm run watch:kanban",
-    "watch:extension": "esbuild src/extension.ts --bundle --external:vscode --platform=node --outdir=dist --format=cjs --sourcemap --watch",
-    "watch:kanban": "vite build --watch",
-    "package": "pnpm run build:extension && vite build --minify",
-    "vsce:package": "vsce package --no-dependencies",
-    "lint": "oxlint src && oxfmt src",
-    "format": "oxfmt src",
+    "build": "pnpm -r build",
+    "build:core": "pnpm --filter portable-kanban-core build",
+    "build:ui": "pnpm --filter portable-kanban-ui build",
+    "build:vscode": "pnpm --filter portable-kanban build",
+    "build:web": "pnpm --filter portable-kanban-web build",
+    "build:tui": "pnpm --filter portable-kanban-tui build",
+    "build:mcp": "pnpm --filter portable-kanban-mcp build",
+    "dev:mcp": "pnpm --filter portable-kanban-mcp dev",
+    "dev:vscode": "pnpm --filter portable-kanban watch",
+    "dev:web": "pnpm --filter portable-kanban-web dev",
+    "dev:tui": "pnpm --filter portable-kanban-tui dev",
+    "lint": "pnpm -r lint",
     "test": "vitest run"
   },
   "devDependencies": {
@@ -94,45 +34,14 @@
     "@testing-library/react": "^16.3.2",
     "@testing-library/user-event": "^14.6.1",
     "@types/mocha": "^10.0.10",
-    "@types/node": "25.x",
-    "@types/react": "^19.2.15",
-    "@types/react-dom": "^19.2.3",
-    "@types/react-linkify": "^1.0.4",
-    "@types/react-router-dom": "^5.3.3",
-    "@types/styled-components": "^5.1.36",
-    "@types/vscode": "^1.101.0",
-    "@vitejs/plugin-react": "^6.0.2",
-    "@vscode/test-electron": "^2.5.2",
-    "@vscode/vsce": "^3.9.1",
-    "babel-plugin-react-compiler": "^1.0.0",
-    "esbuild": "^0.28.0",
-    "glob": "^13.0.6",
     "jsdom": "^29.1.1",
     "oxfmt": "^0.51.0",
     "oxlint": "^1.66.0",
-    "styled-components": "^6.4.1",
-    "typescript": "^6.0.3",
+    "vitest": "^4.1.6",
+    "@vitejs/plugin-react": "^6.0.2",
+    "babel-plugin-react-compiler": "^1.0.0",
     "vite": "^8.0.14",
-    "vitest": "^4.1.6"
-  },
-  "dependencies": {
-    "@dnd-kit/core": "^6.3.1",
-    "@dnd-kit/sortable": "^10.0.0",
-    "@dnd-kit/utilities": "^3.2.2",
-    "@mojotech/json-type-validation": "^3.1.0",
-    "date-fns": "^4.3.0",
-    "fuse.js": "^7.3.0",
-    "jotai": "^2.20.0",
-    "jotai-optics": "^0.4.0",
-    "optics-ts": "^2.4.1",
-    "react": "^19.2.6",
-    "react-dom": "^19.2.6",
-    "react-icons": "^5.5.0",
-    "react-indiana-drag-scroll": "^3.0.4-alpha",
-    "react-linkify": "^1.0.0-alpha",
-    "react-markdown": "^10.1.0",
-    "react-router-dom": "^7.15.1",
-    "react-textarea-autosize": "^8.5.9",
-    "uuid": "^14.0.0"
+    "@types/react": "^19.2.15",
+    "@types/react-dom": "^19.2.3"
   }
 }

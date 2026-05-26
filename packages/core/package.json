@@ -1,0 +1,28 @@
+{
+  "name": "portable-kanban-core",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/types/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/types/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc --project tsconfig.json",
+    "lint": "oxlint src",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@mojotech/json-type-validation": "^3.1.0",
+    "uuid": "^14.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "25.x",
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.6"
+  }
+}

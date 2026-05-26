@@ -1,0 +1,33 @@
+:root {
+  --main-background-color: #1b2327;
+  --primary-background-color: #202f3c;
+  --secondary-background-color: #2c3f50;
+
+  --text-color: #fefefe;
+  --light-text-color: #fefefe;
+  --secondary-text-color: #626e73;
+  --selected-color: #354c60;
+  --hover-color: rgba(0, 0, 0, 0.1);
+
+  --primary-color: #337ab7;
+  --danger-color: #d62f39;
+  --warning-color: #fcc44e;
+  --success-color: #43a23c;
+  --header-color: #22292f;
+
+  --button-color: #186879;
+  --form-border-color: #233240;
+}
+
+body {
+  font-family: var(--font-family);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  user-select: none;
+}
+a {
+  text-decoration: none;
+}
