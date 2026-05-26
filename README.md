@@ -20,33 +20,6 @@ Works across **VS Code**, the **Web browser**, and any **terminal** — all read
 
 ---
 
-## Repository Structure
-
-This is a **pnpm monorepo** containing the following packages:
-
-```
-portable-kanban/
-├── apps/
-│   ├── vscode/      # VS Code extension
-│   ├── web/         # Browser-based kanban app (File System Access API)
-│   ├── tui/         # Standalone terminal TUI CLI (Ink / React)
-│   └── mcp/         # MCP server (AI tool integration)
-└── packages/
-    ├── core/        # Shared data models, decoders, and utilities
-    └── ui/          # Shared React UI components (board, cards, etc.)
-```
-
-| Package | Name | Description |
-|---------|------|-------------|
-| `apps/vscode` | `portable-kanban` | VS Code custom editor for `.kanban` files |
-| `apps/web` | `@portable-kanban/web` | Web app with File System Access API |
-| `apps/tui` | `portable-kanban-tui` | Terminal TUI CLI |
-| `apps/mcp` | `@portable-kanban/mcp` | MCP server for AI tool integration |
-| `packages/core` | `@portable-kanban/core` | Data models, JSON decoder/encoder |
-| `packages/ui` | `@portable-kanban/ui` | React kanban board UI (shared) |
-
----
-
 ## TUI CLI
 
 A keyboard-driven terminal interface for `.kanban` files, built with [Ink](https://github.com/vadimdemedes/ink).
