@@ -23,6 +23,7 @@ import {
   moveCard as moveCardFn,
   moveCardAcrossList as moveCardAcrossListFn,
   moveList as moveListFn,
+  type Card as CardModel,
   type Kanban as KanbanModel,
   type List as ListModel,
 } from 'portable-kanban-core';
@@ -59,7 +60,7 @@ const SortableListItem = ({ list, kanban }: SortableListItemProps) => {
   });
 
   const style: React.CSSProperties = {
-    transform: CSS.Transform.toString(transform),
+    transform: CSS.Translate.toString(transform),
     transition,
     opacity: isDragging ? 0 : 1,
   };
@@ -87,6 +88,9 @@ const Board = () => {
   const [localLists, setLocalLists] = React.useState<ListModel[] | null>(null);
   // Ref for synchronous access in callbacks without stale closures
   const localListsRef = React.useRef<ListModel[] | null>(null);
+  // Cache the dragged card/list at drag start to avoid searching on every onDragOver
+  const overlayCardRef = React.useRef<CardModel | null>(null);
+  const overlayListRef = React.useRef<ListModel | null>(null);
 
   // During drag use local state for rendering; otherwise use store state
   const lists = localLists ?? storeLists;
@@ -103,12 +107,25 @@ const Board = () => {
     (event: DragStartEvent) => {
       const { active } = event;
       const type = active.data.current?.type as string | undefined;
+      const snapshot = [...storeLists];
       // Snapshot store lists into local state at drag start
-      updateLocalLists([...storeLists]);
+      updateLocalLists(snapshot);
       if (type === 'card') {
-        setActiveDrag({ type: 'card', cardId: active.id as string });
+        const cardId = active.id as string;
+        for (const l of snapshot) {
+          const found = l.cards.find((c) => c.id === cardId);
+          if (found) {
+            overlayCardRef.current = found;
+            break;
+          }
+        }
+        overlayListRef.current = null;
+        setActiveDrag({ type: 'card', cardId });
       } else if (type === 'list') {
-        setActiveDrag({ type: 'list', listId: active.id as string });
+        const listId = active.id as string;
+        overlayListRef.current = snapshot.find((l) => l.id === listId) ?? null;
+        overlayCardRef.current = null;
+        setActiveDrag({ type: 'list', listId });
       }
     },
     [storeLists, updateLocalLists],
@@ -261,21 +278,12 @@ const Board = () => {
           </ScrollContainer>
         </Contents>
         <DragOverlay>
-          {activeDrag?.type === 'card' &&
-            (() => {
-              // Search all lists since card may have moved cross-list during drag
-              let card;
-              for (const l of lists) {
-                card = l.cards.find((c) => c.id === activeDrag.cardId);
-                if (card) break;
-              }
-              return card ? <Card card={card} editable={false} /> : null;
-            })()}
-          {activeDrag?.type === 'list' &&
-            (() => {
-              const list = lists.find((l) => l.id === activeDrag.listId);
-              return list ? <List kanban={kanban} list={list} /> : null;
-            })()}
+          {activeDrag?.type === 'card' && overlayCardRef.current ? (
+            <Card card={overlayCardRef.current} editable={false} />
+          ) : null}
+          {activeDrag?.type === 'list' && overlayListRef.current ? (
+            <List kanban={kanban} list={overlayListRef.current} />
+          ) : null}
         </DragOverlay>
       </DndContext>
     </Container>

@@ -65,21 +65,12 @@ const Icon = styled.div`
 `;
 
 const CardCountBadge = styled.span`
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 20px;
-  height: 20px;
-  padding: 0 6px;
-  border-radius: 10px;
-  border: 1px solid var(--form-border-color);
-  color: var(--text-color);
-  font-size: 0.68rem;
-  font-weight: 700;
-  margin-left: 4px;
+  color: var(--secondary-text-color);
+  font-size: 0.8rem;
+  font-weight: 500;
+  margin-left: 6px;
   flex-shrink: 0;
   line-height: 1;
-  opacity: 0.65;
 `;
 
 const EmptyState = styled.div`
@@ -109,7 +100,7 @@ const SortableCardItem = ({ card, listId }: SortableCardItemProps) => {
   });
 
   const style: React.CSSProperties = {
-    transform: CSS.Transform.toString(transform),
+    transform: CSS.Translate.toString(transform),
     transition,
     opacity: isDragging ? 0 : 1,
   };
@@ -233,11 +224,11 @@ export const List = ({ kanban, list, dragHandleListeners, dragHandleAttributes }
                 position: 'relative',
               }}
             >
-              <div style={{ display: 'flex', alignItems: 'center', overflow: 'hidden' }}>
+              <div style={{ flex: 1, minWidth: 0, overflow: 'hidden' }}>
                 <Title
                   title={list.title}
                   fontSize={'medium'}
-                  width={155}
+                  width='100%'
                   onEnter={(text) => {
                     updateList({
                       ...list,
@@ -245,6 +236,8 @@ export const List = ({ kanban, list, dragHandleListeners, dragHandleAttributes }
                     });
                   }}
                 />
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', flexShrink: 0 }}>
                 {filteredCards.length > 0 && <CardCountBadge>{filteredCards.length}</CardCountBadge>}
               </div>
               <Menu

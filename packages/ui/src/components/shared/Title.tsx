@@ -9,6 +9,9 @@ const Container = styled.div`
   font-weight: 800;
   padding: 2px 0;
   background-color: transparent;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `;
 
 type Properties = {
