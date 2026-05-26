@@ -637,6 +637,17 @@ export const App = ({ kanban: initialKanban, title, onSave, onQuit }: Props) => 
     );
   }
 
+  // When in detail mode but the card no longer exists, reset to board in an effect.
+  const detailCardMissing =
+    mode.type === 'detail' &&
+    !kanban.lists[mode.listIndex]?.cards[mode.cardIndex];
+
+  React.useEffect(() => {
+    if (detailCardMissing) {
+      setMode({ type: 'board' });
+    }
+  }, [detailCardMissing]);
+
   // Card detail screen
   if (mode.type === 'detail') {
     const { listIndex, cardIndex } = mode;
@@ -651,7 +662,8 @@ export const App = ({ kanban: initialKanban, title, onSave, onQuit }: Props) => 
         />
       );
     }
-    setMode({ type: 'board' });
+    // Card not found — fallback while the effect above resets the mode.
+    return null;
   }
 
   // Delete confirmation overlay

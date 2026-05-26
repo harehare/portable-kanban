@@ -22,7 +22,7 @@ import {
   ReadResourceRequestSchema,
 } from '@modelcontextprotocol/sdk/types.js';
 import { readFileSync, writeFileSync, readdirSync, statSync, existsSync } from 'node:fs';
-import { resolve, join, basename, normalize } from 'node:path';
+import { resolve, join, basename, normalize, relative, isAbsolute } from 'node:path';
 import { fromJson, toJson } from 'portable-kanban-core';
 import type { Kanban, Card, List } from 'portable-kanban-core';
 
@@ -67,7 +67,8 @@ function resolveBoardPath(name: string): string {
   // then resolve strictly inside rootPath.
   const safeName = basename(withExt);
   const resolved = normalize(join(rootPath, safeName));
-  if (!resolved.startsWith(rootPath + '/') && resolved !== rootPath) {
+  const rel = relative(rootPath, resolved);
+  if (isAbsolute(rel) || rel.startsWith('..')) {
     throw new Error(`Board not found: ${name}`);
   }
   if (!resolved.endsWith('.kanban')) {
@@ -142,7 +143,9 @@ server.setRequestHandler(ListResourcesRequestSchema, async () => {
   const boards = findBoards();
   return {
     resources: boards.map((p) => ({
-      uri: `kanban:///${p}`,
+      // Embed only the board name (no path components) so the URI cannot
+      // encode an arbitrary file-system path.
+      uri: `kanban:///${basename(p, '.kanban')}`,
       name: basename(p, '.kanban'),
       description: `Kanban board: ${p}`,
       mimeType: 'application/json',
@@ -155,8 +158,11 @@ server.setRequestHandler(ReadResourceRequestSchema, async (req) => {
   if (!uri.startsWith('kanban:///')) {
     throw new Error(`Invalid resource URI: ${uri}`);
   }
-  const rawPath = uri.slice('kanban:///'.length);
-  const path = resolveBoardPath(rawPath);
+  // Extract only the final path segment (board name) from the URI and resolve
+  // it through the same allowlist guard used by every tool, so that a client
+  // cannot supply an absolute or traversal path (e.g. kanban:////etc/passwd).
+  const uriName = basename(uri.slice('kanban:///'.length));
+  const path = resolveBoardPath(uriName);
   const kanban = await readBoard(path);
   return {
     contents: [
