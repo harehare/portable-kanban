@@ -1,6 +1,6 @@
 {
   "name": "portable-kanban-workspace",
-  "version": "0.1.0",
+  "version": "0.2.6",
   "private": true,
   "description": "Portable Kanban monorepo — VSCode extension, web app, and TUI CLI",
   "author": "harehare",

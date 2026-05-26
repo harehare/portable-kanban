@@ -1,6 +1,6 @@
 {
   "name": "portable-kanban-mcp",
-  "version": "1.0.0",
+  "version": "0.2.6",
   "description": "MCP server for portable-kanban — lets AI assistants read and manipulate .kanban files",
   "type": "module",
   "main": "dist/index.js",
