@@ -1,6 +1,6 @@
 {
   "name": "portable-kanban-tui",
-  "version": "0.2.6",
+  "version": "0.2.7",
   "description": "Terminal TUI CLI for portable kanban boards — keyboard-driven, works with any .kanban file",
   "keywords": [
     "kanban",
