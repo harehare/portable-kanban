@@ -63,6 +63,7 @@ const SortableListItem = ({ list, kanban }: SortableListItemProps) => {
     transform: CSS.Translate.toString(transform),
     transition,
     opacity: isDragging ? 0 : 1,
+    willChange: transform ? 'transform' : 'auto',
   };
 
   return (
@@ -91,6 +92,9 @@ const Board = () => {
   // Cache the dragged card/list at drag start to avoid searching on every onDragOver
   const overlayCardRef = React.useRef<CardModel | null>(null);
   const overlayListRef = React.useRef<ListModel | null>(null);
+  // rAF throttle refs for onDragOver
+  const dragOverRafRef = React.useRef<number | null>(null);
+  const pendingDragOverRef = React.useRef<DragOverEvent | null>(null);
 
   // During drag use local state for rendering; otherwise use store state
   const lists = localLists ?? storeLists;
@@ -145,7 +149,7 @@ const Board = () => {
     return closestCenter(args);
   }, []);
 
-  const onDragOver = React.useCallback(
+  const processDragOver = React.useCallback(
     (event: DragOverEvent) => {
       const { active, over } = event;
       if (!over) return;
@@ -183,8 +187,29 @@ const Board = () => {
     [updateLocalLists],
   );
 
+  // Throttle onDragOver to one update per animation frame to avoid excessive re-renders
+  const onDragOver = React.useCallback(
+    (event: DragOverEvent) => {
+      pendingDragOverRef.current = event;
+      if (dragOverRafRef.current !== null) return;
+      dragOverRafRef.current = requestAnimationFrame(() => {
+        dragOverRafRef.current = null;
+        const pending = pendingDragOverRef.current;
+        pendingDragOverRef.current = null;
+        if (pending) processDragOver(pending);
+      });
+    },
+    [processDragOver],
+  );
+
   const onDragEnd = React.useCallback(
     (event: DragEndEvent) => {
+      // Cancel any pending rAF to avoid processing a stale drag-over after drop
+      if (dragOverRafRef.current !== null) {
+        cancelAnimationFrame(dragOverRafRef.current);
+        dragOverRafRef.current = null;
+        pendingDragOverRef.current = null;
+      }
       setActiveDrag(null);
       const { active, over } = event;
       const current = localListsRef.current ?? storeLists;

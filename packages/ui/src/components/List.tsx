@@ -103,6 +103,7 @@ const SortableCardItem = ({ card, listId }: SortableCardItemProps) => {
     transform: CSS.Translate.toString(transform),
     transition,
     opacity: isDragging ? 0 : 1,
+    willChange: transform ? 'transform' : 'auto',
   };
 
   return (
