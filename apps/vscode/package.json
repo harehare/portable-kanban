@@ -86,7 +86,7 @@
     "@vscode/vsce": "^3.9.2",
     "babel-plugin-react-compiler": "^1.0.0",
     "esbuild": "^0.28.0",
-    "oxlint": "^0.16.6",
+    "oxlint": "^1.70.0",
     "typescript": "^6.0.3",
     "vite": "^8.0.16"
   },

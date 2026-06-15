@@ -36,7 +36,7 @@
     "@types/mocha": "^10.0.10",
     "jsdom": "^29.1.1",
     "oxfmt": "^0.53.0",
-    "oxlint": "^1.66.0",
+    "oxlint": "^1.70.0",
     "vitest": "^4.1.8",
     "@vitejs/plugin-react": "^6.0.2",
     "babel-plugin-react-compiler": "^1.0.0",
