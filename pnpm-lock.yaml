@@ -98,8 +98,8 @@ importers:
   apps/vscode:
     dependencies:
       jotai:
-        specifier: ^2.20.0
-        version: 2.20.0(@types/react@19.2.15)(react@19.2.6)
+        specifier: ^2.20.1
+        version: 2.20.1(@types/react@19.2.15)(react@19.2.6)
       portable-kanban-core:
         specifier: workspace:*
         version: link:../../packages/core
@@ -153,8 +153,8 @@ importers:
   apps/web:
     dependencies:
       jotai:
-        specifier: ^2.20.0
-        version: 2.20.0(@types/react@19.2.15)(react@19.2.6)
+        specifier: ^2.20.1
+        version: 2.20.1(@types/react@19.2.15)(react@19.2.6)
       portable-kanban-core:
         specifier: workspace:*
         version: link:../../packages/core
@@ -233,11 +233,11 @@ importers:
         specifier: ^7.4.1
         version: 7.4.1
       jotai:
-        specifier: ^2.20.0
-        version: 2.20.0(@types/react@19.2.15)(react@19.2.6)
+        specifier: ^2.20.1
+        version: 2.20.1(@types/react@19.2.15)(react@19.2.6)
       jotai-optics:
         specifier: ^0.4.0
-        version: 0.4.0(jotai@2.20.0(@types/react@19.2.15)(react@19.2.6))(optics-ts@2.4.1)
+        version: 0.4.0(jotai@2.20.1(@types/react@19.2.15)(react@19.2.6))(optics-ts@2.4.1)
       optics-ts:
         specifier: ^2.4.1
         version: 2.4.1
@@ -2235,8 +2235,8 @@ packages:
       jotai: '>=2.0.0'
       optics-ts: '>=2.0.0'
 
-  jotai@2.20.0:
-    resolution: {integrity: sha512-b5GAqgmXmXzB4WPaTH26ppk9Sl7AA9WSQX7yfdM+gJ1rFROiWcVbi97gFuN/yVCojOcbcvop2sfLL+fjxW0JVg==}
+  jotai@2.20.1:
+    resolution: {integrity: sha512-dnuKfU/GLi8B28RRMjQ3AfoN7kfzP8o41+AX2FmITZqEMY8PHnjABq+VkEooomLwYaGjda+pgy0yFSjaHX/ZPg==}
     engines: {node: '>=12.20.0'}
     peerDependencies:
       '@babel/core': '>=7.0.0'
@@ -5304,12 +5304,12 @@ snapshots:
 
   jose@6.2.3: {}
 
-  jotai-optics@0.4.0(jotai@2.20.0(@types/react@19.2.15)(react@19.2.6))(optics-ts@2.4.1):
+  jotai-optics@0.4.0(jotai@2.20.1(@types/react@19.2.15)(react@19.2.6))(optics-ts@2.4.1):
     dependencies:
-      jotai: 2.20.0(@types/react@19.2.15)(react@19.2.6)
+      jotai: 2.20.1(@types/react@19.2.15)(react@19.2.6)
       optics-ts: 2.4.1
 
-  jotai@2.20.0(@types/react@19.2.15)(react@19.2.6):
+  jotai@2.20.1(@types/react@19.2.15)(react@19.2.6):
     optionalDependencies:
       '@types/react': 19.2.15
       react: 19.2.6

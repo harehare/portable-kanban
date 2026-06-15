@@ -93,7 +93,7 @@
   "dependencies": {
     "portable-kanban-core": "workspace:*",
     "portable-kanban-ui": "workspace:*",
-    "jotai": "^2.20.0",
+    "jotai": "^2.20.1",
     "react": "^19.2.6",
     "react-dom": "^19.2.6",
     "react-router-dom": "^7.17.0"
