@@ -45,7 +45,7 @@
     "portable-kanban-core": "workspace:*",
     "@types/node": "25.x",
     "@types/react": "^18.3.23",
-    "esbuild": "^0.25.0",
+    "esbuild": "^0.28.1",
     "oxlint": "^1.70.0",
     "typescript": "^6.0.3"
   }
