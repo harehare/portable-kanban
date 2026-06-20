@@ -7,19 +7,22 @@
   "publisher": "harehare",
   "icon": "assets/icon.png",
   "private": true,
-  "pnpm": {
-    "onlyBuiltDependencies": ["@vscode/vsce-sign", "keytar"]
-  },
   "engines": {
     "vscode": "^1.101.0"
   },
-  "categories": ["Other"],
-  "keywords": ["kanban"],
+  "categories": [
+    "Other"
+  ],
+  "keywords": [
+    "kanban"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/harehare/portable-kanban.git"
   },
-  "activationEvents": ["onStartupFinished"],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
   "main": "./dist/extension.js",
   "contributes": {
     "customEditors": [
@@ -47,7 +50,11 @@
           "title": "Portable Kanban Theme",
           "type": "string",
           "default": "system",
-          "enum": ["dark", "light", "system"],
+          "enum": [
+            "dark",
+            "light",
+            "system"
+          ],
           "description": "Switch the theme to dark or light."
         },
         "portable-kanban.show-description": {

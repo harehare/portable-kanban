@@ -8,12 +8,6 @@
     "type": "git",
     "url": "https://github.com/harehare/portable-kanban.git"
   },
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "@vscode/vsce-sign",
-      "keytar"
-    ]
-  },
   "scripts": {
     "build": "pnpm -r build",
     "build:core": "pnpm --filter portable-kanban-core build",
