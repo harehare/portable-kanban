@@ -13,15 +13,16 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "portable-kanban-core": "workspace:*",
-    "@dnd-kit/core": "^6.3.1",
-    "@dnd-kit/sortable": "^10.0.0",
-    "@dnd-kit/utilities": "^3.2.2",
+    "@atlaskit/pragmatic-drag-and-drop": "^2.0.1",
+    "@atlaskit/pragmatic-drag-and-drop-auto-scroll": "^3.0.0",
+    "@atlaskit/pragmatic-drag-and-drop-hitbox": "^2.0.0",
+    "@atlaskit/pragmatic-drag-and-drop-react-drop-indicator": "^4.0.0",
     "date-fns": "^4.4.0",
     "fuse.js": "^7.4.2",
     "jotai": "^2.20.1",
     "jotai-optics": "^0.4.0",
     "optics-ts": "^2.4.1",
+    "portable-kanban-core": "workspace:*",
     "react": "^19.2.6",
     "react-dom": "^19.2.6",
     "react-icons": "^5.5.0",
@@ -32,16 +33,16 @@
     "styled-components": "^6.4.1"
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
+    "@testing-library/user-event": "^14.6.1",
     "@types/react": "^19.2.15",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.2",
     "babel-plugin-react-compiler": "^1.0.0",
+    "jsdom": "^29.1.1",
     "typescript": "^6.0.3",
     "vite": "^8.0.16",
-    "vitest": "^4.1.8",
-    "@testing-library/jest-dom": "^6.9.1",
-    "@testing-library/react": "^16.3.2",
-    "@testing-library/user-event": "^14.6.1",
-    "jsdom": "^29.1.1"
+    "vitest": "^4.1.8"
   }
 }

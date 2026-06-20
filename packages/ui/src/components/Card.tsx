@@ -227,6 +227,7 @@ export const Card = ({ card, onEnter, onBlur, editable = true, isEdit = false }:
         ) : (
           <Link
             key={card.id}
+            draggable={false}
             to={{
               pathname: `/list/${state.card.listId}/card/${state.card.id}`,
             }}

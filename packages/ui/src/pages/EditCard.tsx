@@ -1,6 +1,7 @@
-import { closestCenter, DndContext, type DragEndEvent, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
-import { SortableContext, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable';
-import { CSS } from '@dnd-kit/utilities';
+import { monitorForElements } from '@atlaskit/pragmatic-drag-and-drop/element/adapter';
+import { extractClosestEdge } from '@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge';
+import { getReorderDestinationIndex } from '@atlaskit/pragmatic-drag-and-drop-hitbox/util/get-reorder-destination-index';
+import { DropIndicator } from '@atlaskit/pragmatic-drag-and-drop-react-drop-indicator/box';
 import * as React from 'react';
 import {
   MdCheck,
@@ -28,6 +29,7 @@ import { TextBaseBold } from '../components/shared/Text';
 import { Title } from '../components/shared/Title';
 import { Task } from '../components/Task';
 import { type CheckBox as CheckBoxModel, type Comment as CommentModel } from 'portable-kanban-core';
+import { useSortableItem } from '../hooks/useSortableItem';
 import { actions, kanbanActions, selectors } from '../store';
 import { uuid } from 'portable-kanban-core';
 
@@ -112,16 +114,16 @@ type SortableTaskItemProps = {
 };
 
 const SortableTaskItem = ({ id, checkbox, onChecked, onEnter, onDelete }: SortableTaskItemProps) => {
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id });
-  const style: React.CSSProperties = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-    opacity: isDragging ? 0.5 : 1,
-  };
+  const { ref, isDragging, closestEdge } = useSortableItem({
+    id,
+    data: { type: 'checkbox' },
+    axis: 'vertical',
+  });
 
   return (
-    <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
+    <div ref={ref} style={{ position: 'relative', opacity: isDragging ? 0.5 : 1 }}>
       <Task checkbox={checkbox} onChecked={onChecked} onEnter={onEnter} onDelete={onDelete} />
+      {closestEdge ? <DropIndicator edge={closestEdge} /> : null}
     </div>
   );
 };
@@ -166,9 +168,10 @@ const EditCard = () => {
     }
   }, [card, archivedCard, lists.length, navigate]);
 
-  const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 8 } }));
-
-  const checkboxIds = React.useMemo(() => card?.checkboxes.map((c) => c.id) ?? [], [card?.checkboxes]);
+  const cardRef = React.useRef(card);
+  cardRef.current = card;
+  const listRef = React.useRef(list);
+  listRef.current = list;
 
   const taskList = React.useMemo(
     () =>
@@ -199,19 +202,36 @@ const EditCard = () => {
     [card?.checkboxes, list, card, deleteCheckBox, updateCheckBox],
   );
 
-  const onDragEnd = React.useCallback(
-    (event: DragEndEvent) => {
-      const { active, over } = event;
-      if (!over || !list || !card || active.id === over.id) return;
+  React.useEffect(() => {
+    return monitorForElements({
+      onDrop({ source, location }) {
+        const sourceData = source.data as { type?: string; id?: string };
+        if (sourceData.type !== 'checkbox') return;
 
-      const fromIndex = card.checkboxes.findIndex((c) => c.id === active.id);
-      const toIndex = card.checkboxes.findIndex((c) => c.id === over.id);
-      if (fromIndex >= 0 && toIndex >= 0) {
-        moveCheckBox(list.id, card.id, fromIndex, toIndex);
-      }
-    },
-    [list, card, moveCheckBox],
-  );
+        const target = location.current.dropTargets.find((t) => (t.data as { type?: string }).type === 'checkbox');
+        if (!target) return;
+
+        const currentCard = cardRef.current;
+        const currentList = listRef.current;
+        if (!currentCard || !currentList) return;
+
+        const targetData = target.data as { id: string };
+        const fromIndex = currentCard.checkboxes.findIndex((c) => c.id === sourceData.id);
+        const indexOfTarget = currentCard.checkboxes.findIndex((c) => c.id === targetData.id);
+        if (fromIndex < 0 || indexOfTarget < 0) return;
+
+        const toIndex = getReorderDestinationIndex({
+          startIndex: fromIndex,
+          indexOfTarget,
+          closestEdgeOfTarget: extractClosestEdge(target.data),
+          axis: 'vertical',
+        });
+        if (toIndex === fromIndex) return;
+
+        moveCheckBox(currentList.id, currentCard.id, fromIndex, toIndex);
+      },
+    });
+  }, [moveCheckBox]);
 
   const handleEditDescription = React.useCallback(
     (description: string) => {
@@ -330,7 +350,7 @@ const EditCard = () => {
   }, [list, card]);
 
   return (
-    <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={onDragEnd}>
+    <>
       <Overlay
         onClick={(e: React.MouseEvent<HTMLDivElement>) => {
           if (showModal) {
@@ -445,9 +465,7 @@ const EditCard = () => {
                   />
                 )}
               </div>
-              <SortableContext items={checkboxIds} strategy={verticalListSortingStrategy}>
-                <div style={{ width: 'calc(100% - 16px)' }}>{taskList}</div>
-              </SortableContext>
+              <div style={{ width: 'calc(100% - 16px)' }}>{taskList}</div>
               <div style={{ margin: '0 12px' }}>
                 <AddItem
                   enableContinuousInput
@@ -489,7 +507,7 @@ const EditCard = () => {
           </BUttons>
         </Container>
       </Overlay>
-    </DndContext>
+    </>
   );
 };
 

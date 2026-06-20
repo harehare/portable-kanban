@@ -1,11 +1,14 @@
-import { SortableContext, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable';
-import { CSS } from '@dnd-kit/utilities';
+import { combine } from '@atlaskit/pragmatic-drag-and-drop/combine';
+import { dropTargetForElements } from '@atlaskit/pragmatic-drag-and-drop/element/adapter';
+import { autoScrollForElements } from '@atlaskit/pragmatic-drag-and-drop-auto-scroll/element';
+import { DropIndicator } from '@atlaskit/pragmatic-drag-and-drop-react-drop-indicator/box';
 import Fuse from 'fuse.js';
 import * as React from 'react';
 import { FiPlus } from 'react-icons/fi';
 import { MdAdd, MdArchive, MdDriveFileMoveOutline, MdMenu, MdOutlineArchive, MdSortByAlpha } from 'react-icons/md';
 import { styled } from 'styled-components';
 import { type Card as CardModel, type Kanban as KanbanModel, type List as ListModel, newCard } from 'portable-kanban-core';
+import { useSortableItem } from '../hooks/useSortableItem';
 import { actions, kanbanActions, selectors } from '../store';
 import { uuid } from 'portable-kanban-core';
 import { Card } from './Card';
@@ -94,21 +97,16 @@ type SortableCardItemProps = {
 };
 
 const SortableCardItem = ({ card, listId }: SortableCardItemProps) => {
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+  const { ref, isDragging, closestEdge } = useSortableItem({
     id: card.id,
     data: { type: 'card', listId },
+    axis: 'vertical',
   });
 
-  const style: React.CSSProperties = {
-    transform: CSS.Translate.toString(transform),
-    transition,
-    opacity: isDragging ? 0 : 1,
-    willChange: transform ? 'transform' : 'auto',
-  };
-
   return (
-    <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
+    <div ref={ref} style={{ position: 'relative', opacity: isDragging ? 0 : 1 }}>
       <Card key={card.id} card={card} />
+      {closestEdge ? <DropIndicator edge={closestEdge} /> : null}
     </div>
   );
 };
@@ -116,10 +114,7 @@ const SortableCardItem = ({ card, listId }: SortableCardItemProps) => {
 type Properties = {
   kanban: KanbanModel;
   list: ListModel;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  dragHandleListeners?: Record<string, any>;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  dragHandleAttributes?: Record<string, any>;
+  dragHandleRef?: React.RefObject<HTMLElement | null>;
 };
 
 const searchOptions = {
@@ -127,7 +122,7 @@ const searchOptions = {
   keys: ['title', 'description', 'comments.comment'],
 };
 
-export const List = ({ kanban, list, dragHandleListeners, dragHandleAttributes }: Properties) => {
+export const List = ({ kanban, list, dragHandleRef }: Properties) => {
   const lists = selectors.useLists();
   const settings = selectors.useSettings();
   const setKanban = actions.useSetKanban();
@@ -167,7 +162,19 @@ export const List = ({ kanban, list, dragHandleListeners, dragHandleAttributes }
     return cards;
   }, [searcher, list, filteredText, filteredLabels, sortOrder]);
 
-  const cardIds = React.useMemo(() => filteredCards.map((c) => c.id), [filteredCards]);
+  const cardsContainerRef = React.useRef<HTMLDivElement>(null);
+
+  React.useEffect(() => {
+    const element = cardsContainerRef.current;
+    if (!element) return;
+    return combine(
+      dropTargetForElements({
+        element,
+        getData: () => ({ type: 'card-zone', listId: list.id }),
+      }),
+      autoScrollForElements({ element }),
+    );
+  }, [list.id]);
 
   const handleAddCard = React.useCallback(
     (card: CardModel) => {
@@ -214,7 +221,7 @@ export const List = ({ kanban, list, dragHandleListeners, dragHandleAttributes }
             }
           }}
         >
-          <Header {...dragHandleAttributes} {...dragHandleListeners}>
+          <Header ref={dragHandleRef as React.RefObject<HTMLDivElement>}>
             <div
               style={{
                 display: 'flex',
@@ -306,21 +313,20 @@ export const List = ({ kanban, list, dragHandleListeners, dragHandleAttributes }
             </div>
           </Header>
           <div
+            ref={cardsContainerRef}
             style={{
               maxHeight: 'calc(100vh - var(--header-height) - 112px)',
               overflowY: 'auto',
             }}
           >
-            <SortableContext items={cardIds} strategy={verticalListSortingStrategy}>
-              <Cards>
-                {filteredCards.map((c) => (
-                  <SortableCardItem key={c.id} card={c} listId={list.id} />
-                ))}
-                {filteredCards.length === 0 && list.id !== addingCard?.listId && (
-                  <EmptyState>{filteredText || filteredLabels.size > 0 ? 'No matching cards' : 'No cards'}</EmptyState>
-                )}
-              </Cards>
-            </SortableContext>
+            <Cards>
+              {filteredCards.map((c) => (
+                <SortableCardItem key={c.id} card={c} listId={list.id} />
+              ))}
+              {filteredCards.length === 0 && list.id !== addingCard?.listId && (
+                <EmptyState>{filteredText || filteredLabels.size > 0 ? 'No matching cards' : 'No cards'}</EmptyState>
+              )}
+            </Cards>
           </div>
           {list.id === addingCard?.listId ? (
             <Card
