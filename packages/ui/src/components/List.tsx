@@ -326,8 +326,8 @@ export const List = ({ kanban, list, dragHandleListeners, dragHandleAttributes }
             <Card
               card={addingCard}
               isEdit={true}
-              onEnter={(c) => {
-                setAddCard(undefined);
+              onEnter={(c, keepOpen) => {
+                setAddCard(keepOpen ? newCard(uuid(), list.id) : undefined);
                 handleAddCard(c);
               }}
               onBlur={(c) => {

@@ -92,6 +92,20 @@ describe('Card', () => {
     expect(onEnter).toHaveBeenCalledWith(expect.objectContaining({ title: 'New Task' }));
   });
 
+  it('calls onEnter with keepOpen=true when Ctrl+Enter is pressed in edit mode', async () => {
+    const user = userEvent.setup();
+    const onEnter = vi.fn();
+    const card = createCard({ title: '' });
+    render(
+      <TestWrapper>
+        <Card card={card} isEdit={true} onEnter={onEnter} />
+      </TestWrapper>,
+    );
+    const textarea = screen.getByPlaceholderText('Enter title of card');
+    await user.type(textarea, 'New Task{Control>}{Enter}{/Control}');
+    expect(onEnter).toHaveBeenCalledWith(expect.objectContaining({ title: 'New Task' }), true);
+  });
+
   it('renders title without link when editable is false', () => {
     const card = createCard({ title: 'Read Only Card' });
     render(
