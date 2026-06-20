@@ -109,7 +109,7 @@ type Properties = {
   card: CardModel;
   isEdit?: boolean;
   editable?: boolean;
-  onEnter?: (card: CardModel) => void;
+  onEnter?: (card: CardModel, keepOpen?: boolean) => void;
   onBlur?: (card: CardModel) => void;
 };
 
@@ -139,11 +139,19 @@ export const Card = ({ card, onEnter, onBlur, editable = true, isEdit = false }:
         return;
       }
 
+      const keepOpen = e.ctrlKey || e.metaKey;
+
       if (onEnter) {
-        onEnter(state.card);
+        if (keepOpen) {
+          onEnter(state.card, true);
+        } else {
+          onEnter(state.card);
+        }
       }
 
-      setState({ ...state, isEdit: false });
+      if (!keepOpen) {
+        setState({ ...state, isEdit: false });
+      }
     },
     [state.card, isComposing],
   );
