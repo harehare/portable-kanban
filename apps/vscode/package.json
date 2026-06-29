@@ -95,7 +95,7 @@
     "esbuild": "^0.28.1",
     "oxlint": "^1.70.0",
     "typescript": "^6.0.3",
-    "vite": "^8.0.16"
+    "vite": "^8.1.0"
   },
   "dependencies": {
     "portable-kanban-core": "workspace:*",
