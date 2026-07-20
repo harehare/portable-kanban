@@ -19,7 +19,7 @@
     "@dnd-kit/utilities": "^3.2.2",
     "date-fns": "^4.4.0",
     "fuse.js": "^7.4.2",
-    "jotai": "^2.20.1",
+    "jotai": "^2.20.2",
     "jotai-optics": "^0.4.0",
     "optics-ts": "^2.4.1",
     "react": "^19.2.6",
