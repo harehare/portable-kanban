@@ -12,7 +12,7 @@
   "dependencies": {
     "portable-kanban-core": "workspace:*",
     "portable-kanban-ui": "workspace:*",
-    "jotai": "^2.20.1",
+    "jotai": "^2.20.2",
     "react": "^19.2.6",
     "react-dom": "^19.2.6",
     "react-icons": "^5.6.0",
