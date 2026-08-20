@@ -21,7 +21,7 @@
     "uuid": "^14.0.0"
   },
   "devDependencies": {
-    "@types/node": "25.x",
+    "@types/node": "26.x",
     "typescript": "^6.0.3",
     "vitest": "^4.1.8"
   }

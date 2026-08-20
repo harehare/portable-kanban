@@ -85,7 +85,7 @@
     "lint": "oxlint src"
   },
   "devDependencies": {
-    "@types/node": "25.x",
+    "@types/node": "26.x",
     "@types/react": "^19.2.15",
     "@types/react-dom": "^19.2.3",
     "@types/vscode": "^1.101.0",
