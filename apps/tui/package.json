@@ -43,7 +43,7 @@
   },
   "devDependencies": {
     "portable-kanban-core": "workspace:*",
-    "@types/node": "25.x",
+    "@types/node": "26.x",
     "@types/react": "^18.3.23",
     "esbuild": "^0.28.1",
     "oxlint": "^1.74.0",
